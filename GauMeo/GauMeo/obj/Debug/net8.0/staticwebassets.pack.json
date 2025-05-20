@@ -1,0 +1,69 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\css\\style.css",
+      "PackagePath": "staticwebassets\\css\\style.css"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\images\\banner1.png",
+      "PackagePath": "staticwebassets\\images\\banner1.png"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\images\\banner2.png",
+      "PackagePath": "staticwebassets\\images\\banner2.png"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\images\\banner3.png",
+      "PackagePath": "staticwebassets\\images\\banner3.png"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\images\\image.png",
+      "PackagePath": "staticwebassets\\images\\image.png"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\images\\logo.png",
+      "PackagePath": "staticwebassets\\images\\logo.png"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\images\\spa.png",
+      "PackagePath": "staticwebassets\\images\\spa.png"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\js\\cart.js",
+      "PackagePath": "staticwebassets\\js\\cart.js"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\js\\index.js",
+      "PackagePath": "staticwebassets\\js\\index.js"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\js\\main.js",
+      "PackagePath": "staticwebassets\\js\\main.js"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\js\\product-detail.js",
+      "PackagePath": "staticwebassets\\js\\product-detail.js"
+    },
+    {
+      "Id": "C:\\laragon\\www\\GauMeo\\GauMeo\\wwwroot\\js\\shopping-cart.js",
+      "PackagePath": "staticwebassets\\js\\shopping-cart.js"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.GauMeo.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.GauMeo.props",
+      "PackagePath": "build\\GauMeo.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.GauMeo.props",
+      "PackagePath": "buildMultiTargeting\\GauMeo.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.GauMeo.props",
+      "PackagePath": "buildTransitive\\GauMeo.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
