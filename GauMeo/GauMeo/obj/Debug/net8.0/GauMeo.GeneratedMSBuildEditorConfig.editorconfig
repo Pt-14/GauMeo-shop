@@ -9,27 +9,89 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = GauMeo
 build_property.RootNamespace = GauMeo
-build_property.ProjectDir = C:\Users\phuon\OneDrive\Tài liệu\GauMeo-shop\GauMeo\GauMeo\
+build_property.ProjectDir = C:\Users\phuon\OneDrive\Máy tính\GauMeo-shop\GauMeo\GauMeo\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\phuon\OneDrive\Tài liệu\GauMeo-shop\GauMeo\GauMeo
+build_property.MSBuildProjectDirectory = C:\Users\phuon\OneDrive\Máy tính\GauMeo-shop\GauMeo\GauMeo
 build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/phuon/OneDrive/Tài liệu/GauMeo-shop/GauMeo/GauMeo/Views/Cart/Index.cshtml]
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Areas/Admin/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Areas/Admin/Views/Shared/_AdminLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Areas/Admin/Views/User/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVXNlclxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Areas/Admin/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Areas/Admin/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Account/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Account/ForgotPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Account/ForgotPasswordConfirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxGb3Jnb3RQYXNzd29yZENvbmZpcm1hdGlvbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Account/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxQcm9maWxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Account/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxSZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Cart/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FydFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/phuon/OneDrive/Tài liệu/GauMeo-shop/GauMeo/GauMeo/Views/Home/Index.cshtml]
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/phuon/OneDrive/Tài liệu/GauMeo-shop/GauMeo/GauMeo/Views/Product/Detail.cshtml]
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Product/Detail.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxEZXRhaWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/phuon/OneDrive/Tài liệu/GauMeo-shop/GauMeo/GauMeo/Views/Shared/_Layout.cshtml]
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Shared/Error404.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yNDA0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/Shared/_LoginPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/phuon/OneDrive/Máy tính/GauMeo-shop/GauMeo/GauMeo/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

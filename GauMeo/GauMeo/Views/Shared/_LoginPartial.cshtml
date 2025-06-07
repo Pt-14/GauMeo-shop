@@ -1,0 +1,33 @@
+@using Microsoft.AspNetCore.Identity
+@using GauMeo.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+        <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Profile" title="Manage">Xin chào @UserManager.GetUserName(User)!</a>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline" asp-area="" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="nav-link btn btn-link text-light">Đăng xuất</button>
+        </form>
+    </li>
+    @if (User.IsInRole("Admin"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-area="Admin" asp-controller="Home" asp-action="Index">Admin</a>
+        </li>
+    }
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Register">Đăng ký</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-light" asp-area="" asp-controller="Account" asp-action="Login">Đăng nhập</a>
+    </li>
+}
+</ul> 
