@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GauMeo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250607200402_AddUserProfileFields")]
-    partial class AddUserProfileFields
+    [Migration("20250607231933_InitUserFullNameAndAddress")]
+    partial class InitUserFullNameAndAddress
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
