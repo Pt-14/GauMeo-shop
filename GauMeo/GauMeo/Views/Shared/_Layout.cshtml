@@ -9,9 +9,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/header-footer.css">
+    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/logout-button.css" asp-append-version="true" />  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
@@ -23,7 +26,8 @@
         </div>
         <div class="main-header">
             <a class="logo" href="/Home/Index">
-                <img src="/images/logo.png" alt="logo" class="logo-img">
+                <img src="/images/logo-light.png" alt="logo" class="logo-img logo-light">
+                <img src="/images/logo-dark.png" alt="logo" class="logo-img logo-dark">
             </a>
             <nav class="header-nav">
                 <ul>
@@ -245,6 +249,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><style>.cls-1{fill:#231f20}</style></defs><g id="cart"><path class="cls-1" d="M29.46 10.14A2.94 2.94 0 0 0 27.1 9H10.22L8.76 6.35A2.67 2.67 0 0 0 6.41 5H3a1 1 0 0 0 0 2h3.41a.68.68 0 0 1 .6.31l1.65 3 .86 9.32a3.84 3.84 0 0 0 4 3.38h10.37a3.92 3.92 0 0 0 3.85-2.78l2.17-7.82a2.58 2.58 0 0 0-.45-2.27zM28 11.86l-2.17 7.83A1.93 1.93 0 0 1 23.89 21H13.48a1.89 1.89 0 0 1-2-1.56L10.73 11H27.1a1 1 0 0 1 .77.35.59.59 0 0 1 .13.51z"/><circle class="cls-1" cx="14" cy="26" r="2"/><circle class="cls-1" cx="24" cy="26" r="2"/></g></svg>
                     <span class="header-cart-badge">1</span>
                 </a>
+                <button class="btn-theme-toggle" aria-label="Chuyển dark mode" title="Chuyển dark mode" type="button" aria-pressed="false">🌙</button>
             </div>
         </div>
     </header>
@@ -279,15 +284,26 @@
                 <div>Email: info.gaumeopetshop@gmail.com</div>
                 <div>Hotline: 09xxxxxxxx</div>
                 <div class="footer-social">
-                    <a href="https://facebook.com" target="_blank" aria-label="Facebook">
-                        <svg width="16" height="16" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 1v14a1 1 0 0 1-1 1H9V9h2V7H9V5a2 2 0 0 1 2-2h2V1h-2a4 4 0 0 0-4 4v2H5v2h2v7H1a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1z"/></svg>
-                    </a>
-                    <a href="https://instagram.com" target="_blank" aria-label="Instagram">
-                        <svg width="16" height="16" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="1" width="14" height="14" rx="4"/><circle cx="8" cy="8" r="3"/><circle cx="12.5" cy="3.5" r="1"/></svg>
-                    </a>
-                    <a href="https://x.com" target="_blank" aria-label="X">
-                        <svg width="16" height="16" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1L1 15M1 1l11 14"/></svg>
-                    </a>
+                    <ul class="wrapper">
+                        <li class="icon facebook">
+                            <span class="tooltip">Facebook</span>
+                            <a href="https://facebook.com" target="_blank" aria-label="Facebook">
+                                <span><i class="fab fa-facebook-f"></i></span>
+                            </a>
+                        </li>
+                        <li class="icon twitter">
+                            <span class="tooltip">Twitter</span>
+                            <a href="https://x.com" target="_blank" aria-label="X">
+                                <span><i class="fab fa-x-twitter"></i></span>
+                            </a>
+                        </li>
+                        <li class="icon instagram">
+                            <span class="tooltip">Instagram</span>
+                            <a href="https://instagram.com" target="_blank" aria-label="Instagram">
+                                <span><i class="fab fa-instagram"></i></span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
             <div class="footer-col">
@@ -311,6 +327,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/main.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     <script src="~/js/logout-button.js" asp-append-version="true"></script>
     <script src="~/js/index.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

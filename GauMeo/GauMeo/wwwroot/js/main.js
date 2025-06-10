@@ -1,35 +1,5 @@
 // Xử lý slider
 document.addEventListener('DOMContentLoaded', function() {
-  // Slider chính
-  const slider = document.querySelector('.slider');
-  if (slider) {
-    const slides = slider.querySelectorAll('.slide');
-    const prevBtn = slider.querySelector('.prev');
-    const nextBtn = slider.querySelector('.next');
-    let currentSlide = 0;
-
-    function showSlide(index) {
-      slides.forEach(slide => slide.classList.remove('active'));
-      slides[index].classList.add('active');
-    }
-
-    function nextSlide() {
-      currentSlide = (currentSlide + 1) % slides.length;
-      showSlide(currentSlide);
-    }
-
-    function prevSlide() {
-      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-      showSlide(currentSlide);
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-
-    // Tự động chuyển slide
-    setInterval(nextSlide, 5000);
-  }
-
   // Slider sản phẩm
   const productSlider = document.querySelector('.product-slider');
   if (productSlider) {

@@ -1,31 +1,45 @@
-// Slider banner
+// Hero slogan
 (function() {
-  var slides = document.querySelectorAll('.slider .slide');
-  var current = 0;
-  var total = slides.length;
-  var interval = null;
-  function show(idx) {
-    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
-    current = idx;
+  const sloganEl = document.querySelector('.hero-slogan');
+  const slogans = [
+      'Sản phẩm chất lượng cho mọi thú cưng.',
+      'Đồng hành cùng bạn chăm sóc thú cưng.',
+      'Đảm bảo chất lượng và giao hàng tận nơi.',
+      'Mang hạnh phúc đến từng mái ấm.',
+      'GauMeo Shop – Thế giới thú cưng của bạn.'
+  ];
+  let current = 0;
+  let charIndex = 0;
+  let deleting = false;
+
+  function typeSlogan() {
+      const text = slogans[current];
+      if (!deleting) {
+          sloganEl.textContent = text.slice(0, charIndex + 1);
+          charIndex++;
+          if (charIndex === text.length) {
+              deleting = true;
+              setTimeout(typeSlogan, 2500);
+              return;
+          }
+      } else {
+          sloganEl.textContent = text.slice(0, charIndex - 1);
+          charIndex--;
+          if (charIndex === 0) {
+              deleting = false;
+              current = (current + 1) % slogans.length;
+          }
+      }
+      setTimeout(typeSlogan, deleting ? 50 : 90);
   }
-  function next() {
-    show((current + 1) % total);
+
+  // Chỉ chạy khi DOM đã load
+  if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', typeSlogan);
+  } else {
+      typeSlogan();
   }
-  function prev() {
-    show((current - 1 + total) % total);
-  }
-  document.querySelector('.slider-btn.next').onclick = next;
-  document.querySelector('.slider-btn.prev').onclick = prev;
-  interval = setInterval(next, 3000);
-  // Dừng khi hover slider
-  document.querySelector('.slider').addEventListener('mouseenter', function() {
-    clearInterval(interval);
-  });
-  document.querySelector('.slider').addEventListener('mouseleave', function() {
-    interval = setInterval(next, 3000);
-  });
-  show(0);
-})();
+})(); 
 
 // Slider cho sản phẩm bán chạy & khuyến mãi
 function setupProductSlider(sliderSelector) {
@@ -81,16 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
       e.stopPropagation();
       searchInput.value = '';
       searchInput.focus();
-      this.style.display = 'none'; // Ẩn nút xóa sau khi xóa nội dung
     });
-    
-    // Hiển thị nút xóa khi có nội dung
-    searchInput.addEventListener('input', function() {
-      searchClear.style.display = this.value ? 'block' : 'none';
-    });
-    
-    // Kiểm tra ban đầu
-    searchClear.style.display = 'none';
     
     // Xử lý form submit
     const searchForm = document.querySelector('.search-form');
@@ -107,7 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Khởi tạo các chức năng khác cho trang web
-  initSlider();
   initProductSliders();
 
   // User dropdown menu hover
@@ -132,37 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
-
-// Xử lý slider banner
-function initSlider() {
-  const slides = document.querySelectorAll('.slide');
-  const prevBtn = document.querySelector('.slider-btn.prev');
-  const nextBtn = document.querySelector('.slider-btn.next');
-  let currentSlide = 0;
-  
-  if (!slides.length || !prevBtn || !nextBtn) return;
-  
-  function showSlide(index) {
-    slides.forEach(slide => slide.classList.remove('active'));
-    slides[index].classList.add('active');
-  }
-  
-  prevBtn.addEventListener('click', function() {
-    currentSlide = currentSlide > 0 ? currentSlide - 1 : slides.length - 1;
-    showSlide(currentSlide);
-  });
-  
-  nextBtn.addEventListener('click', function() {
-    currentSlide = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
-    showSlide(currentSlide);
-  });
-  
-  // Auto slide
-  setInterval(function() {
-    currentSlide = currentSlide < slides.length - 1 ? currentSlide + 1 : 0;
-    showSlide(currentSlide);
-  }, 5000);
-}
 
 // Xử lý product slider
 function initProductSliders() {
@@ -208,4 +181,54 @@ function initProductSliders() {
     // Theo dõi sự kiện scroll
     productList.addEventListener('scroll', updateButtonStates);
   });
-} 
+}
+
+// FAQ Accordion functionality
+function initFAQ() {
+  const faqItems = document.querySelectorAll('.faq-item');
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+    if (!question || !answer) return;
+    question.addEventListener('click', function() {
+      const isActive = item.classList.contains('active');
+      // Close all others
+      faqItems.forEach(otherItem => {
+        if (otherItem !== item) {
+          otherItem.classList.remove('active');
+          const otherAnswer = otherItem.querySelector('.faq-answer');
+          const otherBtn = otherItem.querySelector('.faq-question');
+          if (otherAnswer) otherAnswer.style.maxHeight = '0';
+          if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+      // Toggle current
+      if (isActive) {
+        item.classList.remove('active');
+        answer.style.maxHeight = '0';
+        question.setAttribute('aria-expanded', 'false');
+      } else {
+        item.classList.add('active');
+        answer.style.maxHeight = 'none';
+        const contentHeight = answer.scrollHeight;
+        answer.style.maxHeight = '0';
+        setTimeout(() => {
+          answer.style.maxHeight = contentHeight + 'px';
+        }, 10);
+        question.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+}
+
+// Khởi tạo FAQ khi DOM đã load
+document.addEventListener('DOMContentLoaded', function() {
+  initFAQ();
+});
+
+// Khởi tạo FAQ ngay lập tức nếu DOM đã sẵn sàng
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFAQ);
+} else {
+  initFAQ();
+}

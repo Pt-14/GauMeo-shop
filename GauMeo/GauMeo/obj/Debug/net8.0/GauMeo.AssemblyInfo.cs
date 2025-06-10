@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GauMeo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6114370178c178e441c72047d91f75e98fff6105")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e07cde692dbe964370370d9de48e9d4c85a82972")]
 [assembly: System.Reflection.AssemblyProductAttribute("GauMeo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GauMeo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
