@@ -97,6 +97,11 @@ namespace GauMeo.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                // Kiểm tra nếu user là admin thì chuyển đến trang admin
+                if (User.IsInRole("Admin"))
+                {
+                    return RedirectToAction("Index", "Home", new { area = "Admin" });
+                }
                 return RedirectToAction("Index", "Home");
             }
             return View();
@@ -104,7 +109,7 @@ namespace GauMeo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -147,12 +152,19 @@ namespace GauMeo.Controllers
                         await _userManager.AddClaimAsync(user, new Claim("Avatar", avatarPath));
                     }
                     
-                    // Kiểm tra nếu user là admin thì chuyển đến trang admin
+                    // Kiểm tra nếu user là admin thì luôn chuyển đến trang admin
                     if (await _userManager.IsInRoleAsync(user, "Admin"))
                     {
                         return RedirectToAction("Index", "Home", new { area = "Admin" });
                     }
                     
+                    // Nếu không phải admin và có returnUrl hợp lệ thì redirect đến returnUrl
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    
+                    // Mặc định redirect về trang chủ
                     return RedirectToAction("Index", "Home");
                 }
                 else

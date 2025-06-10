@@ -12,15 +12,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.classList.remove('dark');
             themeToggleBtn.textContent = '🌙';
             themeToggleBtn.setAttribute('aria-pressed', 'false');
-            localStorage.removeItem('theme');
+            localStorage.setItem('theme', 'light');
         }
     }
     
-    // Initialize theme based on localStorage or system preference
-    if(localStorage.getItem('theme') === 'dark' || 
-       (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    // Initialize theme based on localStorage, default to light mode
+    const savedTheme = localStorage.getItem('theme');
+    if(savedTheme === 'dark') {
         setTheme(true);
     } else {
+        // Default to light mode if no theme is saved or if it's 'light'
         setTheme(false);
     }
     
@@ -30,8 +31,9 @@ document.addEventListener('DOMContentLoaded', function() {
         themeToggleBtn.focus();
     });
     
-    // Listen for system theme changes
+    // Listen for system theme changes (optional - can be removed if you don't want system preference)
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        // Only change if user hasn't explicitly set a theme
         if(!localStorage.getItem('theme')) {
             setTheme(e.matches);
         }

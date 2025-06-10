@@ -13,6 +13,7 @@
         <div class="form">
             <h2>Đăng nhập</h2>
             <form asp-action="Login" asp-controller="Account" method="post" style="height: 210px;">
+                <input type="hidden" name="returnUrl" value="@Context.Request.Query["returnUrl"]" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="inputBox">
                     <input asp-for="Email" required="required">

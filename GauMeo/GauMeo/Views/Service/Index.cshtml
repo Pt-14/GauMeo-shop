@@ -1,0 +1,504 @@
+@{
+    ViewData["Title"] = "Dịch vụ - GauMeo Petshop";
+    var services = ViewBag.Services as List<dynamic>;
+    var currentService = ViewBag.CurrentService as dynamic;
+    var currentServiceId = ViewBag.CurrentServiceId;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <link rel="website icon" type="png" href="~/images/webicon.png">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/theme.css" asp-append-version="true">
+    <link rel="stylesheet" href="/css/header-footer.css">
+    <style>
+        /* Service page styles with dark/light mode support */
+        .service-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--color-bg-light);
+            color: var(--color-text-light);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        
+        body.dark .service-container {
+            background: var(--color-bg-dark);
+            color: var(--color-text-dark);
+        }
+        
+        .breadcrumb {
+            margin-bottom: 30px;
+            color: var(--color-text-light);
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .breadcrumb {
+            color: var(--color-text-dark);
+        }
+        
+        .breadcrumb a {
+            color: var(--color-accent-end);
+            text-decoration: none;
+            transition: color var(--transition-speed);
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+            color: var(--color-accent-hover);
+        }
+        
+        body.dark .breadcrumb a {
+            color: var(--color-accent-end-dark);
+        }
+        
+        body.dark .breadcrumb a:hover {
+            color: var(--color-accent-hover-dark);
+        }
+        
+        .service-layout {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        
+        .service-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            background: var(--color-bg-light);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px var(--shadow-light);
+            padding: 20px;
+            transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        
+        body.dark .service-sidebar {
+            background: var(--color-bg-dark);
+            box-shadow: 0 2px 10px var(--shadow-dark);
+            border: 1px solid #374151;
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-bottom: 20px;
+            text-align: center;
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .sidebar-title {
+            color: var(--color-primary-dark);
+        }
+        
+        .service-tabs {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .service-tab {
+            padding: 15px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            border-radius: 8px;
+            margin-bottom: 5px;
+            background: transparent;
+            border: none;
+            text-align: left;
+            outline: none;
+        }
+        
+        .service-tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+        
+        body.dark .service-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .service-tab.active {
+            background: var(--color-accent-end);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        body.dark .service-tab.active {
+            background: var(--color-accent-end-dark);
+        }
+        
+        .service-tab:focus {
+            outline: 2px solid var(--color-accent-end);
+            outline-offset: 2px;
+        }
+        
+        body.dark .service-tab:focus {
+            outline-color: var(--color-accent-end-dark);
+        }
+        
+        .service-tab-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .service-tab-desc {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .service-tab-divider {
+            height: 1px;
+            background: #eee;
+            margin: 10px 0;
+            transition: background-color var(--transition-speed);
+        }
+        
+        body.dark .service-tab-divider {
+            background: #374151;
+        }
+        
+        .service-content {
+            flex: 1;
+            background: var(--color-bg-light);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 10px var(--shadow-light);
+            padding: 30px;
+            transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        
+        body.dark .service-content {
+            background: var(--color-bg-dark);
+            box-shadow: 0 2px 10px var(--shadow-dark);
+            border: 1px solid #374151;
+        }
+        
+        .service-detail {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity var(--transition-speed), transform var(--transition-speed);
+        }
+        
+        .service-detail.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .service-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .service-title {
+            font-size: 32px;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .service-title {
+            color: var(--color-primary-dark);
+        }
+        
+        .service-subtitle {
+            font-size: 18px;
+            color: var(--color-text-light);
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .service-subtitle {
+            color: var(--color-text-dark);
+        }
+        
+        .service-image-placeholder {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, var(--color-accent-start) 0%, var(--color-accent-end) 100%);
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            transition: background var(--transition-speed);
+        }
+        
+        body.dark .service-image-placeholder {
+            background: linear-gradient(135deg, var(--color-accent-start-dark) 0%, var(--color-accent-end-dark) 100%);
+        }
+        
+        .service-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: background-color var(--transition-speed);
+        }
+        
+        body.dark .info-card {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: var(--color-text-light);
+            margin-bottom: 8px;
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .info-label {
+            color: var(--color-text-dark);
+        }
+        
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--color-primary);
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .info-value {
+            color: var(--color-primary-dark);
+        }
+        
+        .service-description {
+            line-height: 1.8;
+            color: var(--color-text-light);
+            font-size: 16px;
+            margin-bottom: 30px;
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .service-description {
+            color: var(--color-text-dark);
+        }
+        
+        .service-features {
+            margin-bottom: 30px;
+        }
+        
+        .features-title {
+            font-size: 20px;
+            color: var(--color-primary);
+            margin-bottom: 15px;
+            transition: color var(--transition-speed);
+        }
+        
+        body.dark .features-title {
+            color: var(--color-primary-dark);
+        }
+        
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+        }
+        
+        .feature-item {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background-color var(--transition-speed);
+        }
+        
+        body.dark .feature-item {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-icon {
+            width: 18px;
+            height: 18px;
+            background: var(--color-accent-end);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            transition: background-color var(--transition-speed);
+        }
+        
+        body.dark .feature-icon {
+            background: var(--color-accent-end-dark);
+        }
+        
+        .service-actions {
+            text-align: center;
+        }
+        
+        .book-btn {
+            background: var(--color-accent-end);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            margin-right: 15px;
+        }
+        
+        .book-btn:hover {
+            background: var(--color-accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        body.dark .book-btn {
+            background: var(--color-accent-end-dark);
+        }
+        
+        body.dark .book-btn:hover {
+            background: var(--color-accent-hover-dark);
+            box-shadow: 0 4px 12px rgba(122, 150, 255, 0.3);
+        }
+        
+        .contact-btn {
+            background: transparent;
+            color: var(--color-accent-end);
+            padding: 12px 30px;
+            border: 2px solid var(--color-accent-end);
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .contact-btn:hover {
+            background: var(--color-accent-end);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        body.dark .contact-btn {
+            color: var(--color-accent-end-dark);
+            border-color: var(--color-accent-end-dark);
+        }
+        
+        body.dark .contact-btn:hover {
+            background: var(--color-accent-end-dark);
+        }
+        
+        /* Focus styles for accessibility */
+        .service-tab:focus-visible {
+            outline: 2px solid var(--color-accent-end);
+            outline-offset: 2px;
+        }
+        
+        body.dark .service-tab:focus-visible {
+            outline-color: var(--color-accent-end-dark);
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="service-container">
+        <div class="breadcrumb">
+            <a href="/Home/Index">Trang chủ</a> / 
+            <span>Dịch vụ</span>
+        </div>
+        
+        <div class="service-layout">
+            <!-- Sidebar với các tab dịch vụ -->
+            <div class="service-sidebar">
+                <h3 class="sidebar-title">Dịch vụ của chúng tôi</h3>
+                <div class="service-tabs">
+                    @foreach (var service in services)
+                    {
+                        <div class="service-tab @(service.Id == currentServiceId ? "active" : "")" 
+                             data-service-id="@service.Id"
+                             role="tab"
+                             tabindex="0"
+                             aria-selected="@(service.Id == currentServiceId ? "true" : "false")">
+                            <div class="service-tab-name">@service.Name</div>
+                            <div class="service-tab-desc">@service.Description</div>
+                        </div>
+                        @if (service.Id != services.Last().Id)
+                        {
+                            <div class="service-tab-divider"></div>
+                        }
+                    }
+                </div>
+            </div>
+            
+            <!-- Nội dung chi tiết dịch vụ -->
+            <div class="service-content">
+                @foreach (var service in services)
+                {
+                    <div class="service-detail @(service.Id == currentServiceId ? "active" : "")" 
+                         id="service-@service.Id"
+                         role="tabpanel"
+                         aria-labelledby="service-tab-@service.Id">
+                        <div class="service-header">
+                            <h1 class="service-title">@service.Name</h1>
+                            <p class="service-subtitle">@service.Description</p>
+                        </div>
+                        
+                        <div class="service-image-placeholder">
+                            @service.ShortName
+                        </div>
+                        
+                        <div class="service-info-grid">
+                            <div class="info-card">
+                                <div class="info-label">Giá dịch vụ</div>
+                                <div class="info-value">@service.Price</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Thời gian</div>
+                                <div class="info-value">@service.Duration</div>
+                            </div>
+                        </div>
+                        
+                        <div class="service-description">
+                            @service.FullDescription
+                        </div>
+                        
+                        <div class="service-features">
+                            <h3 class="features-title">Dịch vụ bao gồm:</h3>
+                            <div class="features-list">
+                                @foreach (var feature in service.Features)
+                                {
+                                    <div class="feature-item">
+                                        <div class="feature-icon">✓</div>
+                                        <span>@feature</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="service-actions">
+                            <button class="book-btn">Đặt lịch ngay</button>
+                            <a href="#" class="contact-btn">Liên hệ tư vấn</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script src="~/js/service.js"></script>
+    }
+</body>
+</html>

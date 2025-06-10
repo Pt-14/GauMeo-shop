@@ -1,5 +1,6 @@
 using GauMeo.Data;
 using GauMeo.Models;
+using GauMeo.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +51,9 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Thêm middleware bảo vệ Admin Area
+app.UseAdminAreaProtection();
 
 // Cấu hình Area
 app.MapControllerRoute(
