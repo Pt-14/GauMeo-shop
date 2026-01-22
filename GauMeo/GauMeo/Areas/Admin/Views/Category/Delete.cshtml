@@ -1,0 +1,420 @@
+@model GauMeo.Models.Categories.Category
+@{
+    ViewData["Title"] = $"Xóa danh mục: {Model.Name}";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <div class="header-left">
+                <h4 class="card-title text-danger">
+                    <i class='bx bx-trash'></i>
+                    Xóa danh mục: @Model.Name
+                </h4>
+                <p class="card-subtitle">Xác nhận xóa danh mục này khỏi hệ thống</p>
+            </div>
+            <div class="header-actions">
+                <a href="@Url.Action("Details", new { id = Model.Id })" class="btn-admin btn-info">
+                    <i class='bx bx-show'></i>
+                    Xem chi tiết
+                </a>
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-arrow-back'></i>
+                    Quay lại
+                </a>
+            </div>
+        </div>
+
+        @if (ViewBag.CanDelete == false)
+        {
+            <div class="alert alert-danger">
+                <div class="alert-header">
+                    <i class='bx bx-error-circle'></i>
+                    <strong>Không thể xóa danh mục này!</strong>
+                </div>
+                <div class="alert-content">
+                    @if (ViewBag.HasChildren == true)
+                    {
+                        <p>Danh mục này có <strong>danh mục con</strong>. Bạn cần xóa hoặc di chuyển các danh mục con trước khi xóa danh mục cha.</p>
+                    }
+                    @if (ViewBag.HasProducts == true)
+                    {
+                        <p>Danh mục này có <strong>sản phẩm liên quan</strong>. Bạn cần di chuyển các sản phẩm sang danh mục khác trước khi xóa.</p>
+                    }
+                </div>
+            </div>
+
+            @if (ViewBag.ChildCategories != null)
+            {
+                var childCategories = (IEnumerable<GauMeo.Models.Categories.Category>)ViewBag.ChildCategories;
+                if (childCategories.Any())
+                {
+                    <div class="child-categories-warning">
+                        <h5>
+                            <i class='bx bx-folder'></i>
+                            Danh mục con cần xử lý (@childCategories.Count())
+                        </h5>
+                        <div class="child-list">
+                            @foreach (var child in childCategories)
+                            {
+                                <div class="child-item">
+                                    <span class="child-name">@child.Name</span>
+                                    <span class="child-level">Cấp @child.Level</span>
+                                    <a href="@Url.Action("Edit", new { id = child.Id })" class="btn-sm btn-warning">
+                                        <i class='bx bx-edit'></i>
+                                        Chỉnh sửa
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="action-buttons disabled-delete">
+                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn-admin btn-warning">
+                    <i class='bx bx-edit'></i>
+                    Chỉnh sửa danh mục
+                </a>
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-arrow-back'></i>
+                    Quay lại danh sách
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="delete-confirmation">
+                <div class="warning-section">
+                    <div class="warning-icon">
+                        <i class='bx bx-error-circle'></i>
+                    </div>
+                    <div class="warning-content">
+                        <h5>Cảnh báo!</h5>
+                        <p>Bạn có chắc chắn muốn xóa danh mục <strong>"@Model.Name"</strong> không?</p>
+                        <p class="text-danger">Hành động này không thể hoàn tác!</p>
+                    </div>
+                </div>
+
+                <!-- Thông tin danh mục sẽ bị xóa -->
+                <div class="category-info">
+                    <h5>
+                        <i class='bx bx-info-circle'></i>
+                        Thông tin danh mục sẽ bị xóa
+                    </h5>
+                    
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Tên danh mục:</label>
+                            <span class="info-value">@Model.Name</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Slug:</label>
+                            <span class="info-value code">@Model.Slug</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Cấp độ:</label>
+                            <span class="info-value">
+                                Cấp @Model.Level
+                                @if (Model.Level == 1)
+                                {
+                                    <small>(Danh mục chính)</small>
+                                }
+                                else if (Model.Level == 2)
+                                {
+                                    <small>(Danh mục cha)</small>
+                                }
+                                else if (Model.Level == 3)
+                                {
+                                    <small>(Danh mục con)</small>
+                                }
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <label>Trạng thái:</label>
+                            <span class="status-badge @(Model.IsActive ? "active" : "inactive")">
+                                @(Model.IsActive ? "Hoạt động" : "Ngừng hoạt động")
+                            </span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            <div class="info-item">
+                                <label>Mô tả:</label>
+                                <span class="info-value">@Model.Description</span>
+                            </div>
+                        }
+                        <div class="info-item">
+                            <label>Ngày tạo:</label>
+                            <span class="info-value">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form xác nhận xóa -->
+                <form asp-action="Delete" method="post" class="delete-form">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="confirmation-checkbox">
+                        <div class="form-check">
+                            <input type="checkbox" id="confirmDelete" class="form-check-input" required />
+                            <label for="confirmDelete" class="form-check-label">
+                                Tôi hiểu rằng hành động này không thể hoàn tác và xác nhận muốn xóa danh mục này.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="submit" class="btn-admin btn-danger" id="deleteButton" disabled>
+                            <i class='bx bx-trash'></i>
+                            Xác nhận xóa
+                        </button>
+                        <a href="@Url.Action("Details", new { id = Model.Id })" class="btn-admin btn-info">
+                            <i class='bx bx-show'></i>
+                            Xem chi tiết
+                        </a>
+                        <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                            <i class='bx bx-x'></i>
+                            Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .alert {
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid;
+    }
+
+    .alert-danger {
+        background-color: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+    }
+
+    .alert-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .alert-content p {
+        margin: 5px 0;
+    }
+
+    .child-categories-warning {
+        background: #fffbeb;
+        border: 1px solid #fed7aa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .child-categories-warning h5 {
+        color: #92400e;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .child-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .child-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #fed7aa;
+    }
+
+    .child-name {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .child-level {
+        font-size: 12px;
+        padding: 2px 6px;
+        background: #e5e7eb;
+        border-radius: 10px;
+        color: #6b7280;
+    }
+
+    .delete-confirmation {
+        padding: 20px 0;
+    }
+
+    .warning-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .warning-icon {
+        color: #dc2626;
+        font-size: 24px;
+    }
+
+    .warning-content h5 {
+        color: #dc2626;
+        margin-bottom: 10px;
+    }
+
+    .warning-content p {
+        margin: 5px 0;
+    }
+
+    .category-info {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .category-info h5 {
+        color: #374151;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .info-item label {
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .info-value {
+        color: #374151;
+        font-size: 16px;
+    }
+
+    .info-value.code {
+        font-family: 'Courier New', monospace;
+        background: #f3f4f6;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        width: fit-content;
+    }
+
+    .status-badge.active {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-badge.inactive {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .delete-form {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+    }
+
+    .confirmation-checkbox {
+        margin-bottom: 20px;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .form-check-input {
+        margin-top: 4px;
+    }
+
+    .form-check-label {
+        color: #374151;
+        line-height: 1.5;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .disabled-delete {
+        padding: 20px 0;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .text-danger {
+        color: #dc2626 !important;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Enable/disable delete button based on confirmation checkbox
+            $('#confirmDelete').change(function() {
+                $('#deleteButton').prop('disabled', !this.checked);
+            });
+
+            // Confirm deletion
+            $('.delete-form').submit(function(e) {
+                if (!$('#confirmDelete').is(':checked')) {
+                    e.preventDefault();
+                    alert('Vui lòng xác nhận bằng cách check vào ô xác nhận.');
+                    return false;
+                }
+
+                if (!confirm('Bạn có chắc chắn muốn xóa danh mục này? Hành động này không thể hoàn tác!')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>
+} 

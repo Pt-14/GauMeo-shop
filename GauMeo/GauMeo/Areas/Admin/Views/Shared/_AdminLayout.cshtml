@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GauMeo Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="~/css/admin/admin.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-details">
+            <div class="logo_name">GauMeoPetshop</div>
+            <i class='bx bx-menu' id="btn"></i>
+        </div>
+        <ul class="nav-list">
+            <li>
+                <a href="@Url.Action("Index", "Home", new { area = "Admin" })">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="links_name">Tổng quan</span>
+                </a>
+                <span class="tooltip">Tổng quan</span>
+            </li>
+            <li class="dropdown-menu-item">
+                <a href="@Url.Action("Index", "Product", new { area = "Admin" })" class="dropdown-toggle">
+                    <i class='bx bx-package'></i>
+                    <span class="links_name">Sản phẩm</span>
+                    <i class='bx bx-chevron-down dropdown-arrow'></i>
+                </a>
+                <span class="tooltip">Sản phẩm</span>
+                <ul class="dropdown-submenu">
+                    <li><a href="@Url.Action("Index", "Product", new { area = "Admin" })">Danh sách sản phẩm</a></li>
+                    <li><a href="@Url.Action("Create", "Product", new { area = "Admin" })">Thêm sản phẩm mới</a></li>
+                    <li><a href="@Url.Action("Index", "Category", new { area = "Admin" })">Quản lý danh mục</a></li>
+                    <li><a href="@Url.Action("Index", "Brand", new { area = "Admin" })">Quản lý thương hiệu</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="@Url.Action("Index", "Order", new { area = "Admin" })">
+                    <i class='bx bx-cart-alt'></i>
+                    <span class="links_name">Đơn hàng</span>
+                </a>
+                <span class="tooltip">Đơn hàng</span>
+            </li>
+            <li class="dropdown-menu-item">
+                <a href="@Url.Action("Index", "User", new { area = "Admin" })" class="dropdown-toggle">
+                    <i class='bx bx-user'></i>
+                    <span class="links_name">Khách hàng</span>
+                    <i class='bx bx-chevron-down dropdown-arrow'></i>
+                </a>
+                <span class="tooltip">Khách hàng</span>
+                <ul class="dropdown-submenu">
+                    <li><a href="@Url.Action("Index", "User", new { area = "Admin" })">Danh sách khách hàng</a></li>
+                </ul>
+            </li>
+            <li class="dropdown-menu-item">
+                <a href="@Url.Action("Index", "Service", new { area = "Admin" })" class="dropdown-toggle">
+                    <i class='bx bx-spa'></i>
+                    <span class="links_name">Dịch vụ</span>
+                    <i class='bx bx-chevron-down dropdown-arrow'></i>
+                </a>
+                <span class="tooltip">Dịch vụ</span>
+                <ul class="dropdown-submenu">
+                    <li><a href="@Url.Action("Index", "Service", new { area = "Admin" })">Danh sách dịch vụ</a></li>
+                    <li><a href="@Url.Action("Create", "Service", new { area = "Admin" })">Thêm dịch vụ mới</a></li>
+                    <li><a href="@Url.Action("Bookings", "Service", new { area = "Admin" })">Lịch đặt dịch vụ</a></li>
+                    <li><a href="@Url.Action("Calendar", "Service", new { area = "Admin" })">Lịch trình dịch vụ</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="@Url.Action("Index", "Review", new { area = "Admin" })">
+                    <i class='bx bx-star'></i>
+                    <span class="links_name">Đánh giá</span>
+                </a>
+                <span class="tooltip">Đánh giá</span>
+            </li>
+
+            <li class="profile">
+                <div class="profile-details">
+                    <div class="profile-avatar">
+                        <img src="~/images/webicon.png" alt="Admin Avatar" />
+                    </div>
+                    <div class="name_job">
+                        <div class="name">@User.Identity?.Name</div>
+                        <div class="job">Quản trị viên</div>
+                    </div>
+                </div>
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" style="margin: 0;">
+                    <button type="submit" id="log_out">
+                        <i class='bx bx-log-out'></i>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+    <section class="home-section">
+        <div class="top-bar">
+            <div class="page-title">@ViewData["Title"]</div>
+            <div class="user-actions">
+                <a href="@Url.Action("Index", "Home", new { area = "" })" class="home-btn">
+                    <i class='bx bx-home'></i>
+                    <span>Về trang chủ</span>
+                </a>
+            </div>
+        </div>
+        <div class="main-content">
+            @RenderBody()
+        </div>
+    </section>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/admin/admin.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html> 

@@ -1,0 +1,419 @@
+@model GauMeo.Models.ViewModels.ServiceBookingViewModel
+@{
+    ViewData["Title"] = $"Đặt Lịch {Model.Service?.Name} - GauMeo Petshop";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/service-booking.css" asp-append-version="true" />
+    <style>
+        .variant-card.incompatible {
+            opacity: 0.5;
+            pointer-events: none;
+            position: relative;
+        }
+        
+        .variant-card.incompatible::after {
+            content: "Không phù hợp với thú cưng đã chọn";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        
+        .pet-service-warning {
+            margin-top: 10px;
+            padding: 12px;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .pet-service-warning strong {
+            color: #dc3545;
+        }
+        
+        .form-section.pet-info-highlight {
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background: rgba(0, 123, 255, 0.05);
+        }
+    </style>
+}
+
+<div class="booking-container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/Home/Index">Trang chủ</a> / 
+        <a href="/Service/Index">Dịch vụ</a> / 
+        <span>Đặt lịch @Model.Service?.ShortName</span>
+    </div>
+
+    <!-- Header Section -->
+    <div class="booking-header">
+        <div class="service-info">
+            <div class="service-image" style="background-image: url('@Model.Service?.Image');"></div>
+            <div class="service-details">
+                <h1 class="service-name">@Model.Service?.Name</h1>
+                <p class="service-description">@Model.Service?.Description</p>
+                <div class="service-price-range">
+                    <span class="price-label">Giá từ:</span>
+                    <span class="price-value">@Model.Service?.Price</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="booking-form-section">
+        <form asp-action="Booking" method="post" id="booking-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ServiceId" />
+            
+            <div class="form-grid">
+                <!-- Left Column: Service Selection -->
+                <div class="form-column left">
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-paw"></i>
+                            Chọn Loại Dịch Vụ
+                        </h3>
+                        
+                        <div class="variant-selection">
+                            @if (Model.ServiceVariants?.Any() == true)
+                            {
+                                @foreach (var variant in Model.ServiceVariants)
+                                {
+                                    <div class="variant-card">
+                                        <input type="radio" 
+                                               id="variant-@variant.Id" 
+                                               asp-for="ServiceVariantId" 
+                                               value="@variant.Id" 
+                                               class="variant-radio" 
+                                               data-price="@variant.Price"
+                                               data-duration="@variant.Duration"
+                                               data-pet-type="@variant.PetType"
+                                               data-pet-size="@variant.PetSize"
+                                               required />
+                                        <label for="variant-@variant.Id" class="variant-label">
+                                        <div class="variant-header">
+                                            <h4 class="variant-name">@variant.Name</h4>
+                                            <div class="variant-price">@variant.Price.ToString("N0") VNĐ</div>
+                                        </div>
+                                        <div class="variant-info">
+                                            <div class="variant-duration">
+                                                <i class="fas fa-clock"></i>
+                                                @variant.Duration
+                                            </div>
+                                            <div class="variant-pet-type">
+                                                @if (variant.PetType == "dog")
+                                                {
+                                                    <i class="fas fa-dog"></i>
+                                                    <span>Dành cho chó</span>
+                                                }
+                                                else if (variant.PetType == "cat")
+                                                {
+                                                    <i class="fas fa-cat"></i>
+                                                    <span>Dành cho mèo</span>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-paw"></i>
+                                                    <span>Tất cả loại</span>
+                                                }
+                                                
+                                                @if (!string.IsNullOrEmpty(variant.PetSize) && variant.PetSize != "all")
+                                                {
+                                                    <span class="pet-size">
+                                                        (@(variant.PetSize == "small" ? "Nhỏ" : variant.PetSize == "medium" ? "Trung bình" : "Lớn"))
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(variant.Description))
+                                        {
+                                            <p class="variant-description">@variant.Description</p>
+                                        }
+                                    </label>
+                                </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Hiện tại chưa có loại dịch vụ nào được thiết lập. Vui lòng liên hệ quản trị viên.
+                                </div>
+                            }
+                        </div>
+                        <span asp-validation-for="ServiceVariantId" class="text-danger"></span>
+                    </div>
+
+                    <!-- Add-on Services -->
+                    @if (Model.ServiceAddons?.Any() == true)
+                    {
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-plus-circle"></i>
+                                Dịch Vụ Đi Kèm
+                            </h3>
+                            
+                            <div class="addon-selection">
+                                @foreach (var addon in Model.ServiceAddons)
+                                {
+                                    <div class="addon-card">
+                                        <input type="checkbox" 
+                                               id="addon-@addon.Id" 
+                                               name="SelectedAddonIds" 
+                                               value="@addon.Id" 
+                                               class="addon-checkbox"
+                                               data-price="@addon.Price" />
+                                        <label for="addon-@addon.Id" class="addon-label">
+                                            <div class="addon-header">
+                                                <h5 class="addon-name">@addon.Name</h5>
+                                                <div class="addon-price">+@addon.Price.ToString("N0") VNĐ</div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(addon.Description))
+                                            {
+                                                <p class="addon-description">@addon.Description</p>
+                                            }
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Right Column: Customer & Pet Information -->
+                <div class="form-column right">
+                    <!-- Customer Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user"></i>
+                            Thông Tin Khách Hàng
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label asp-for="CustomerName" class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    @Html.DisplayNameFor(m => m.CustomerName) *
+                                </label>
+                                <input asp-for="CustomerName" class="form-input" placeholder="Nhập họ và tên của bạn" />
+                                <span asp-validation-for="CustomerName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label asp-for="CustomerPhone" class="form-label">
+                                    <i class="fas fa-phone"></i>
+                                    @Html.DisplayNameFor(m => m.CustomerPhone) *
+                                </label>
+                                <input asp-for="CustomerPhone" class="form-input" placeholder="0123 456 789" />
+                                <span asp-validation-for="CustomerPhone" class="text-danger"></span>
+                            </div>
+                            <div class="form-group half-width">
+                                <label asp-for="CustomerEmail" class="form-label">
+                                    <i class="fas fa-envelope"></i>
+                                    @Html.DisplayNameFor(m => m.CustomerEmail)
+                                </label>
+                                <input asp-for="CustomerEmail" class="form-input" placeholder="email@example.com" />
+                                <span asp-validation-for="CustomerEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pet Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-heart"></i>
+                            Thông Tin Thú Cưng
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label asp-for="PetName" class="form-label">
+                                    <i class="fas fa-paw"></i>
+                                    @Html.DisplayNameFor(m => m.PetName) *
+                                </label>
+                                <input asp-for="PetName" class="form-input" placeholder="Tên thú cưng" />
+                                <span asp-validation-for="PetName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group half-width">
+                                <label asp-for="PetType" class="form-label">
+                                    <i class="fas fa-tags"></i>
+                                    @Html.DisplayNameFor(m => m.PetType) *
+                                </label>
+                                <select asp-for="PetType" class="form-select" id="PetType">
+                                    <option value="">Chọn loại thú cưng</option>
+                                    @foreach (var petType in Model.PetTypes)
+                                    {
+                                        <option value="@petType.Value">@petType.Text</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="PetType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label asp-for="PetBreed" class="form-label">
+                                    <i class="fas fa-dna"></i>
+                                    @Html.DisplayNameFor(m => m.PetBreed)
+                                </label>
+                                <input asp-for="PetBreed" class="form-input" placeholder="Ví dụ: Golden Retriever, Mèo Ba Tư..." />
+                                <span asp-validation-for="PetBreed" class="text-danger"></span>
+                            </div>
+                            <div class="form-group half-width">
+                                <label asp-for="PetSize" class="form-label">
+                                    <i class="fas fa-weight"></i>
+                                    @Html.DisplayNameFor(m => m.PetSize)
+                                </label>
+                                <select asp-for="PetSize" class="form-select">
+                                    <option value="">Chọn kích thước</option>
+                                    @foreach (var petSize in Model.PetSizes)
+                                    {
+                                        <option value="@petSize.Value">@petSize.Text</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="PetSize" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Booking Date & Time -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            Chọn Ngày & Giờ
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group half-width">
+                                <label asp-for="BookingDate" class="form-label">
+                                    <i class="fas fa-calendar"></i>
+                                    @Html.DisplayNameFor(m => m.BookingDate) *
+                                </label>
+                                <input asp-for="BookingDate" class="form-input" type="date" id="BookingDate" />
+                                <span asp-validation-for="BookingDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group half-width">
+                                <label asp-for="BookingTime" class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    @Html.DisplayNameFor(m => m.BookingTime) *
+                                </label>
+                                <select asp-for="BookingTime" class="form-select" id="BookingTime">
+                                    <option value="">Chọn giờ</option>
+                                    @foreach (var timeSlot in Model.AvailableTimeSlots)
+                                    {
+                                        <option value="@timeSlot">@timeSlot</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="BookingTime" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Special Requests -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-comment"></i>
+                            Yêu Cầu Đặc Biệt
+                        </h3>
+                        
+                        <div class="form-group full-width">
+                            <label asp-for="SpecialRequests" class="form-label">
+                                <i class="fas fa-edit"></i>
+                                @Html.DisplayNameFor(m => m.SpecialRequests)
+                            </label>
+                            <textarea asp-for="SpecialRequests" class="form-textarea" rows="4" 
+                                      placeholder="Ví dụ: Thú cưng của tôi rất nhút nhát, cần xử lý nhẹ nhàng..."></textarea>
+                            <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Price Summary and Actions -->
+                    <div class="booking-summary-section">
+                        <div class="price-summary">
+                            <h3 class="summary-title">
+                                <i class="fas fa-receipt"></i>
+                                Tóm Tắt Thông Tin Đặt Lịch
+                            </h3>
+                            <div class="price-breakdown" id="price-breakdown">
+                                <div class="price-row base-service" style="display: none;">
+                                    <span class="price-label">Dịch vụ cơ bản:</span>
+                                    <span class="price-value" id="base-price">0 VNĐ</span>
+                                </div>
+                                <div class="price-row addons-total" style="display: none;">
+                                    <span class="price-label">Dịch vụ thêm:</span>
+                                    <span class="price-value" id="addons-price">0 VNĐ</span>
+                                </div>
+                                <div class="price-row total">
+                                    <span class="price-label">Tổng cộng:</span>
+                                    <span class="price-value total-amount" id="total-price">0 VNĐ</span>
+                                </div>
+                            </div>
+                            <p class="price-note">
+                                <i class="fas fa-info-circle"></i>
+                                Giá chỉ mang tính chất tham khảo. Giá cuối cùng có thể thay đổi tùy thuộc vào tình trạng thực tế của thú cưng.
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit" id="submit-btn">
+                                <i class="fas fa-calendar-check"></i>
+                                Đặt Lịch Ngay
+                            </button>
+                            <a href="/Service/Index" class="btn-cancel">
+                                <i class="fas fa-arrow-left"></i>
+                                Quay Lại
+                            </a>
+                        </div>
+
+                        <!-- Important Notes - Below Summary -->
+                        @if (Model.ServiceNotes.Any())
+                        {
+                            <div class="important-notes">
+                                <h3 class="notes-title">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Lưu Ý Quan Trọng
+                                </h3>
+                                <div class="notes-list">
+                                    @foreach (var note in Model.ServiceNotes)
+                                    {
+                                        <div class="note-item @note.NoteType">
+                                            <span class="note-icon">@note.Icon</span>
+                                            <div class="note-content">
+                                                @if (!string.IsNullOrEmpty(note.Title))
+                                                {
+                                                    <strong>@note.Title:</strong>
+                                                }
+                                                @note.Content
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/service-booking.js" asp-append-version="true"></script>
+} 

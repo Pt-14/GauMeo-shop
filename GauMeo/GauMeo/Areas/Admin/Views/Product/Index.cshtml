@@ -1,0 +1,306 @@
+@model IEnumerable<GauMeo.Models.Products.Product>
+
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon bg-primary">
+            <i class='bx bx-package'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count()</div>
+            <div class="stat-label">Tổng sản phẩm</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-success">
+            <i class='bx bx-check-circle'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count(p => p.IsActive)</div>
+            <div class="stat-label">Đang bán</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-warning">
+            <i class='bx bx-error-circle'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count(p => p.StockQuantity <= 10)</div>
+            <div class="stat-label">Sắp hết hàng</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-danger">
+            <i class='bx bx-x-circle'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count(p => p.StockQuantity == 0)</div>
+            <div class="stat-label">Hết hàng</div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="admin-card">
+    <div class="search-filter-section">
+        <div class="search-container-admin">
+            <div class="search-input-wrapper">
+                <i class='bx bx-search search-icon'></i>
+                <input type="text" id="productSearch" placeholder="Tìm kiếm sản phẩm..." class="search-input-admin">
+            </div>
+        </div>
+        <div class="filter-controls">
+            <select id="categoryFilter" class="filter-select">
+                <option value="">Tất cả danh mục</option>
+                @foreach (var category in Model.Select(p => p.Category).Where(c => c != null).Distinct())
+                {
+                    <option value="@category.Name">@category.Name</option>
+                }
+            </select>
+            <select id="brandFilter" class="filter-select">
+                <option value="">Tất cả thương hiệu</option>
+                @foreach (var brand in Model.Select(p => p.Brand).Where(b => b != null).Distinct())
+                {
+                    <option value="@brand.Name">@brand.Name</option>
+                }
+            </select>
+            <select id="statusFilter" class="filter-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="inactive">Không hoạt động</option>
+            </select>
+        </div>
+        <div class="action-controls">
+            <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                <i class='bx bx-plus'></i>
+                Thêm sản phẩm
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Product List Section -->
+<div class="admin-card">
+    <div class="card-header-admin">
+        <h4 class="card-title">
+            <i class='bx bx-list-ul'></i>
+            Danh sách sản phẩm
+        </h4>
+        <div class="view-options">
+            <button class="view-btn active" data-view="table">
+                <i class='bx bx-table'></i>
+            </button>
+            <button class="view-btn" data-view="grid">
+                <i class='bx bx-grid-alt'></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table View -->
+    <div id="tableView" class="table-responsive">
+        <table class="table admin-table" id="productsTable">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectAll" class="admin-checkbox">
+                    </th>
+                    <th>Hình ảnh</th>
+                    <th class="sortable" data-sort="name">
+                        Thông tin sản phẩm
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="category">
+                        Danh mục
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="brand">
+                        Thương hiệu
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="price">
+                        Giá bán
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="stock">
+                        Tồn kho
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="status">
+                        Trạng thái
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="date">
+                        Ngày tạo
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="product-row" 
+                        data-name="@item.Name.ToLower()" 
+                        data-category="@(item.Category?.Name ?? "")" 
+                        data-brand="@(item.Brand?.Name ?? "")" 
+                        data-status="@(item.IsActive ? "active" : "inactive")"
+                        data-price="@((item.OriginalPrice * (100 - item.DiscountPercent) / 100))"
+                        data-stock="@item.StockQuantity"
+                        data-date="@item.CreatedAt.ToString("yyyy-MM-dd")"
+                        data-sort-name="@item.Name"
+                        data-sort-category="@(item.Category?.Name ?? "")"
+                        data-sort-brand="@(item.Brand?.Name ?? "")"
+                        data-sort-price="@((item.OriginalPrice * (100 - item.DiscountPercent) / 100))"
+                        data-sort-stock="@item.StockQuantity"
+                        data-sort-status="@(item.IsActive ? "1" : "0")"
+                        data-sort-date="@item.CreatedAt.Ticks">
+                        <td>
+                            <input type="checkbox" class="admin-checkbox product-checkbox" value="@item.Id">
+                        </td>
+                        <td>
+                            <div class="product-image">
+                                @if (item.ProductImages?.Any() == true)
+                                {
+                                    <img src="@item.ProductImages.First().ImageUrl" alt="@item.Name">
+                                }
+                                else
+                                {
+                                    <div class="no-image">
+                                        <i class='bx bx-image'></i>
+                                    </div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="product-info">
+                                <div class="product-name">@item.Name</div>
+                                <div class="product-sku">SKU: @item.Id</div>
+                                @if (!string.IsNullOrEmpty(item.ShortDescription))
+                                {
+                                    <div class="product-desc">@(item.ShortDescription.Length > 60 ? item.ShortDescription.Substring(0, 60) + "..." : item.ShortDescription)</div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <span class="category-badge">@(item.Category?.Name ?? "Chưa phân loại")</span>
+                        </td>
+                        <td>
+                            <span class="brand-badge">@(item.Brand?.Name ?? "Chưa có thương hiệu")</span>
+                        </td>
+                        <td>                            <div class="price-info">
+                                <span class="current-price">@((item.OriginalPrice * (100 - item.DiscountPercent) / 100).ToString("N0"))₫</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="stock-badge @(item.StockQuantity > 10 ? "high" : item.StockQuantity > 0 ? "medium" : "low")">
+                                @item.StockQuantity
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge @(item.IsActive ? "active" : "inactive")">
+                                @(item.IsActive ? "Hoạt động" : "Tạm dừng")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="date-text">@item.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="@Url.Action("Details", new { id = item.Id })" class="action-btn view-btn" title="Xem chi tiết">
+                                    <i class='bx bx-show'></i>
+                                </a>
+                                <a href="@Url.Action("Edit", new { id = item.Id })" class="action-btn edit-btn" title="Chỉnh sửa">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                                <button class="action-btn delete-btn" onclick="deleteProduct(@item.Id)" title="Xóa">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Grid View -->
+    <div id="gridView" class="product-grid" style="display: none;">
+        @foreach (var item in Model)
+        {
+            <div class="product-card" 
+                 data-name="@item.Name.ToLower()" 
+                 data-category="@(item.Category?.Name ?? "")" 
+                 data-brand="@(item.Brand?.Name ?? "")" 
+                 data-status="@(item.IsActive ? "active" : "inactive")">
+                <div class="product-card-image">
+                    @if (item.ProductImages?.Any() == true)
+                    {
+                        <img src="@item.ProductImages.First().ImageUrl" alt="@item.Name">
+                    }
+                    else
+                    {
+                        <div class="no-image">
+                            <i class='bx bx-image'></i>
+                        </div>
+                    }
+                    <div class="product-overlay">
+                        <div class="overlay-actions">
+                            <a href="@Url.Action("Details", new { id = item.Id })" class="overlay-btn">
+                                <i class='bx bx-show'></i>
+                            </a>
+                            <a href="@Url.Action("Edit", new { id = item.Id })" class="overlay-btn">
+                                <i class='bx bx-edit'></i>
+                            </a>
+                            <button class="overlay-btn delete" onclick="deleteProduct(@item.Id)">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-card-content">
+                    <h5 class="product-card-title">@item.Name</h5>
+                    <div class="product-card-meta">
+                        <span class="category">@(item.Category?.Name ?? "Chưa phân loại")</span>
+                        <span class="brand">@(item.Brand?.Name ?? "")</span>
+                    </div>
+                    <div class="product-card-price">@((item.OriginalPrice * (100 - item.DiscountPercent) / 100).ToString("N0"))₫</div>
+                    <div class="product-card-footer">
+                        <span class="stock @(item.StockQuantity > 10 ? "high" : item.StockQuantity > 0 ? "medium" : "low")">
+                            Kho: @item.StockQuantity
+                        </span>
+                        <span class="status @(item.IsActive ? "active" : "inactive")">
+                            @(item.IsActive ? "Hoạt động" : "Tạm dừng")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class='bx bx-package'></i>
+            </div>
+            <h5 class="empty-title">Chưa có sản phẩm nào</h5>
+            <p class="empty-description">Hãy thêm sản phẩm đầu tiên của bạn!</p>
+            <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                <i class='bx bx-plus'></i>
+                Thêm sản phẩm mới
+            </a>
+        </div>
+    }
+</div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/product-management.js" asp-append-version="true"></script>
+} 

@@ -1,0 +1,257 @@
+@model GauMeo.Models.ViewModels.ProductReviewsViewModel
+
+<div class="reviews-section">
+    <!-- Review Statistics -->
+    <div class="review-stats mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <div class="overall-rating text-center">
+                    <div class="rating-score">
+                        <span class="score">@Model.Statistics.AverageRating.ToString("F1")</span>
+                        <span class="total">/5</span>
+                    </div>
+                    <div class="stars mb-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="@(i <= Math.Round(Model.Statistics.AverageRating) ? "fas" : "far") fa-star text-warning"></i>
+                        }
+                    </div>
+                    <small class="text-muted">@Model.Statistics.TotalReviews đánh giá</small>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="rating-breakdown">
+                    @for (int i = 5; i >= 1; i--)
+                    {
+                        var count = Model.Statistics.RatingBreakdown.ContainsKey(i) ? Model.Statistics.RatingBreakdown[i] : 0;
+                        var percentage = Model.Statistics.TotalReviews > 0 ? (count * 100.0 / Model.Statistics.TotalReviews) : 0;
+                        
+                        <div class="rating-row d-flex align-items-center mb-1">
+                            <span class="rating-label">@i sao</span>
+                            <div class="progress flex-grow-1 mx-2" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: @percentage%" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <span class="rating-count">@count</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sort and Filter -->
+    <div class="review-controls mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5>Đánh giá từ khách hàng (@Model.TotalReviews)</h5>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                    Sắp xếp
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item sort-option" href="#" data-sort="newest">Mới nhất</a></li>
+                    <li><a class="dropdown-item sort-option" href="#" data-sort="oldest">Cũ nhất</a></li>
+                    <li><a class="dropdown-item sort-option" href="#" data-sort="highest_rating">Đánh giá cao nhất</a></li>
+                    <li><a class="dropdown-item sort-option" href="#" data-sort="lowest_rating">Đánh giá thấp nhất</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="reviews-list">
+        @if (Model.Reviews.Any())
+        {
+            @foreach (var review in Model.Reviews)
+            {
+                <div class="review-item border-bottom py-3">
+                    <div class="d-flex mb-2">
+                        <div class="reviewer-avatar me-3">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                @review.CustomerName.Substring(0, 1).ToUpper()
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">
+                                        @review.CustomerName
+                                        @if (review.IsVerifiedPurchase)
+                                        {
+                                            <span class="badge bg-success ms-2" style="font-size: 0.7em;">Đã mua hàng</span>
+                                        }
+                                    </h6>
+                                    <div class="stars mb-1">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="@(i <= review.Rating ? "fas" : "far") fa-star text-warning" style="font-size: 0.9em;"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <small class="text-muted">@review.CreatedAt.ToString("dd/MM/yyyy")</small>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(review.Comment))
+                            {
+                                <p class="review-comment mb-2">@review.Comment</p>
+                            }
+                            
+                            @if (review.ImageUrls.Any())
+                            {
+                                <div class="review-images">
+                                    <div class="row g-2">
+                                        @foreach (var imageUrl in review.ImageUrls)
+                                        {
+                                            <div class="col-auto">
+                                                <img src="@imageUrl" alt="Review image" class="review-image-thumb img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" onclick="showImageModal('@imageUrl')">
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Chưa có đánh giá nào</h5>
+                <p class="text-muted">Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Review pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (Model.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="@(Model.CurrentPage - 1)">Trước</a>
+                    </li>
+                }
+                
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="#" data-page="@i">@i</a>
+                    </li>
+                }
+                
+                @if (Model.CurrentPage < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="@(Model.CurrentPage + 1)">Sau</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="Review image" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.review-stats .rating-score .score {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffc107;
+}
+
+.review-stats .rating-score .total {
+    font-size: 1.2rem;
+    color: #6c757d;
+}
+
+.rating-breakdown .rating-row {
+    font-size: 0.9em;
+}
+
+.rating-breakdown .rating-label {
+    width: 50px;
+    text-align: right;
+}
+
+.rating-breakdown .rating-count {
+    width: 30px;
+    text-align: left;
+    color: #6c757d;
+}
+
+.review-item:last-child {
+    border-bottom: none !important;
+}
+
+.review-comment {
+    line-height: 1.5;
+    color: #333;
+}
+
+.review-image-thumb:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+</style>
+
+<script>
+function showImageModal(imageUrl) {
+    document.getElementById('modalImage').src = imageUrl;
+    new bootstrap.Modal(document.getElementById('imageModal')).show();
+}
+
+// Sort functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sortOptions = document.querySelectorAll('.sort-option');
+    const productId = @Model.ProductId;
+    
+    sortOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            const sortBy = this.dataset.sort;
+            loadReviews(productId, 1, sortBy);
+        });
+    });
+    
+    // Pagination
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('page-link') && e.target.dataset.page) {
+            e.preventDefault();
+            const page = parseInt(e.target.dataset.page);
+            const currentSort = getCurrentSort();
+            loadReviews(productId, page, currentSort);
+        }
+    });
+});
+
+function getCurrentSort() {
+    // Get current sort from URL or default to 'newest'
+    return 'newest';
+}
+
+function loadReviews(productId, page, sortBy) {
+    fetch(`/Review/GetProductReviews?productId=${productId}&page=${page}&sortBy=${sortBy}`)
+        .then(response => response.text())
+        .then(html => {
+            document.querySelector('.reviews-section').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error loading reviews:', error);
+        });
+}
+</script>

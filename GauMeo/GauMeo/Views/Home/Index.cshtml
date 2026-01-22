@@ -1,0 +1,411 @@
+@{
+    ViewData["Title"] = "Trang chủ";
+}
+@Html.AntiForgeryToken()
+<link rel="stylesheet" href="~/css/header-footer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+<link rel="stylesheet" href="/css/style.css">
+
+<main id="main-content">
+        <section class="hero-container" aria-label="Chào mừng đến GauMeo Shop" role="banner">
+        <div class="hero-text">
+            <h1 class="hero-title">
+                Người bạn mới của thú cưng nhà bạn
+            </h1>
+            <p class="hero-description">
+                Khám phá trải nghiệm mua sắm tiện lợi với đa dạng sản phẩm và dịch vụ chất lượng!
+            </p>
+            <div class="hero-slogan" aria-live="polite" aria-atomic="true" aria-relevant="text">
+                <!-- Animated text will appear here -->
+            </div>
+            <button class="hero-btn btn-primary" aria-label="Mua sắm ngay" onclick="scrollToOffers()">
+                Khám phá ngay
+            </button>
+        </div>
+        <div class="hero-illustration" aria-hidden="true" aria-label="Minh họa thú cưng vui vẻ">
+            <img src="/images/pet1.png" alt="Chó dễ thương" class="hero-image" draggable="false" />
+        </div>
+    </section>
+        
+    <!-- Why Choose Us Section Title -->
+    <section id="why-choose-us" class="section-title-container">
+        <div class="section-title-wrapper">
+            <h2 class="section-main-title">Tại sao nên mua sắm tại GauMeo Shop?</h2>
+        </div>
+    </section>
+
+    <!-- Offers Banner Section -->
+    <section class="offers-banner" aria-labelledby="offers-banner-title">
+        <div class="offers-background-extension"></div>
+        <div class="offers-banner-inner">
+            <div class="offers-primary">
+                <div class="offers-logo">
+                    <img src="/images/title-offer.img/wrd.png" alt="GauMeo Shop logo" />
+                </div>
+                <h2 class="offers-heading" id="offers-banner-title">
+                  Không chỉ mang đến những ưu đãi hấp dẫn, GauMeo còn tập trung vào khách hàng "thực sự" – đó là một trong những cách khiến chúng tôi trở thành một nhà bán lẻ khác biệt. Khách hàng thực sự là…               </h2>
+                <p class="offers-text">
+                  THÚ CƯNG CỦA BẠN
+                </p>
+                <p class="offers-subtitle">
+                  Đừng bỏ lỡ — hãy đăng ký để cảm nhận sự khác biệt ngay hôm nay.
+                </p>
+                <div class="offers-button-group">
+                    <a href="/Account/Register" class="btn-primary offers-button">
+                        Đăng ký ngay
+                    </a>
+                    <a href="@Url.Action("MembershipBenefits", "Footer")" class="btn-secondary offers-button">Tìm hiểu thêm
+                      <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M13.4697 5.46967C13.7626 5.17678 14.2374 5.17678 14.5303 5.46967L20.5303 11.4697C20.8232 11.7626 20.8232 12.2374 20.5303 12.5303L14.5303 18.5303C14.2374 18.8232 13.7626 18.8232 13.4697 18.5303C13.1768 18.2374 13.1768 17.7626 13.4697 17.4697L18.1893 12.75H4C3.58579 12.75 3.25 12.4142 3.25 12C3.25 11.5858 3.58579 11.25 4 11.25H18.1893L13.4697 6.53033C13.1768 6.23744 13.1768 5.76256 13.4697 5.46967Z" fill="#F0FFF0"/>
+                      </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="offers-right-section">
+                <div class="offers-pawprint">
+                    <div class="benefits-container">
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <img src="/images/title-offer.img/eCommShop_Icon.png" alt="Ưu đãi độc quyền">
+                            </div>
+                            <h3>Ưu đãi độc quyền</h3>
+                            <p>Nhận voucher giảm giá và chương trình khuyến mãi dành riêng cho thành viên.</p>
+                        </div>
+                        
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <img src="/images/title-offer.img/Membership.png" alt="Tích điểm thưởng">
+                            </div>
+                            <h3>Tích điểm thưởng</h3>
+                            <p>Tích điểm từ mỗi đơn hàng và quy đổi thành ưu đãi cho lần mua tiếp theo.</p>
+                        </div>
+                        
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <img class="benefit-icon" style="width: 90px; height: 70px;" src="/images/title-offer.img/delivery.jpg" alt="Miễn phí vận chuyển">
+                            </div>
+                            <h3>Miễn phí vận chuyển</h3>
+                            <p><p>Miễn phí giao hàng toàn quốc cho đơn từ 700K và ưu tiên xử lý nhanh chóng.</p>
+                        </div>
+                        
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <img class="benefit-icon" style="width: 80px; height: 80px;" src="/images/title-offer.img/Support.png" alt="Tư vấn chuyên nghiệp">
+                            </div>
+                            <h3>Tư vấn chuyên nghiệp</h3>
+                            <p>Nhận tư vấn miễn phí từ đội ngũ chuyên gia chăm sóc thú cưng giàu kinh nghiệm.</p>
+                        </div>
+                        
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <img src="/images/title-offer.img/Solutions_Icon.png" alt="Hỗ trợ 24/7">
+                            </div>
+                            <h3>Hỗ trợ 24/7</h3>
+                            <p>Hỗ trợ tận tâm 24/7 cho mọi vấn đề mà thú cưng của bạn có thể gặp phải.</p>
+                        </div>
+                        
+                        <div class="benefit-card">
+                            <div class="benefit-icon">
+                                <img src="/images/title-offer.img/Certificate-Of-Trust_Icon.png" alt="Chất lượng đảm bảo">
+                            </div>
+                            <h3>Đảm bảo chất lượng</h3>
+                            <p>Cam kết 100% sản phẩm chính hãng với chế độ bảo hành toàn diện.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products best-seller">
+        <h2>Sản phẩm bán chạy</h2>
+        <div class="product-slider">
+          <button class="product-slider-btn prev" aria-label="Trước" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <div class="product-list">
+            @if (ViewBag.BestSellingProducts != null)
+            {
+              @foreach (dynamic product in ViewBag.BestSellingProducts)
+              {
+                <div class="product-card" data-product-id="@product.Id" data-has-variants="@product.HasVariants.ToString().ToLower()">
+                  <div class="product-image-section">
+                    <a href="/Product/Detail/@product.Id" class="product-link">
+                      <img src="@product.Image" alt="@product.Name">
+                    </a>
+                    @if (product.IsOnSale && product.DiscountPercent > 0)
+                    {
+                      <div class="sale-badge">-@product.DiscountPercent%</div>
+                    }
+                  </div>
+                  <div class="product-info-section">
+                    <a href="/Product/Detail/@product.Id" class="product-link">
+                      <h3>@product.Name</h3>
+                    </a>
+                    <div class="product-rating">
+                      <div class="rating-stars">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                          if (i <= product.Rating)
+                          {
+                            <svg class="star-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                              <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                            </svg>
+                          }
+                          else
+                          {
+                            <svg class="star-icon empty" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                              <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                            </svg>
+                          }
+                        }
+                      </div>
+                      <span class="rating-count">(@product.ReviewCount)</span>
+                    </div>
+                    <p class="product-price">
+                      @if (product.IsOnSale && product.DiscountPercent > 0)
+                      {
+                        <span class="sale-price">@(((decimal)product.CurrentPrice).ToString("N0"))đ</span>
+                        <span class="original-price">@(((decimal)product.OriginalPrice).ToString("N0"))đ</span>
+                      }
+                      else
+                      {
+                        <span>@(((decimal)product.CurrentPrice).ToString("N0"))đ</span>
+                      }
+                    </p>
+                    <button class="add-to-cart-btn" data-product-id="@product.Id">
+                      <svg class="cart-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                        <path d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"></path>
+                      </svg>
+                      Thêm vào giỏ hàng
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+            else
+            {
+              <div class="no-products">
+                <p>Hiện tại chưa có sản phẩm bán chạy nào.</p>
+              </div>
+            }
+          </div>
+          <button class="product-slider-btn next" aria-label="Sau">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 6 15 12 9 18"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+      <section class="products promotion">
+        <h2>Sản phẩm khuyến mãi</h2>
+        <div class="product-slider">
+          <button class="product-slider-btn prev" aria-label="Trước" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <div class="product-list">
+            @if (ViewBag.PromotionProducts != null)
+            {
+                @foreach (dynamic product in ViewBag.PromotionProducts)
+                {
+                    <div class="product-card" data-variant="true" data-product-id="@product.Id" data-has-variants="@product.HasVariants.ToString().ToLower()">
+                        <div class="product-image-section">
+                            <a href="@Url.Action("Detail", "Product", new { id = product.Id })">
+                                <img src="@product.Image" alt="@product.Name">
+                            </a>
+                            @if (product.DiscountPercent > 0)
+                            {
+                                <div class="product-badge">-@(product.DiscountPercent)%</div>
+                            }
+                        </div>
+                        <div class="product-info-section">
+                            <a href="@Url.Action("Detail", "Product", new { id = product.Id })">
+                                <h3>@product.Name</h3>
+                            </a>
+                            <div class="product-rating">
+                                <div class="rating-stars">
+                                    @{
+                                        int fullStars = (int)Math.Floor((double)product.Rating);
+                                        bool hasHalfStar = ((double)product.Rating - fullStars) >= 0.5;
+                                        int emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                                    }
+                                    @for (int i = 0; i < fullStars; i++)
+                                    {
+                                        <svg class="star-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                                        </svg>
+                                    }
+                                    @if (hasHalfStar)
+                                    {
+                                        <svg class="star-icon half" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                                        </svg>
+                                    }
+                                    @for (int i = 0; i < emptyStars; i++)
+                                    {
+                                        <svg class="star-icon empty" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                                        </svg>
+                                    }
+                                </div>
+                                <span class="rating-count">(@product.ReviewCount)</span>
+                            </div>
+                            <div class="product-price">
+                                @if (product.DiscountPercent > 0)
+                                {
+                                    <span class="current-price">@(((decimal)product.CurrentPrice).ToString("N0"))đ</span>
+                                    <span class="original-price">@(((decimal)product.OriginalPrice).ToString("N0"))đ</span>
+                                }
+                                else
+                                {
+                                    <span class="current-price">@(((decimal)product.CurrentPrice).ToString("N0"))đ</span>
+                                }
+                            </div>
+                            <button class="add-to-cart-btn" data-product-id="@product.Id">
+                                <svg class="cart-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                    <path d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"></path>
+                                </svg>
+                                Thêm vào giỏ hàng
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="no-products">
+                    <p>Hiện tại chưa có sản phẩm khuyến mãi nào.</p>
+                </div>
+            }
+          </div>
+          <button class="product-slider-btn next" aria-label="Sau">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 6 15 12 9 18"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Brands Section -->
+      <section class="brands-section">
+        <div class="brands-container">
+            <div class="brands-content">
+                <div class="brands-text">
+                    <div class="brands-text-wrapper">
+                        <h2 class="brands-title">
+                            <span class="highlight">100+</span> Thương hiệu<br>Thú cưng hàng đầu
+                        </h2>
+                        <div class="brands-divider">
+                            <svg class="divider-icon" viewBox="0 0 78 9">
+                                <path d="M1.492 0L0 1.026l5.168 7.396 1.491-1.026zm5.441 0L5.441 1.026l5.168 7.396L12.1 7.396zm5.442 0l-1.491 1.026 5.168 7.396 1.489-1.026zm5.443 0l-1.493 1.026 5.168 7.396 1.49-1.026zm5.442 0l-1.494 1.026 5.168 7.396 1.493-1.026zm5.44 0l-1.49 1.026 5.167 7.396 1.49-1.026zm5.443 0L32.65 1.026l5.168 7.396 1.491-1.026zm5.442 0l-1.493 1.026 5.168 7.396 1.493-1.026zm5.441 0l-1.491 1.026 5.168 7.396 1.49-1.026zm5.443 0l-1.493 1.026 5.168 7.396 1.491-1.026zm5.441 0l-1.493 1.026 5.168 7.396 1.493-1.026zm5.442 0L59.86 1.026l5.168 7.396 1.49-1.026zm5.442 0l-1.492 1.026 5.168 7.396 1.49-1.026zm5.442 0l-1.493 1.026 5.168 7.396 1.493-1.026z" fill-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="brands-description">
+                            <p>Tại GauMeo Shop, tất cả sản phẩm đều được chọn lọc và kiểm tra kỹ lưỡng nhằm đáp ứng các tiêu chuẩn cao về sức khỏe, độ an toàn và tính bền vững, đảm bảo phù hợp với từng thú cưng.</p>
+                        </div>
+                        <div class="brands-cta-desktop">
+                            <a href="/brand" class="btn-brands">TẤT CẢ THƯƠNG HIỆU 
+                              <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M13.4697 5.46967C13.7626 5.17678 14.2374 5.17678 14.5303 5.46967L20.5303 11.4697C20.8232 11.7626 20.8232 12.2374 20.5303 12.5303L14.5303 18.5303C14.2374 18.8232 13.7626 18.8232 13.4697 18.5303C13.1768 18.2374 13.1768 17.7626 13.4697 17.4697L18.1893 12.75H4C3.58579 12.75 3.25 12.4142 3.25 12C3.25 11.5858 3.58579 11.25 4 11.25H18.1893L13.4697 6.53033C13.1768 6.23744 13.1768 5.76256 13.4697 5.46967Z" fill="#F0FFF0"/>
+                              </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="brands-logos">
+                    <div class="brands-grid">
+                        @if (ViewBag.FeaturedBrands != null)
+                        {
+                            foreach (var brand in ViewBag.FeaturedBrands)
+                            {
+                                <a href="@Url.Action("Detail", "Brand", new { id = brand.Id })" class="brand-item">
+                                    <div class="brand-logo">
+                                        <img src="@brand.Image" alt="@brand.Name" />
+                                    </div>
+                                </a>
+                            }
+                        }
+                    </div>
+                    <div class="brands-cta-mobile">
+                        <a href="/brands" class="btn-brands">TẤT CẢ THƯƠNG HIỆU 
+                          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M13.4697 5.46967C13.7626 5.17678 14.2374 5.17678 14.5303 5.46967L20.5303 11.4697C20.8232 11.7626 20.8232 12.2374 20.5303 12.5303L14.5303 18.5303C14.2374 18.8232 13.7626 18.8232 13.4697 18.5303C13.1768 18.2374 13.1768 17.7626 13.4697 17.4697L18.1893 12.75H4C3.58579 12.75 3.25 12.4142 3.25 12C3.25 11.5858 3.58579 11.25 4 11.25H18.1893L13.4697 6.53033C13.1768 6.23744 13.1768 5.76256 13.4697 5.46967Z" fill="#F0FFF0"/>
+                          </svg>
+                        </a>
+          </div>
+          </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="categories">
+        <h2>Danh mục sản phẩm cho chó</h2>
+        <div class="category-list">
+          @if (ViewBag.DogCategories != null)
+          {
+              @foreach (var category in (IEnumerable<GauMeo.Models.Categories.Category>)ViewBag.DogCategories)
+              {
+                  <div class="category-card">
+                      <a href="/Product/Category/@category.Slug">
+                          @if (!string.IsNullOrEmpty(category.ImageUrl))
+                          {
+                              <img src="@category.ImageUrl" alt="@category.Name" />
+                          }
+                          else if (!string.IsNullOrEmpty(category.Icon))
+                          {
+                              <div class="category-icon">@category.Icon</div>
+                          }
+                          else
+                          {
+                              <img src="/images/categories/default-dog.png" alt="@category.Name" />
+                          }
+                          <span>@category.Name</span>
+                      </a>
+                  </div>
+              }
+          }
+        </div>
+        <h2>Danh mục sản phẩm cho mèo</h2>
+        <div class="category-list">
+          @if (ViewBag.CatCategories != null)
+          {
+              @foreach (var category in (IEnumerable<GauMeo.Models.Categories.Category>)ViewBag.CatCategories)
+              {
+                  <div class="category-card">
+                      <a href="/Product/Category/@category.Slug">
+                          @if (!string.IsNullOrEmpty(category.ImageUrl))
+                          {
+                              <img src="@category.ImageUrl" alt="@category.Name" />
+                          }
+                          else if (!string.IsNullOrEmpty(category.Icon))
+                          {
+                              <div class="category-icon">@category.Icon</div>
+                          }
+                          else
+                          {
+                              <img src="/images/categories/default-cat.png" alt="@category.Name" />
+                          }
+                          <span>@category.Name</span>
+                      </a>
+                  </div>
+              }
+          }
+        </div>
+      </section>
+      
+
+    </div>
+  </main>
+
+<script src="~/js/main.js" asp-append-version="true"></script>
+<script src="~/js/index.js" asp-append-version="true"></script>
+<script src="~/js/product-tracking.js" asp-append-version="true"></script>
+<script src="~/js/product-tracking.js" asp-append-version="true"></script>
+
+
+

@@ -1,0 +1,85 @@
+@{
+    ViewData["Title"] = "Thương hiệu - GauMeo Petshop";
+    var brands = ViewBag.Brands as IEnumerable<dynamic> ?? new List<dynamic>();
+    var brandsList = brands.ToList();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/brand-index.css" asp-append-version="true" />
+}
+
+<div class="brand-index-container">
+    <div class="breadcrumb">
+        <a href="/Home/Index">Trang chủ</a> / 
+        <span>Thương hiệu</span>
+    </div>
+    
+    <div class="brand-index-header">
+        <h1 class="brand-index-title">Thương hiệu đang được phân phối bởi GauMeo</h1>
+        <div class="brand-index-subtitle">
+            Chúng tôi tự hào mang đến cho khách hàng những thương hiệu thức ăn và sản phẩm chăm sóc thú cưng uy tín, đa dạng, được chọn lọc kỹ lưỡng từ các quốc gia hàng đầu. Sự an tâm và hài lòng của bạn là ưu tiên số một của GauMeo!
+        </div>
+    </div>
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    
+    @if (TempData["InfoMessage"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["InfoMessage"]
+        </div>
+    }
+    
+    @if (brandsList != null && brandsList.Count > 0)
+    {
+        <div class="brand-grid">
+            @foreach (var brand in brandsList)
+            {
+                <a href="/Brand/Detail/@brand.Id" class="brand-card-link">
+                    <div class="brand-card" data-brand-id="@brand.Id">
+                        <div class="brand-card-main">
+                            <div class="brand-logo-index">
+                                @if (!string.IsNullOrEmpty(brand.Image) && brand.Image != "/images/brands/default.png")
+                                {
+                                    <img src="@brand.Image" alt="@brand.Name" class="brand-logo-index-img">
+                                }
+                                else
+                                {
+                                    <div class="brand-logo-placeholder">@brand.ShortName</div>
+                                }
+                            </div>
+                            <div class="brand-content">
+                                <h3 class="brand-name">@brand.Name</h3>
+                                <div class="brand-info">
+                                    <span class="brand-founded">Thành lập: @brand.Founded</span>
+                                    <span class="brand-origin">Xuất xứ: @brand.Origin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="no-brands-message">
+            <div class="no-brands-icon">
+                <i class="fas fa-store-slash"></i>
+            </div>
+            <h3>Hiện tại chưa có thương hiệu nào</h3>
+            <p>Chúng tôi đang cập nhật danh sách thương hiệu. Vui lòng quay lại sau.</p>
+            <a href="/Home/Index" class="btn btn-primary">Về trang chủ</a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/brand-index.js" asp-append-version="true"></script>
+} 

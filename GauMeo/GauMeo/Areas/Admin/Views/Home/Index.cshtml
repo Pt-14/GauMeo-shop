@@ -1,0 +1,268 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var stats = ViewBag.Stats as dynamic;
+}
+
+<div class="dashboard-content">
+    <!-- Welcome Section -->
+    <div class="admin-card">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="text-primary mb-2">
+                    <i class="fas fa-tachometer-alt me-2"></i>
+                    Chào mừng trở lại, @User.Identity?.Name!
+                </h2>
+                <p class="text-muted mb-0">Quản lý hệ thống GauMeo Shop một cách hiệu quả</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="dashboard-date">
+                    <i class="fas fa-calendar-alt text-primary"></i>
+                    <span class="ms-2">@DateTime.Now.ToString("dd/MM/yyyy")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class="fas fa-box"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(stats?.TotalProducts ?? 0)</div>
+                <div class="stat-label">Tổng sản phẩm</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(stats?.TotalOrders ?? 0)</div>
+                <div class="stat-label">Tổng đơn hàng</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(stats?.TotalUsers ?? 0)</div>
+                <div class="stat-label">Người dùng</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(stats?.PendingOrders ?? 0)</div>
+                <div class="stat-label">Đơn chờ xử lý</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@((stats?.TodayRevenue ?? 0).ToString("N0"))₫</div>
+                <div class="stat-label">Doanh thu hôm nay</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="admin-card">
+                <h4>
+                    <i class="fas fa-bolt text-warning me-2"></i>
+                    Thao tác nhanh
+                </h4>
+                <div class="quick-actions">
+                    <a href="@Url.Action("Create", "Product")" class="btn-admin btn-success">
+                        <i class="fas fa-plus"></i>
+                        Thêm sản phẩm mới
+                    </a>
+                    <a href="@Url.Action("Index", "Order")" class="btn-admin">
+                        <i class="fas fa-list"></i>
+                        Xem đơn hàng
+                    </a>
+                    <a href="@Url.Action("Index", "User")" class="btn-admin">
+                        <i class="fas fa-users"></i>
+                        Quản lý người dùng
+                    </a>
+                    <a href="@Url.Action("Create", "Promotion")" class="btn-admin btn-warning">
+                        <i class="fas fa-percentage"></i>
+                        Tạo khuyến mãi
+                    </a>
+                    <a href="@Url.Action("Reports")" class="btn-admin">
+                        <i class="fas fa-chart-bar"></i>
+                        Xem báo cáo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="admin-card">
+                <h4>
+                    <i class="fas fa-bell text-danger me-2"></i>
+                    Thông báo
+                </h4>
+                <div class="notification-list">
+                    @if (stats?.PendingOrders > 0)
+                    {
+                        <div class="notification-item">
+                            <i class="fas fa-exclamation-triangle text-warning"></i>
+                            <span>Có @stats.PendingOrders đơn hàng chờ xử lý</span>
+                        </div>
+                    }
+                    <div class="notification-item">
+                        <i class="fas fa-info-circle text-info"></i>
+                        <span>Hệ thống hoạt động bình thường</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="admin-card">
+        <h4>
+            <i class="fas fa-history text-info me-2"></i>
+            Hoạt động gần đây
+        </h4>
+        <div class="recent-activity">
+            <div class="activity-item">
+                <div class="activity-icon bg-success">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div class="activity-content">
+                    <span class="activity-text">Thêm sản phẩm mới vào hệ thống</span>
+                    <span class="activity-time">2 giờ trước</span>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon bg-info">
+                    <i class="fas fa-edit"></i>
+                </div>
+                <div class="activity-content">
+                    <span class="activity-text">Cập nhật thông tin khuyến mãi</span>
+                    <span class="activity-time">4 giờ trước</span>
+                </div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon bg-warning">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="activity-content">
+                    <span class="activity-text">Người dùng mới đăng ký</span>
+                    <span class="activity-time">6 giờ trước</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .dashboard-date {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: #3498db;
+            font-size: 14px;
+        }
+
+        .stat-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .notification-list {
+            space-y: 10px;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .recent-activity {
+            space-y: 15px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            display: block;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+} 

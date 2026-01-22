@@ -1,0 +1,267 @@
+@model GauMeo.Models.Services.Service
+
+@{
+    ViewData["Title"] = "Xóa dịch vụ";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/admin.css" />
+}
+
+<div class="page-header">
+    <div class="header-content">
+        <h1>
+            <i class='bx bx-trash text-danger'></i>
+            Xóa dịch vụ
+        </h1>
+        <div class="breadcrumb">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })">Trang chủ</a>
+            <span>/</span>
+            <a href="@Url.Action("Index", "Service")">Quản lý dịch vụ</a>
+            <span>/</span>
+            <span>Xóa</span>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="delete-container">
+        <div class="alert alert-danger">
+            <i class='bx bx-error-circle'></i>
+            <strong>Cảnh báo!</strong> Bạn có chắc muốn xóa dịch vụ này? Hành động này không thể hoàn tác.
+        </div>
+
+        <div class="delete-preview">
+            <div class="service-preview">
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    <div class="service-image">
+                        <img src="@Model.Image" alt="@Model.Name" />
+                    </div>
+                }
+                <div class="service-info">
+                    <h3>@Model.Name</h3>
+                    <p class="service-description">@Model.Description</p>
+                    <div class="service-meta">
+                        <span class="price">@Model.Price</span>
+                        <span class="duration">@Model.Duration</span>
+                        <span class="status-badge @(Model.IsActive ? "active" : "inactive")">
+                            @(Model.IsActive ? "Đang hoạt động" : "Tạm dừng")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="delete-details">
+            <h4>Thông tin dịch vụ sẽ bị xóa:</h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>ID:</label>
+                    <span>@Model.Id</span>
+                </div>
+                <div class="info-item">
+                    <label>Tên dịch vụ:</label>
+                    <span>@Model.Name</span>
+                </div>
+                <div class="info-item">
+                    <label>Tên ngắn:</label>
+                    <span>@Model.ShortName</span>
+                </div>
+                <div class="info-item">
+                    <label>Ngày tạo:</label>
+                    <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="info-item">
+                    <label>Số biến thể:</label>
+                    <span>@(Model.ServiceVariants?.Count ?? 0)</span>
+                </div>
+                <div class="info-item">
+                    <label>Số hình ảnh:</label>
+                    <span>@(Model.ServiceImages?.Count ?? 0)</span>
+                </div>
+                <div class="info-item">
+                    <label>Số lượt đặt:</label>
+                    <span class="text-warning">@(Model.ServiceBookings?.Count ?? 0)</span>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.ServiceBookings != null && Model.ServiceBookings.Any())
+        {
+            <div class="alert alert-warning">
+                <i class='bx bx-info-circle'></i>
+                <strong>Lưu ý:</strong> Dịch vụ này có @Model.ServiceBookings.Count lượt đặt. 
+                Việc xóa dịch vụ có thể ảnh hưởng đến dữ liệu đặt dịch vụ hiện có.
+            </div>
+        }
+
+        @if (Model.ServiceVariants != null && Model.ServiceVariants.Any())
+        {
+            <div class="related-data">
+                <h4>Dữ liệu liên quan sẽ bị xóa:</h4>
+                <div class="data-list">
+                    <div class="data-item">
+                        <i class='bx bx-list-ul'></i>
+                        <span>@Model.ServiceVariants.Count biến thể dịch vụ</span>
+                    </div>
+                    @if (Model.ServiceImages != null && Model.ServiceImages.Any())
+                    {
+                        <div class="data-item">
+                            <i class='bx bx-image'></i>
+                            <span>@Model.ServiceImages.Count hình ảnh dịch vụ</span>
+                        </div>
+                    }
+                    @if (Model.ServiceAddons != null && Model.ServiceAddons.Any())
+                    {
+                        <div class="data-item">
+                            <i class='bx bx-plus-circle'></i>
+                            <span>@Model.ServiceAddons.Count addon dịch vụ</span>
+                        </div>
+                    }
+                    @if (Model.ServiceFAQs != null && Model.ServiceFAQs.Any())
+                    {
+                        <div class="data-item">
+                            <i class='bx bx-help-circle'></i>
+                            <span>@Model.ServiceFAQs.Count câu hỏi thường gặp</span>
+                        </div>
+                    }
+                    @if (Model.ServiceNotes != null && Model.ServiceNotes.Any())
+                    {
+                        <div class="data-item">
+                            <i class='bx bx-note'></i>
+                            <span>@Model.ServiceNotes.Count ghi chú</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <form asp-action="Delete" method="post" id="deleteServiceForm">
+            <input type="hidden" asp-for="Id" />
+            
+            <div class="form-check confirmation-check">
+                <input type="checkbox" id="confirmDelete" class="form-check-input" required />
+                <label for="confirmDelete" class="form-check-label">
+                    Tôi hiểu rằng hành động này không thể hoàn tác và đồng ý xóa dịch vụ này.
+                </label>
+            </div>
+
+            <div class="delete-actions">
+                <button type="submit" class="btn-admin btn-danger" id="deleteButton" disabled>
+                    <i class='bx bx-trash'></i>
+                    Xác nhận xóa
+                </button>
+                <a class="btn-admin btn-secondary" asp-action="Index">
+                    <i class='bx bx-x'></i>
+                    Hủy bỏ
+                </a>
+                <a class="btn-admin btn-info" asp-action="Details" asp-route-id="@Model.Id">
+                    <i class='bx bx-show'></i>
+                    Xem chi tiết
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDeleteForm();
+        });
+
+        function initializeDeleteForm() {
+            // Enable delete button only when checkbox is checked
+            const confirmCheckbox = document.getElementById('confirmDelete');
+            const deleteButton = document.getElementById('deleteButton');
+            
+            if (confirmCheckbox && deleteButton) {
+                confirmCheckbox.addEventListener('change', function() {
+                    deleteButton.disabled = !this.checked;
+                    
+                    if (this.checked) {
+                        deleteButton.classList.remove('disabled');
+                    } else {
+                        deleteButton.classList.add('disabled');
+                    }
+                });
+            }
+
+            // Double confirmation on form submit
+            const form = document.getElementById('deleteServiceForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const serviceName = '@Html.Raw(Model.Name.Replace("'", "\\'"))';
+                    const hasBookings = @(Model.ServiceBookings?.Count ?? 0) > 0;
+                    
+                    let confirmMessage = `Bạn có THỰC SỰ muốn xóa dịch vụ "${serviceName}"?\n\nHành động này không thể hoàn tác!`;
+                    
+                    if (hasBookings) {
+                        confirmMessage += '\n\nLưu ý: Dịch vụ này có lượt đặt, việc xóa có thể ảnh hưởng đến dữ liệu hiện có.';
+                    }
+                    
+                    if (!confirm(confirmMessage)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    // Show loading state
+                    const deleteButton = document.getElementById('deleteButton');
+                    if (deleteButton) {
+                        deleteButton.disabled = true;
+                        deleteButton.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Đang xóa...';
+                    }
+                });
+            }
+        }
+
+        // Show notification function
+        function showNotification(type, message) {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class='bx ${type === 'success' ? 'bx-check-circle' : 'bx-error-circle'}'></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="notification-close" onclick="closeNotification(this)">
+                    <i class='bx bx-x'></i>
+                </button>
+            `;
+
+            // Add to page
+            let container = document.querySelector('.notification-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'notification-container';
+                document.body.appendChild(container);
+            }
+            
+            container.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function closeNotification(button) {
+            const notification = button.closest('.notification');
+            if (notification) {
+                notification.style.animation = 'slideOut 0.3s ease-in-out';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }
+        }
+    </script>
+} 

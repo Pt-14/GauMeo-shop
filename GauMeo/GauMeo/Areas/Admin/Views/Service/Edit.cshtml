@@ -1,0 +1,300 @@
+@model GauMeo.Models.Services.Service
+
+@{
+    ViewData["Title"] = "Chỉnh sửa dịch vụ";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/admin.css" />
+}
+
+<div class="page-header">
+    <div class="header-content">
+        <h1>
+            <i class='bx bx-edit'></i>
+            Chỉnh sửa dịch vụ
+        </h1>
+        <div class="breadcrumb">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })">Trang chủ</a>
+            <span>/</span>
+            <a href="@Url.Action("Index", "Service")">Quản lý dịch vụ</a>
+            <span>/</span>
+            <span>Chỉnh sửa</span>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="form-container">
+        <form asp-action="Edit" enctype="multipart/form-data" id="editServiceForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" />
+            
+            <div class="form-section">
+                <h3>Thông tin cơ bản</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label">Tên dịch vụ *</label>
+                        <input asp-for="Name" class="form-control" placeholder="Nhập tên dịch vụ" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ShortName" class="control-label">Tên ngắn *</label>
+                        <input asp-for="ShortName" class="form-control" placeholder="Tên ngắn hiển thị" required />
+                        <span asp-validation-for="ShortName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Mô tả dịch vụ</h3>
+                <div class="form-group">
+                    <label asp-for="Description" class="control-label">Mô tả ngắn</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả ngắn về dịch vụ"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="FullDescription" class="control-label">Mô tả đầy đủ</label>
+                    <textarea asp-for="FullDescription" class="form-control" rows="5" placeholder="Mô tả chi tiết về dịch vụ"></textarea>
+                    <span asp-validation-for="FullDescription" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Giá và thời gian</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label">Giá hiển thị</label>
+                        <input asp-for="Price" class="form-control" placeholder="VD: 150.000 - 300.000 VNĐ" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Duration" class="control-label">Thời gian</label>
+                        <input asp-for="Duration" class="form-control" placeholder="VD: 60 - 90 phút" />
+                        <span asp-validation-for="Duration" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="MinPrice" class="control-label">Giá tối thiểu (VNĐ)</label>
+                        <input asp-for="MinPrice" type="number" class="form-control" step="1000" min="0" />
+                        <span asp-validation-for="MinPrice" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaxPrice" class="control-label">Giá tối đa (VNĐ)</label>
+                        <input asp-for="MaxPrice" type="number" class="form-control" step="1000" min="0" />
+                        <span asp-validation-for="MaxPrice" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Hình ảnh và đặc điểm</h3>
+                <div class="form-group">
+                    <label asp-for="Image" class="control-label">Hình ảnh dịch vụ</label>
+                    <input asp-for="Image" class="form-control" placeholder="URL hình ảnh hoặc tải lên" />
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                    @if (!string.IsNullOrEmpty(Model.Image))
+                    {
+                        <div class="image-preview mt-2" id="currentImagePreview">
+                            <img src="@Model.Image" alt="Service Image" style="max-width: 200px; height: auto; border-radius: 8px;" />
+                        </div>
+                    }
+                    <div id="newImagePreview" class="image-preview" style="display: none; margin-top: 10px;">
+                        <img id="previewImg" src="" alt="New Preview" style="max-width: 200px; height: auto; border-radius: 8px;" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Features" class="control-label">Đặc điểm dịch vụ</label>
+                    <textarea asp-for="Features" class="form-control" rows="3" placeholder="Các đặc điểm nổi bật (phân cách bằng dấu phẩy)"></textarea>
+                    <span asp-validation-for="Features" class="text-danger"></span>
+                    <small class="form-text text-muted">Nhập các đặc điểm phân cách bằng dấu phẩy hoặc định dạng JSON</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Cài đặt</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="DisplayOrder" class="control-label">Thứ tự hiển thị</label>
+                        <input asp-for="DisplayOrder" type="number" class="form-control" min="0" />
+                        <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check-container">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsActive" class="form-check-label">
+                                    Kích hoạt dịch vụ
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input asp-for="IsFeatured" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsFeatured" class="form-check-label">
+                                    Dịch vụ nổi bật
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Thông tin hệ thống</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="control-label">Ngày tạo</label>
+                        <input type="text" class="form-control" value="@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Cập nhật lần cuối</label>
+                        <input type="text" class="form-control" value="@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")" readonly />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-success">
+                    <i class='bx bx-save'></i>
+                    Cập nhật dịch vụ
+                </button>
+                <a class="btn-admin btn-secondary" asp-action="Index">
+                    <i class='bx bx-x'></i>
+                    Hủy bỏ
+                </a>
+                <a class="btn-admin btn-info" asp-action="Details" asp-route-id="@Model.Id">
+                    <i class='bx bx-show'></i>
+                    Xem chi tiết
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEditForm();
+        });
+
+        function initializeEditForm() {
+            // Price validation
+            const minPriceField = document.getElementById('MinPrice');
+            const maxPriceField = document.getElementById('MaxPrice');
+            
+            if (minPriceField) {
+                minPriceField.addEventListener('change', function() {
+                    validatePriceRange(this, maxPriceField, 'min');
+                });
+            }
+
+            if (maxPriceField) {
+                maxPriceField.addEventListener('change', function() {
+                    validatePriceRange(this, minPriceField, 'max');
+                });
+            }
+
+            // Image preview for new images
+            const imageField = document.getElementById('Image');
+            if (imageField) {
+                // Store original image URL
+                const originalImageUrl = imageField.value;
+                
+                imageField.addEventListener('input', function() {
+                    if (this.value !== originalImageUrl) {
+                        showImagePreview(this.value);
+                    } else {
+                        hideNewImagePreview();
+                    }
+                });
+            }
+
+            // Form validation
+            const form = document.getElementById('editServiceForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (!validateForm()) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        }
+
+        function validatePriceRange(changedField, otherField, type) {
+            if (!changedField || !otherField || !changedField.value || !otherField.value) {
+                return;
+            }
+
+            const changedValue = parseFloat(changedField.value);
+            const otherValue = parseFloat(otherField.value);
+            const originalValue = type === 'min' ? '@(Model.MinPrice ?? 0)' : '@(Model.MaxPrice ?? 0)';
+
+            if (type === 'min' && changedValue > otherValue) {
+                alert('Giá tối thiểu không thể lớn hơn giá tối đa');
+                changedField.value = originalValue;
+                changedField.focus();
+            } else if (type === 'max' && changedValue < otherValue) {
+                alert('Giá tối đa không thể nhỏ hơn giá tối thiểu');
+                changedField.value = originalValue;
+                changedField.focus();
+            }
+        }
+
+        function showImagePreview(imageUrl) {
+            const newPreview = document.getElementById('newImagePreview');
+            const previewImg = document.getElementById('previewImg');
+            const currentPreview = document.getElementById('currentImagePreview');
+            
+            if (imageUrl && isValidUrl(imageUrl)) {
+                previewImg.src = imageUrl;
+                newPreview.style.display = 'block';
+                if (currentPreview) {
+                    currentPreview.style.opacity = '0.5';
+                }
+            } else {
+                hideNewImagePreview();
+            }
+        }
+
+        function hideNewImagePreview() {
+            const newPreview = document.getElementById('newImagePreview');
+            const currentPreview = document.getElementById('currentImagePreview');
+            
+            newPreview.style.display = 'none';
+            if (currentPreview) {
+                currentPreview.style.opacity = '1';
+            }
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function validateForm() {
+            const name = document.getElementById('Name').value.trim();
+            const shortName = document.getElementById('ShortName').value.trim();
+            
+            if (!name) {
+                alert('Vui lòng nhập tên dịch vụ');
+                document.getElementById('Name').focus();
+                return false;
+            }
+            
+            if (!shortName) {
+                alert('Vui lòng nhập tên ngắn');
+                document.getElementById('ShortName').focus();
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+} 

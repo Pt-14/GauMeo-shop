@@ -1,0 +1,414 @@
+@model GauMeo.Models.Categories.Brand
+@{
+    ViewData["Title"] = $"Chi tiết thương hiệu: {Model.Name}";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">@ViewData["Title"]</h4>
+            <div class="header-actions">
+                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn-admin btn-warning">
+                    <i class='bx bx-edit'></i>
+                    Chỉnh sửa
+                </a>
+                <button class="btn-admin btn-danger" onclick="deleteBrand('@Model.Id')">
+                    <i class='bx bx-trash'></i>
+                    Xóa
+                </button>
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-arrow-back'></i>
+                    Quay lại
+                </a>
+            </div>
+        </div>
+
+        <div class="detail-content">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="brand-logo-detail">
+                        @if (!string.IsNullOrEmpty(Model.Image))
+                        {
+                            <img src="@Model.Image" alt="@Model.Name" class="brand-logo-large" />
+                        }
+                        else
+                        {
+                            <div class="no-logo-large">
+                                <i class='bx bx-category-alt'></i>
+                                <span>Không có logo</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="brand-status-info">
+                        <div class="status-item">
+                            <span class="status-badge @(Model.IsActive ? "active" : "inactive")">
+                                @(Model.IsActive ? "Đang hoạt động" : "Ngừng hoạt động")
+                            </span>
+                        </div>
+                        @if (Model.IsFeatured)
+                        {
+                            <div class="status-item">
+                                <span class="status-badge featured">
+                                    <i class='bx bx-star'></i>
+                                    Thương hiệu nổi bật
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="brand-info-detail">
+                        <div class="info-section">
+                            <h5>Thông tin cơ bản</h5>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Tên thương hiệu:</label>
+                                    <span>@Model.Name</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Tên viết tắt:</label>
+                                    <span>@(Model.ShortName ?? "Chưa có")</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Năm thành lập:</label>
+                                    <span>@(Model.Founded?.ToString() ?? "Chưa có")</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Xuất xứ:</label>
+                                    <span>@(Model.Origin ?? "Chưa có")</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Website:</label>
+                                    <span>
+                                        @if (!string.IsNullOrEmpty(Model.Website))
+                                        {
+                                            <a href="@Model.Website" target="_blank" class="website-link">@Model.Website</a>
+                                        }
+                                        else
+                                        {
+                                            <span>Chưa có</span>
+                                        }
+                                    </span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Thứ tự hiển thị:</label>
+                                    <span>@Model.DisplayOrder</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.Description))
+                        {
+                            <div class="info-section">
+                                <h5>Mô tả ngắn</h5>
+                                <p>@Model.Description</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.FullDescription))
+                        {
+                            <div class="info-section">
+                                <h5>Mô tả chi tiết</h5>
+                                <div class="full-description">
+                                    @Html.Raw(Model.FullDescription.Replace("\n", "<br />"))
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Features))
+                        {
+                            <div class="info-section">
+                                <h5>Đặc điểm nổi bật</h5>
+                                <div class="features-list">
+                                    @try
+                                    {
+                                        var features = System.Text.Json.JsonSerializer.Deserialize<string[]>(Model.Features);
+                                        if (features != null && features.Any())
+                                        {
+                                            <ul>
+                                                @foreach (var feature in features)
+                                                {
+                                                    <li>@feature</li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <p>Chưa có đặc điểm nào.</p>
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        <p>@Model.Features</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <div class="info-section">
+                            <h5>Thông tin hệ thống</h5>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>ID:</label>
+                                    <span>@Model.Id</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Ngày tạo:</label>
+                                    <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Cập nhật lần cuối:</label>
+                                    <span>@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products của thương hiệu này (nếu có) -->
+    @if (Model.Products != null && Model.Products.Any())
+    {
+        <div class="admin-card mt-4">
+            <div class="card-header-admin">
+                <h4 class="card-title">Sản phẩm của thương hiệu (@Model.Products.Count() sản phẩm)</h4>
+                <a href="@Url.Action("Index", "Product", new { brand = Model.Id })" class="btn-admin btn-info">
+                    <i class='bx bx-show'></i>
+                    Xem tất cả
+                </a>
+            </div>
+            <div class="products-preview">
+                @foreach (var product in Model.Products.Take(6))
+                {
+                    <div class="product-card-mini">
+                        <div class="product-image">
+                            @if (product.ProductImages != null && product.ProductImages.Any())
+                            {
+                                <img src="@product.ProductImages.First().ImageUrl" alt="@product.Name" />
+                            }
+                            else
+                            {
+                                <div class="no-image">
+                                    <i class='bx bx-package'></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="product-info">
+                            <h6>@product.Name</h6>
+                            <p>@((product.OriginalPrice * (100 - product.DiscountPercent) / 100).ToString("N0")) VNĐ</p>
+                            <span class="status-badge @(product.IsActive ? "active" : "inactive")">
+                                @(product.IsActive ? "Hoạt động" : "Ngừng")
+                            </span>
+                        </div>
+                    </div>
+                }
+                @if (Model.Products.Count() > 6)
+                {
+                    <div class="more-products">
+                        <span>+@(Model.Products.Count() - 6) sản phẩm khác</span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        function deleteBrand(brandId) {
+            if (confirm('Bạn có chắc chắn muốn xóa thương hiệu này? Thao tác này không thể hoàn tác.')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("Delete")';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = brandId;
+                
+                const token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (token) {
+                    form.appendChild(token.cloneNode());
+                }
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}
+
+<style>
+    .brand-logo-detail {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .brand-logo-large {
+        max-width: 200px;
+        max-height: 200px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+    }
+
+    .no-logo-large {
+        width: 200px;
+        height: 200px;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        margin: 0 auto;
+    }
+
+    .no-logo-large i {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    .brand-status-info {
+        text-align: center;
+    }
+
+    .status-item {
+        margin-bottom: 10px;
+    }
+
+    .status-badge.featured {
+        background: linear-gradient(45deg, #f39c12, #e67e22);
+        color: white;
+    }
+
+    .info-section {
+        margin-bottom: 30px;
+    }
+
+    .info-section h5 {
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 5px;
+        margin-bottom: 15px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .info-item label {
+        font-weight: bold;
+        color: #555;
+        font-size: 14px;
+    }
+
+    .info-item span {
+        color: #333;
+        background: #f8f9fa;
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+    }
+
+    .features-list ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .features-list li {
+        background: #e8f5e8;
+        margin-bottom: 8px;
+        padding: 10px 15px;
+        border-left: 4px solid #28a745;
+        border-radius: 4px;
+    }
+
+    .features-list li:before {
+        content: "✓";
+        color: #28a745;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .products-preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .product-card-mini {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.2s;
+    }
+
+    .product-card-mini:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+        height: 120px;
+        overflow: hidden;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-image {
+        color: #999;
+        font-size: 24px;
+    }
+
+    .product-info {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .product-info h6 {
+        margin: 0 0 5px 0;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .product-info p {
+        margin: 0 0 8px 0;
+        font-weight: bold;
+        color: #e74c3c;
+    }
+
+    .more-products {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #ddd;
+        border-radius: 8px;
+        height: 200px;
+        color: #999;
+        font-weight: bold;
+    }
+</style> 

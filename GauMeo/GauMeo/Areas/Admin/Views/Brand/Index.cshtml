@@ -1,0 +1,262 @@
+@model IEnumerable<GauMeo.Models.Categories.Brand>
+@{
+    ViewData["Title"] = "Quản lý thương hiệu";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class='bx bx-category-alt'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count()</div>
+                <div class="stat-label">Tổng thương hiệu</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(b => b.IsActive)</div>
+                <div class="stat-label">Đang hoạt động</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class='bx bx-pause-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(b => !b.IsActive)</div>
+                <div class="stat-label">Ngừng hoạt động</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class='bx bx-calendar-plus'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(b => b.CreatedAt.Date == DateTime.Today)</div>
+                <div class="stat-label">Mới hôm nay</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="admin-card">
+        <div class="search-filter-section">
+            <div class="search-container-admin">
+                <div class="search-input-wrapper">
+                    <i class='bx bx-search search-icon'></i>
+                    <input type="text" id="brandSearch" class="search-input-admin" placeholder="Tìm kiếm thương hiệu...">
+                </div>
+            </div>
+            <div class="filter-controls">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active">Đang hoạt động</option>
+                    <option value="inactive">Ngừng hoạt động</option>
+                </select>
+            </div>
+            <div class="action-controls">
+                <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                    <i class='bx bx-plus'></i>
+                    Thêm thương hiệu
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">Danh sách thương hiệu</h4>
+            <div class="view-options">
+                <button class="view-btn active" data-view="table" title="Hiển thị dạng bảng">
+                    <i class='bx bx-table'></i>
+                </button>
+                <button class="view-btn" data-view="grid" title="Hiển thị dạng lưới">
+                    <i class='bx bx-grid-alt'></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div id="tableView" class="table-responsive">
+            <table class="admin-table" id="brandsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll" class="admin-checkbox">
+                        </th>
+                        <th>Logo</th>
+                        <th class="sortable" data-sort="name">
+                            Tên thương hiệu
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th>Mô tả</th>
+                        <th>Website</th>
+                        <th class="sortable" data-sort="status">
+                            Trạng thái
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th class="sortable" data-sort="date">
+                            Ngày tạo
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var brand in Model)
+                    {
+                        <tr class="brand-row" 
+                            data-name="@brand.Name.ToLower()" 
+                            data-status="@(brand.IsActive ? "active" : "inactive")"
+                            data-sort-name="@brand.Name"
+                            data-sort-status="@(brand.IsActive ? "1" : "0")"
+                            data-sort-date="@brand.CreatedAt.Ticks">
+                            <td>
+                                <input type="checkbox" class="admin-checkbox brand-checkbox" value="@brand.Id">
+                            </td>
+                            <td>
+                                <div class="brand-logo">
+                                    @if (!string.IsNullOrEmpty(brand.Image))
+                                    {
+                                        <img src="@brand.Image" alt="@brand.Name">
+                                    }
+                                    else
+                                    {
+                                        <div class="no-logo">
+                                            <i class='bx bx-category-alt'></i>
+                                        </div>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div class="brand-info">
+                                    <div class="brand-name">@brand.Name</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="brand-desc">
+                                    @(string.IsNullOrEmpty(brand.Description) ? "Chưa có mô tả" : 
+                                      brand.Description.Length > 100 ? brand.Description.Substring(0, 100) + "..." : brand.Description)
+                                </div>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(brand.Website))
+                                {
+                                    <a href="@brand.Website" target="_blank" class="website-link">@brand.Website</a>
+                                }
+                                else
+                                {
+                                    <span class="no-website">Chưa có</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="status-badge @(brand.IsActive ? "active" : "inactive")">
+                                    @(brand.IsActive ? "Hoạt động" : "Ngừng")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="date-text">@brand.CreatedAt.ToString("dd/MM/yyyy")</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="@Url.Action("Details", new { id = brand.Id })" class="action-btn view-btn" title="Xem chi tiết">
+                                        <i class='bx bx-show'></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = brand.Id })" class="action-btn edit-btn" title="Chỉnh sửa">
+                                        <i class='bx bx-edit'></i>
+                                    </a>
+                                    <button class="action-btn delete-btn" onclick="deleteBrand('@brand.Id')" title="Xóa">
+                                        <i class='bx bx-trash'></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grid View -->
+        <div id="gridView" class="brand-grid" style="display: none;">
+            @foreach (var brand in Model)
+            {
+                <div class="brand-card" 
+                     data-name="@brand.Name.ToLower()" 
+                     data-status="@(brand.IsActive ? "active" : "inactive")">
+                    <div class="brand-card-header">
+                        <div class="brand-card-logo">
+                            @if (!string.IsNullOrEmpty(brand.Image))
+                            {
+                                <img src="@brand.Image" alt="@brand.Name">
+                            }
+                            else
+                            {
+                                <div class="no-logo">
+                                    <i class='bx bx-category-alt'></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="brand-card-overlay">
+                            <div class="overlay-actions">
+                                <a href="@Url.Action("Details", new { id = brand.Id })" class="overlay-btn">
+                                    <i class='bx bx-show'></i>
+                                </a>
+                                <a href="@Url.Action("Edit", new { id = brand.Id })" class="overlay-btn">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                                <button class="overlay-btn delete" onclick="deleteBrand('@brand.Id')">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="brand-card-content">
+                        <h5 class="brand-card-name">@brand.Name</h5>
+                        <div class="brand-card-desc">
+                            @(string.IsNullOrEmpty(brand.Description) ? "Chưa có mô tả" : brand.Description)
+                        </div>
+                        @if (!string.IsNullOrEmpty(brand.Website))
+                        {
+                            <div class="brand-card-website">
+                                <a href="@brand.Website" target="_blank">@brand.Website</a>
+                            </div>
+                        }
+                        <div class="brand-card-footer">
+                            <span class="status @(brand.IsActive ? "active" : "inactive")">
+                                @(brand.IsActive ? "Hoạt động" : "Ngừng")
+                            </span>
+                            <span class="date">@brand.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class='bx bx-category-alt'></i>
+                </div>
+                <h5 class="empty-title">Chưa có thương hiệu nào</h5>
+                <p class="empty-description">Hãy thêm thương hiệu đầu tiên của bạn!</p>
+                <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                    <i class='bx bx-plus'></i>
+                    Thêm thương hiệu mới
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/brand-management.js" asp-append-version="true"></script>
+} 

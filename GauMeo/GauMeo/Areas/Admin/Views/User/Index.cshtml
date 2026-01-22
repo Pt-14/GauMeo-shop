@@ -1,0 +1,336 @@
+@model IEnumerable<GauMeo.Models.ViewModels.UserViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<!-- Stats Section -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon bg-primary">
+            <i class='bx bx-user'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count()</div>
+            <div class="stat-label">Tổng người dùng</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-success">
+            <i class='bx bx-user-check'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count(u => u.User.EmailConfirmed)</div>
+            <div class="stat-label">Đã xác thực</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-warning">
+            <i class='bx bx-crown'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count(u => u.Roles.Contains("Admin"))</div>
+            <div class="stat-label">Quản trị viên</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon bg-info">
+            <i class='bx bx-time-five'></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-number">@Model.Count(u => u.User.CreatedAt.Date == DateTime.Today)</div>
+            <div class="stat-label">Mới hôm nay</div>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="admin-card">
+    <div class="search-filter-section">
+        <div class="search-container-admin">
+            <div class="search-input-wrapper">
+                <i class='bx bx-search search-icon'></i>
+                <input type="text" id="userSearch" placeholder="Tìm kiếm người dùng..." class="search-input-admin">
+            </div>
+        </div>
+        <div class="filter-controls">
+            <select id="statusFilter" class="filter-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="confirmed">Đã xác thực</option>
+                <option value="unconfirmed">Chưa xác thực</option>
+                <option value="locked">Đã khóa</option>
+            </select>
+            <select id="roleFilter" class="filter-select">
+                <option value="">Tất cả vai trò</option>
+                <option value="admin">Quản trị viên</option>
+                <option value="user">Người dùng</option>
+            </select>
+        </div>
+        <div class="action-controls">
+            <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                <i class='bx bx-user-plus'></i>
+                Thêm quản trị viên
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- User List Section -->
+<div class="admin-card">
+    <div class="card-header-admin">
+        <h4 class="card-title">
+            <i class='bx bx-list-ul'></i>
+            Danh sách người dùng
+        </h4>
+        <div class="view-options">
+            <button class="view-btn active" data-view="table">
+                <i class='bx bx-table'></i>
+            </button>
+            <button class="view-btn" data-view="grid">
+                <i class='bx bx-grid-alt'></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Table View -->
+    <div id="tableView" class="table-responsive">
+        <table class="table admin-table" id="usersTable">
+            <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" id="selectAll" class="admin-checkbox">
+                    </th>
+                    <th>Avatar</th>
+                    <th class="sortable" data-sort="name">
+                        Thông tin người dùng
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="email">
+                        Email
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th>Số điện thoại</th>
+                    <th class="sortable" data-sort="status">
+                        Trạng thái
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="role">
+                        Vai trò
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th class="sortable" data-sort="date">
+                        Ngày tạo
+                        <i class='bx bx-sort sort-icon'></i>
+                    </th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userModel in Model)
+                {
+                    var user = userModel.User;
+                    var isLocked = user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.Now;
+                    var isAdmin = userModel.Roles.Contains("Admin");
+                    
+                    <tr class="user-row" 
+                        data-name="@(user.FullName?.ToLower() ?? user.UserName.ToLower())" 
+                        data-email="@user.Email.ToLower()" 
+                        data-phone="@(user.PhoneNumber?.ToLower() ?? "")"
+                        data-status="@(isLocked ? "locked" : (user.EmailConfirmed ? "confirmed" : "unconfirmed"))"
+                        data-role="@(isAdmin ? "admin" : "user")"
+                        data-sort-name="@(user.FullName ?? user.UserName)"
+                        data-sort-email="@user.Email"
+                        data-sort-status="@(isLocked ? "2" : (user.EmailConfirmed ? "1" : "0"))"
+                        data-sort-role="@(isAdmin ? "1" : "0")"
+                        data-sort-date="@user.CreatedAt.Ticks">
+                        <td>
+                            <input type="checkbox" class="admin-checkbox user-checkbox" value="@user.Id">
+                        </td>
+                        <td>
+                            <div class="user-avatar">
+                                @if (!string.IsNullOrEmpty(user.Avatar))
+                                {
+                                    <img src="@user.Avatar" alt="@(user.FullName ?? user.UserName)">
+                                }
+                                else
+                                {
+                                    <div class="no-avatar">
+                                        @((user.FullName ?? user.UserName).Substring(0, 1).ToUpper())
+                                    </div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-name">@(user.FullName ?? user.UserName)</div>
+                                <div class="user-username">@@@user.UserName</div>
+                                @if (!string.IsNullOrEmpty(user.Address))
+                                {
+                                    <div class="user-address">@user.Address</div>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="email-info">
+                                <span class="email-address">@user.Email</span>
+                                @if (user.EmailConfirmed)
+                                {
+                                    <i class='bx bx-check-circle verified-icon' title="Đã xác thực"></i>
+                                }
+                                else
+                                {
+                                    <i class='bx bx-x-circle unverified-icon' title="Chưa xác thực"></i>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(user.PhoneNumber))
+                            {
+                                <span class="phone-number">@user.PhoneNumber</span>
+                            }
+                            else
+                            {
+                                <span class="no-phone">Chưa có</span>
+                            }
+                        </td>
+                        <td>
+                            @if (isLocked)
+                            {
+                                <span class="status-badge locked">Đã khóa</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge @(user.EmailConfirmed ? "verified" : "unverified")">
+                                    @(user.EmailConfirmed ? "Đã xác thực" : "Chưa xác thực")
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <span class="role-badge @(isAdmin ? "admin" : "user")">
+                                @(isAdmin ? "Quản trị viên" : "Người dùng")
+                            </span>
+                        </td>
+                        <td>
+                            <span class="date-text">@user.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="@Url.Action("Details", new { id = user.Id })" class="action-btn view-btn" title="Xem chi tiết">
+                                    <i class='bx bx-show'></i>
+                                </a>
+                                @if (isAdmin)
+                                {
+                                    <a href="@Url.Action("Edit", new { id = user.Id })" class="action-btn edit-btn" title="Chỉnh sửa">
+                                        <i class='bx bx-edit'></i>
+                                    </a>
+                                }
+                                <button class="action-btn @(isLocked ? "unlock-btn" : "lock-btn")" 
+                                        onclick="toggleUserStatus('@user.Id')" 
+                                        title="@(isLocked ? "Mở khóa" : "Khóa tài khoản")">
+                                    <i class='bx @(isLocked ? "bx-lock-open" : "bx-lock")'></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="deleteUser('@user.Id')" title="Xóa">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Grid View -->
+    <div id="gridView" class="user-grid" style="display: none;">
+        @foreach (var userModel in Model)
+        {
+            var user = userModel.User;
+            var isLocked = user.LockoutEnd.HasValue && user.LockoutEnd > DateTimeOffset.Now;
+            var isAdmin = userModel.Roles.Contains("Admin");
+            
+            <div class="user-card" 
+                 data-name="@(user.FullName?.ToLower() ?? user.UserName.ToLower())" 
+                 data-email="@user.Email.ToLower()" 
+                 data-status="@(isLocked ? "locked" : (user.EmailConfirmed ? "confirmed" : "unconfirmed"))"
+                 data-role="@(isAdmin ? "admin" : "user")">
+                <div class="user-card-header">
+                    <div class="user-card-avatar">
+                        @if (!string.IsNullOrEmpty(user.Avatar))
+                        {
+                            <img src="@user.Avatar" alt="@(user.FullName ?? user.UserName)">
+                        }
+                        else
+                        {
+                            <div class="no-avatar">
+                                @((user.FullName ?? user.UserName).Substring(0, 1).ToUpper())
+                            </div>
+                        }
+                    </div>
+                    <div class="user-card-overlay">
+                        <div class="overlay-actions">
+                            <a href="@Url.Action("Details", new { id = user.Id })" class="overlay-btn">
+                                <i class='bx bx-show'></i>
+                            </a>
+                            @if (isAdmin)
+                            {
+                                <a href="@Url.Action("Edit", new { id = user.Id })" class="overlay-btn">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                            }
+                            <button class="overlay-btn @(isLocked ? "unlock" : "lock")" onclick="toggleUserStatus('@user.Id')">
+                                <i class='bx @(isLocked ? "bx-lock-open" : "bx-lock")'></i>
+                            </button>
+                            <button class="overlay-btn delete" onclick="deleteUser('@user.Id')">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-card-content">
+                    <h5 class="user-card-name">@(user.FullName ?? user.UserName)</h5>
+                    <div class="user-card-username">@@@user.UserName</div>
+                    <div class="user-card-email">@user.Email</div>
+                    @if (!string.IsNullOrEmpty(user.PhoneNumber))
+                    {
+                        <div class="user-card-phone">@user.PhoneNumber</div>
+                    }
+                    <div class="user-card-footer">
+                        @if (isLocked)
+                        {
+                            <span class="status locked">Đã khóa</span>
+                        }
+                        else
+                        {
+                            <span class="status @(user.EmailConfirmed ? "verified" : "unverified")">
+                                @(user.EmailConfirmed ? "Đã xác thực" : "Chưa xác thực")
+                            </span>
+                        }
+                        <span class="role @(isAdmin ? "admin" : "user")">
+                            @(isAdmin ? "Admin" : "User")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class='bx bx-user'></i>
+            </div>
+            <h5 class="empty-title">Chưa có người dùng nào</h5>
+            <p class="empty-description">Hãy thêm quản trị viên đầu tiên của bạn!</p>
+            <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                <i class='bx bx-user-plus'></i>
+                Thêm quản trị viên mới
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Html.AntiForgeryToken()
+    <script src="~/js/admin/user-management.js" asp-append-version="true"></script>
+} 

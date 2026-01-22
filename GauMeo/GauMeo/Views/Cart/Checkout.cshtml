@@ -1,0 +1,304 @@
+@model CheckoutViewModel
+
+@{
+    ViewBag.Title = "Thanh toán - GauMeo Petshop";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/checkout.css">
+}
+
+<main>
+    <div class="breadcrumb">
+        <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
+        <a href="/Cart" class="breadcrumb-link">Giỏ hàng</a> /
+        <span class="breadcrumb-link active">Thanh toán</span>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-error">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h1 class="checkout-title">Thanh toán</h1>
+            <div class="checkout-steps">
+                <div class="step active" id="step-1">
+                    <span class="step-number">1</span>
+                    <span class="step-text">Thông tin giao hàng</span>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step" id="step-2">
+                    <span class="step-number">2</span>
+                    <span class="step-text">Thanh toán</span>
+                </div>
+                <div class="step-divider"></div>
+                <div class="step" id="step-3">
+                    <span class="step-number">3</span>
+                    <span class="step-text">Hoàn thành</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout-content">
+            <!-- Phần bên trái - Form -->
+            <div class="checkout-left">
+                <form asp-action="Checkout" method="post" id="checkout-form" class="delivery-form">
+                    @Html.AntiForgeryToken()
+                    
+                    <!-- Bước 1: Thông tin giao hàng -->
+                    <div class="checkout-step-content" id="step-content-1">
+                        <div class="delivery-info-section">
+                            <h2 class="section-title">Thông tin giao hàng</h2>
+                            
+                            <div class="form-group">
+                                <label asp-for="CustomerName">Họ và tên *</label>
+                                <input asp-for="CustomerName" type="text" required placeholder="Nhập họ và tên của bạn">
+                                <span asp-validation-for="CustomerName" class="field-validation-error"></span>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label asp-for="CustomerEmail">Email</label>
+                                    <input asp-for="CustomerEmail" type="email" placeholder="Nhập email (không bắt buộc)">
+                                    <span asp-validation-for="CustomerEmail" class="field-validation-error"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CustomerPhone">Số điện thoại *</label>
+                                    <input asp-for="CustomerPhone" type="tel" required placeholder="Nhập số điện thoại">
+                                    <span asp-validation-for="CustomerPhone" class="field-validation-error"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="ShippingAddress">Địa chỉ giao hàng *</label>
+                                <textarea asp-for="ShippingAddress" rows="3" required placeholder="Nhập địa chỉ giao hàng chi tiết (số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố)"></textarea>
+                                <span asp-validation-for="ShippingAddress" class="field-validation-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="BillingAddress">Địa chỉ hóa đơn (tùy chọn)</label>
+                                <textarea asp-for="BillingAddress" rows="2" placeholder="Để trống nếu trùng với địa chỉ giao hàng"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label asp-for="Notes">Ghi chú (tùy chọn)</label>
+                                <textarea asp-for="Notes" rows="3" placeholder="Ghi chú cho đơn hàng..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Phương thức vận chuyển -->
+                        <div class="shipping-section">
+                            <h2 class="section-title">Phương thức vận chuyển</h2>
+                            <div class="shipping-options">
+                                <div class="shipping-option active" data-method="standard" data-price="30000">
+                                    <div class="shipping-radio">
+                                        <input type="radio" id="standard" name="shipping" value="standard" checked>
+                                        <label for="standard"></label>
+                                    </div>
+                                    <div class="shipping-info">
+                                        <div class="shipping-name">Giao hàng tiêu chuẩn</div>
+                                        <div class="shipping-desc">3-5 ngày làm việc</div>
+                                    </div>
+                                    <div class="shipping-price">
+                                        @if (Model.SubTotal >= 700000)
+                                        {
+                                            <span class="free-shipping">Miễn phí</span>
+                                        }
+                                        else
+                                        {
+                                            <span>30.000đ</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if (Model.SubTotal >= 700000)
+                            {
+                                <div class="free-shipping-notice">
+                                    <i class="icon-check"></i>
+                                    <span>Chúc mừng! Bạn được miễn phí vận chuyển cho đơn hàng trên 700.000đ</span>
+                                </div>
+                            }
+                            else
+                            {
+                                var amountLeft = 700000 - Model.SubTotal;
+                                <div class="shipping-promotion">
+                                    <i class="icon-info"></i>
+                                    <span>Mua thêm @amountLeft.ToString("N0")đ để được miễn phí vận chuyển</span>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Button chuyển bước -->
+                        <div class="checkout-actions">
+                            <button type="button" class="btn-continue-payment" id="btn-next-step">Tiếp tục thanh toán</button>
+                            <a href="/Cart" class="btn-back">← Quay lại giỏ hàng</a>
+                        </div>
+                    </div>
+
+                    <!-- Bước 2: Phương thức thanh toán -->
+                    <div class="checkout-step-content" id="step-content-2" style="display: none;">
+                        <div class="delivery-info-section">
+                            <h2 class="section-title">Phương thức thanh toán</h2>
+                            <div class="payment-methods">
+                                <div class="payment-option active">
+                                    <input type="radio" id="cod" name="PaymentMethod" value="COD" checked>
+                                    <label for="cod" class="payment-label">
+                                        <div class="payment-icon">💰</div>
+                                        <div class="payment-info">
+                                            <span class="payment-name">Thanh toán khi nhận hàng (COD)</span>
+                                            <span class="payment-desc">Bạn thanh toán bằng tiền mặt khi nhận hàng</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <div class="payment-option">
+                                    <input type="radio" id="bank" name="PaymentMethod" value="BankTransfer">
+                                    <label for="bank" class="payment-label">
+                                        <div class="payment-icon">🏦</div>
+                                        <div class="payment-info">
+                                            <span class="payment-name">Chuyển khoản ngân hàng</span>
+                                            <span class="payment-desc">Chuyển khoản trước khi giao hàng</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <div class="payment-option">
+                                    <input type="radio" id="ewallet" name="PaymentMethod" value="EWallet">
+                                    <label for="ewallet" class="payment-label">
+                                        <div class="payment-icon">📱</div>
+                                        <div class="payment-info">
+                                            <span class="payment-name">Ví điện tử</span>
+                                            <span class="payment-desc">Thanh toán qua MoMo, ZaloPay</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions cho bước 2 -->
+                        <div class="checkout-actions">
+                            <button type="submit" class="btn-continue-payment">Hoàn tất đặt hàng</button>
+                            <button type="button" class="btn-back" id="btn-prev-step">← Quay lại thông tin giao hàng</button>
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    <input type="hidden" asp-for="SubTotal" />
+                    <input type="hidden" asp-for="ShippingFee" />
+                    <input type="hidden" asp-for="TotalAmount" />
+                </form>
+
+                <!-- Important Notice -->
+                <div class="important-notice">
+                    <h3 class="notice-title">Lưu ý quan trọng</h3>
+                    <div class="notice-content">
+                        <div class="notice-item">
+                            <span class="notice-icon">!</span>
+                            <span>Vui lòng kiểm tra kỹ thông tin giao hàng trước khi đặt hàng</span>
+                        </div>
+                        <div class="notice-item">
+                            <span class="notice-icon">!</span>
+                            <span>Đơn hàng sẽ được xác nhận trong vòng 24h kể từ khi đặt hàng</span>
+                        </div>
+                        <div class="notice-item">
+                            <span class="notice-icon">!</span>
+                            <span>Miễn phí giao hàng cho đơn hàng từ 700.000đ trở lên</span>
+                        </div>
+                        <div class="notice-item">
+                            <span class="notice-icon">!</span>
+                            <span>Hỗ trợ đổi trả trong vòng 7 ngày với sản phẩm chưa sử dụng</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phần bên phải - Tóm tắt đơn hàng -->
+            <div class="checkout-right">
+                <div class="order-summary">
+                    <h2 class="section-title">Tóm tắt đơn hàng</h2>
+                    
+                    <!-- Danh sách sản phẩm -->
+                    <div class="order-items">
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <div class="order-item">
+                                <div class="order-item-image">
+                                    <img src="@(item.Product.ProductImages?.FirstOrDefault()?.ImageUrl ?? "/images/products/default-product.jpg")" alt="@item.Product.Name">
+                                </div>
+                                <div class="order-item-info">
+                                    <h4 class="order-item-name">@item.Product.Name</h4>
+                                    @if (!string.IsNullOrEmpty(item.SelectedVariants))
+                                    {
+                                        var variants = item.GetSelectedVariants();
+                                        @if (variants.Any())
+                                        {
+                                            <div class="order-item-details">
+                                                @foreach (var variant in variants)
+                                                {
+                                                    <span class="variant-tag">@variant.Key: @variant.Value</span>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                    <div class="order-item-price">
+                                        <span class="order-item-quantity">SL: @item.Quantity</span>
+                                        <span class="order-item-total">@item.GetSubTotal().ToString("N0")đ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Tóm tắt giá -->
+                    <div class="price-summary">
+                        <div class="price-row">
+                            <span>Tạm tính (@Model.CartItems.Count() sản phẩm)</span>
+                            <span id="subtotal">@Model.SubTotal.ToString("N0")đ</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Phí vận chuyển</span>
+                            <span id="shipping-fee">
+                                @if (Model.ShippingFee > 0)
+                                {
+                                    @Model.ShippingFee.ToString("N0")<text>đ</text>
+                                }
+                                else
+                                {
+                                    <span class="free-text">Miễn phí</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="checkout-price-divider"></div>
+                        <div class="price-row total-row">
+                            <span>Tổng cộng</span>
+                            <span id="total-amount">@Model.TotalAmount.ToString("N0")đ</span>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin liên hệ -->
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span class="contact-icon">📞</span>
+                            <span>Hotline: 1900 1234</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">✉️</span>
+                            <span>Email: support@gaumeo.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="~/js/checkout.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+} 

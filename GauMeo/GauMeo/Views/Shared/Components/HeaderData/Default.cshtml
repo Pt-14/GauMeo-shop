@@ -1,0 +1,108 @@
+@model GauMeo.ViewComponents.HeaderDataViewModel
+
+<nav class="header-nav">
+    <ul>
+        @if (Model.DogMainCategory != null)
+        {
+        <li class="nav-dropdown nav-dog">
+            <a href="/Product/Category/@Model.DogMainCategory.Slug">@Model.DogMainCategory.Name <span class="arrow-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></a>
+            <div class="dropdown-menu multi-col">
+                @{
+                    var dogParentCategories = Model.DogCategories.Where(c => c.Level == 2).OrderBy(c => c.DisplayOrder).ToList();
+                }
+                @foreach (var parentCategory in dogParentCategories)
+                {
+                <div class="dropdown-col">
+                        <div class="dropdown-title" onclick="window.location.href='/Product/Category/@parentCategory.Slug'">@parentCategory.Name</div>
+                        @{
+                            var subCategories = Model.DogCategories.Where(c => c.Level == 3 && c.ParentCategoryId == parentCategory.Id).OrderBy(c => c.DisplayOrder).ToList();
+                        }
+                        @foreach (var subCategory in subCategories)
+                        {
+                            <div class="dropdown-sub" onclick="window.location.href='/Product/Category/@subCategory.Slug'">
+                                @if (!string.IsNullOrEmpty(subCategory.Icon))
+                                {
+                                    <span class="dropdown-icon">@subCategory.Icon</span>
+                                }
+                                @subCategory.Name
+                </div>
+                        }
+                </div>
+                }
+            </div>
+        </li>
+        }
+        @if (Model.CatMainCategory != null)
+        {
+        <li class="nav-dropdown nav-cat">
+            <a href="/Product/Category/@Model.CatMainCategory.Slug">@Model.CatMainCategory.Name <span class="arrow-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></a>
+            <div class="dropdown-menu multi-col">
+                @{
+                    var catParentCategories = Model.CatCategories.Where(c => c.Level == 2).OrderBy(c => c.DisplayOrder).ToList();
+                }
+                @foreach (var parentCategory in catParentCategories)
+                {
+                <div class="dropdown-col">
+                        <div class="dropdown-title" onclick="window.location.href='/Product/Category/@parentCategory.Slug'">@parentCategory.Name</div>
+                        @{
+                            var subCategories = Model.CatCategories.Where(c => c.Level == 3 && c.ParentCategoryId == parentCategory.Id).OrderBy(c => c.DisplayOrder).ToList();
+                        }
+                        @foreach (var subCategory in subCategories)
+                        {
+                            <div class="dropdown-sub" onclick="window.location.href='/Product/Category/@subCategory.Slug'">
+                                @if (!string.IsNullOrEmpty(subCategory.Icon))
+                                {
+                                    <span class="dropdown-icon">@subCategory.Icon</span>
+                                }
+                                @subCategory.Name
+                </div>
+                        }
+                </div>
+                }
+            </div>
+        </li>
+        }
+        @if (Model.ActiveServices != null && Model.ActiveServices.Any())
+        {
+        <li class="nav-dropdown nav-service">
+            <a href="/Service/Index">Dịch vụ <span class="arrow-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></a>
+            <div class="dropdown-menu multi-col">
+                <div class="dropdown-col">
+                    @foreach (var service in Model.ActiveServices)
+                    {
+                        <div class="dropdown-sub" onclick="window.location.href='/Service/Index?serviceId=@service.Id'">@service.Name</div>
+                    }
+                </div>
+            </div>
+        </li>
+        }
+        @if (Model.ActiveBrands != null && Model.ActiveBrands.Any())
+        {
+        <li class="nav-dropdown nav-brand">
+            <a href="/Brand/Index">Thương hiệu <span class="arrow-svg"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span></a>
+            <div class="dropdown-menu multi-col">
+                @{
+                    var brandList = Model.ActiveBrands.ToList();
+                    var itemsPerColumn = 5; // Mỗi cột có tối đa 5 brand
+                    var totalColumns = (int)Math.Ceiling(brandList.Count / (double)itemsPerColumn);
+                }
+                @for (int col = 0; col < totalColumns; col++)
+                {
+                    <div class="dropdown-col">
+                        @{
+                            var startIndex = col * itemsPerColumn;
+                            var endIndex = Math.Min(startIndex + itemsPerColumn, brandList.Count);
+                        }
+                        @for (int i = startIndex; i < endIndex; i++)
+                        {
+                            var brand = brandList[i];
+                            <div class="dropdown-sub" onclick="window.location.href='/Brand/Detail/@brand.Id'">@brand.Name</div>
+                        }
+                    </div>
+                }
+            </div>
+        </li>
+        }
+        <li><a href="/Promotion/Index">Khuyến mãi</a></li>
+    </ul>
+</nav> 

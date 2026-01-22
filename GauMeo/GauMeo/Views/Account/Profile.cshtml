@@ -1,0 +1,451 @@
+@model GauMeo.Models.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Trang cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+}
+
+@Html.AntiForgeryToken()
+
+<div class="container-fluid profile-page-container">
+    <div class="row">
+        <div class="col-12 col-md-4 col-lg-3">
+            <div class="card profile-card">
+                    <div class="card-header profile-header">
+                        <div class="profile-avatar-section">
+                            @if (!string.IsNullOrEmpty(Model.Avatar))
+                            {
+                                <div class="profile-thumb-img" style="background-image: url('@Model.Avatar')"></div>
+                            }
+                            else
+                            {
+                                <div class="profile-thumb-img profile-avatar-default">
+                                    @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Substring(0,1).ToUpper() : Model.Email.Substring(0,1).ToUpper())
+                                </div>
+                            }
+                        </div>
+                        <div class="profile-user-info mt-3">
+                            <p class="profile-user-name m-0"><strong>@(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName : Model.Email)</strong></p>
+                        </div>
+                    </div>
+                    <div class="profile-divider"></div>
+                    <div class="card-body profile-menu-body">
+                        <div class="profile-menu-section">
+                            <ul class="nav flex-column profile-menu">
+                                <li class="profile-menu-item active" data-section="my-account">
+                                    <p>Tài khoản của tôi</p>
+                                </li>
+                                <li class="profile-menu-item" data-section="address">
+                                    <p>Địa chỉ</p>
+                                </li>
+                                <li class="profile-menu-item" data-section="order-history">
+                                    <p>Lịch sử đơn hàng</p>
+                                </li>
+                                <li class="profile-menu-item" data-section="my-wishlist">
+                                    <p>Danh sách yêu thích</p>
+                                </li>
+                                                @if (!Model.HasExternalLogin)
+                {
+                                <li class="profile-menu-item" data-section="password-setting">
+                                    <p>Cài đặt mật khẩu</p>
+                                </li>
+                }
+                                <li class="profile-menu-item logout-item">
+                                    <form asp-action="Logout" asp-controller="Account" method="post" style="margin: 0;">
+                                        <button type="submit" class="logout-btn">Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="col-12 col-md-8 col-lg-9">
+                <!-- My Account Section -->
+                <div id="my-account-section" class="profile-content-section active">
+                    <div class="card profile-card">
+                        <div class="card-header profile-section-header">
+                            <h3 class="section-title" id="section-title-text">Tài khoản của tôi</h3>
+                        </div>
+                        <div class="profile-divider"></div>
+                        <div class="card-body profile-section-body">
+                            <!-- View Mode -->
+                            <div id="profile-view-mode">
+                                <div class="profile-info-grid">
+                                    <div class="profile-info-row">
+                                        <label class="profile-info-label">Email</label>
+                                        <div class="profile-info-value">
+                                            @Model.Email
+                                        </div>
+                                    </div>
+                                    <div class="profile-info-row">
+                                        <label class="profile-info-label">Họ và tên</label>
+                                        <div class="profile-info-value">
+                                            @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName : "Chưa cập nhật")
+                                        </div>
+                                    </div>
+                                    <div class="profile-info-row">
+                                        <label class="profile-info-label">Số điện thoại</label>
+                                        <div class="profile-info-value">
+                                            @(!string.IsNullOrEmpty(Model.PhoneNumber) ? Model.PhoneNumber : "Chưa cập nhật")
+                                        </div>
+                                    </div>
+                                    <div class="profile-info-row">
+                                        <label class="profile-info-label">Giới tính</label>
+                                        <div class="profile-info-value">
+                                            @(Model.Gender == "Male" ? "Nam" : Model.Gender == "Female" ? "Nữ" : "Chưa cập nhật")
+                                        </div>
+                                    </div>
+                                    <div class="profile-info-row">
+                                        <label class="profile-info-label">Ngày sinh</label>
+                                        <div class="profile-info-value">
+                                            @(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="profile-action-row mt-4">
+                                    <button type="button" class="btn profile-edit-btn" id="edit-profile-btn">
+                                        <i class="fas fa-edit"></i>
+                                        Chỉnh sửa thông tin
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Edit Mode -->
+                            <div id="profile-edit-mode" style="display: none;">
+                                <form asp-action="Profile" asp-controller="Account" method="post" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="edit-form-group">
+                                                <label class="edit-form-label">Email</label>
+                                                <input asp-for="Email" class="form-control edit-input" readonly>
+                                            </div>
+                                            <div class="edit-form-group">
+                                                <label class="edit-form-label">Họ và tên</label>
+                                                <input asp-for="FullName" class="form-control edit-input" placeholder="Phương Trường">
+                                            </div>
+                                            <div class="edit-form-group">
+                                                <label class="edit-form-label">Số điện thoại</label>
+                                                <input asp-for="PhoneNumber" class="form-control edit-input" placeholder="0914793231">
+                                            </div>
+                                            <div class="edit-form-group">
+                                                <label class="edit-form-label">Giới tính</label>
+                                                <div class="gender-options">
+                                                    <label class="gender-option">
+                                                        <input type="radio" asp-for="Gender" value="Male" checked="@(Model.Gender == "Male")">
+                                                        <span>Nam</span>
+                                                    </label>
+                                                    <label class="gender-option">
+                                                        <input type="radio" asp-for="Gender" value="Female" checked="@(Model.Gender == "Female")">
+                                                        <span>Nữ</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="edit-form-group">
+                                                <label class="edit-form-label">Ngày sinh</label>
+                                                <div class="input-group date" id="birthdatePicker">
+                                                    <input type="text" class="form-control edit-input" name="DateOfBirthFormatted" id="textMemberBirthdate" value="@(Model.DateOfBirth?.ToString("dd/MM/yyyy") ?? "")" placeholder="dd/MM/yyyy">
+                                                    <span class="input-group-text" role="button">
+                                                        <i class="fas fa-calendar"></i>
+                                                    </span>
+                                                </div>
+                                                <input asp-for="DateOfBirth" type="hidden" id="hiddenDateOfBirth">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="edit-form-group">
+                                                <label class="edit-form-label">Ảnh hồ sơ</label>
+                                                <div class="profile-image-upload-row">
+                                                    @if (!string.IsNullOrEmpty(Model.Avatar))
+                                                    {
+                                                        <div class="current-avatar" style="background-image: url('@Model.Avatar')"></div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="current-avatar profile-avatar-default">
+                                                            @(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Substring(0,1).ToUpper() : Model.Email.Substring(0,1).ToUpper())
+                                                        </div>
+                                                    }
+                                                    <button type="button" class="btn btn-outline-primary upload-btn">Chọn tệp</button>
+                                                    <span class="upload-note">Không có tệp nào được chọn</span>
+                                                    <small class="upload-help">File <span class="file-types">.jpg, .png, .jpeg</span></small>
+                                                    <input type="file" name="AvatarFile" accept="image/*" style="display: none;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="edit-form-actions">
+                                        <button type="submit" class="btn btn-update">
+                                            <i class="fas fa-check"></i> Cập nhật
+                                        </button>
+                                        <button type="button" class="btn btn-cancel" id="cancel-edit-btn">Hủy</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Section -->
+                <div id="address-section" class="profile-content-section">
+                    <div class="card profile-card">
+                        <div class="card-header profile-section-header">
+                            <h3 class="section-title">Địa chỉ giao hàng</h3>
+                        </div>
+                        <div class="profile-divider"></div>
+                        <div class="card-body profile-section-body">
+                            <div class="address-table-header">
+                                <div class="address-col-name">Tên</div>
+                                <div class="address-col-address">Địa chỉ</div>
+                                <div class="address-col-phone">Số điện thoại</div>
+                            </div>
+                            <div class="address-content">
+                                @if (!string.IsNullOrEmpty(Model.Address))
+                                {
+                                    <div class="address-row">
+                                        <div class="address-col-name">@Model.FullName</div>
+                                        <div class="address-col-address">@Model.Address</div>
+                                        <div class="address-col-phone">@Model.PhoneNumber</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="no-address">
+                                        Chưa có địa chỉ giao hàng.
+                                    </div>
+                                }
+                            </div>
+                            <div class="profile-action-row mt-4">
+                                <button type="button" class="btn profile-add-btn">
+                                    + Thêm địa chỉ mới
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order History Section -->
+                <div id="order-history-section" class="profile-content-section">
+                    <div class="card profile-card">
+                        <div class="card-header profile-section-header">
+                            <h3 class="section-title">Lịch sử đơn hàng</h3>
+                        </div>
+                        <div class="profile-divider"></div>
+                        <div class="card-body profile-section-body">
+                            <!-- View Mode -->
+                            <div id="order-view-mode">
+                                <div class="order-search-section">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" id="order-search-input" placeholder="Mã đơn hàng, Giá tiền">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select class="form-control" id="order-status-filter">
+                                                <option value="">Hiển thị tất cả</option>
+                                                <option value="Pending">Chờ xác nhận</option>
+                                                <option value="Confirmed">Đã xác nhận</option>
+                                                <option value="Processing">Đang xử lý</option>
+                                                <option value="Shipping">Đang giao hàng</option>
+                                                <option value="Delivered">Đã giao hàng</option>
+                                                <option value="Cancelled">Đã hủy</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="order-table-header">
+                                    <div class="order-col-id">Mã đơn hàng</div>
+                                    <div class="order-col-price">Giá (VNĐ)</div>
+                                    <div class="order-col-status">Trạng thái đơn hàng</div>
+                                    <div class="order-col-date">Ngày đặt hàng</div>
+                                </div>
+                                <div class="order-content" id="order-list">
+                                    @if (Model.Orders != null && Model.Orders.Any())
+                                    {
+                                        @foreach (var order in Model.Orders)
+                                        {
+                                            <div class="order-row" data-order-id="@order.Id" data-order-number="@order.OrderNumber">
+                                                <div class="order-col-id">@order.OrderNumber</div>
+                                                <div class="order-col-price">@order.TotalAmount.ToString("N0")</div>
+                                                <div class="order-col-status">
+                                                    @switch (order.Status)
+                                                    {
+                                                        case "Pending":
+                                                            <span class="badge bg-warning">Chờ xác nhận</span>
+                                                            break;
+                                                        case "Confirmed":
+                                                            <span class="badge bg-info">Đã xác nhận</span>
+                                                            break;
+                                                        case "Processing":
+                                                            <span class="badge bg-primary">Đang xử lý</span>
+                                                            break;
+                                                        case "Shipping":
+                                                            <span class="badge bg-secondary">Đang giao hàng</span>
+                                                            break;
+                                                        case "Delivered":
+                                                            <span class="badge bg-success">Đã giao hàng</span>
+                                                            break;
+                                                        case "Cancelled":
+                                                            <span class="badge bg-danger">Đã hủy</span>
+                                                            break;
+                                                        default:
+                                                            <span class="badge bg-secondary">@order.Status</span>
+                                                            break;
+                                                    }
+                                                </div>
+                                                <div class="order-col-date">@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="no-orders">
+                                            Chưa có lịch sử đơn hàng.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Detail Mode -->
+                            <div id="order-detail-mode" style="display: none;">
+                                <div class="order-detail-header">
+                                    <h4 id="order-detail-title">Chi tiết đơn hàng</h4>
+                                    <button type="button" class="btn btn-outline-secondary" id="back-to-orders-btn">
+                                        <i class="fas fa-arrow-left"></i> Quay lại
+                                    </button>
+                                </div>
+                                <div id="order-detail-content">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Wishlist Section -->
+                <div id="my-wishlist-section" class="profile-content-section">
+                    <div class="card profile-card">
+                        <div class="card-header profile-section-header">
+                            <div class="wishlist-header-row">
+                            <h3 class="section-title">Danh sách yêu thích của tôi</h3>
+                                <button id="add-all-to-cart-btn" class="btn btn-success add-all-cart-btn" style="display: none;">
+                                    Thêm tất cả vào giỏ hàng
+                                </button>
+                            </div>
+                        </div>
+                        <div class="profile-divider"></div>
+                        <div class="card-body profile-section-body">
+                            <div class="wishlist-count-container">
+                                <p class="wishlist-count" id="wishlist-count">0 sản phẩm trong danh sách yêu thích của tôi</p>
+                            </div>
+                            
+                            <!-- Empty state -->
+                            <div id="wishlist-empty-state" class="wishlist-empty-state">
+                                <h5 class="wishlist-subtitle">Danh sách sản phẩm</h5>
+                                <div class="no-products">
+                                    Không có sản phẩm
+                                </div>
+                            </div>
+
+                            <!-- Products list -->
+                            <div id="wishlist-products-container" class="wishlist-products-container" style="display: none;">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Setting Section -->
+                @if (!Model.HasExternalLogin)
+                {
+                <div id="password-setting-section" class="profile-content-section">
+                    <div class="card profile-card">
+                        <div class="card-header profile-section-header">
+                            <h3 class="section-title">Đổi mật khẩu</h3>
+                        </div>
+                        <div class="profile-divider"></div>
+                        <div class="card-body profile-section-body">
+                                <form class="password-form" method="post">
+                                <div class="password-form-row">
+                                        <label for="current-password">Mật khẩu hiện tại <span class="text-danger">*</span></label>
+                                        <input type="password" id="current-password" name="currentPassword" class="form-control" required>
+                                </div>
+                                <div class="password-form-row">
+                                        <label for="new-password">Mật khẩu mới <span class="text-danger">*</span></label>
+                                        <input type="password" id="new-password" name="newPassword" class="form-control" required>
+                                </div>
+                                <div class="password-requirements">
+                                    <p>* Mật khẩu mới phải có ít nhất 8 ký tự bao gồm chữ cái</p>
+                                    <p>* Mật khẩu mới phải chứa ít nhất một chữ thường, chữ hoa và số</p>
+                                </div>
+                                <div class="password-form-row">
+                                        <label for="confirm-password">Xác nhận mật khẩu mới <span class="text-danger">*</span></label>
+                                        <input type="password" id="confirm-password" name="confirmPassword" class="form-control" required>
+                                </div>
+                                <div class="profile-action-row mt-4">
+                                    <button type="submit" class="btn profile-update-btn">
+                                            <i class="fas fa-check"></i> Cập nhật
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                }
+                else
+                {
+                    <!-- External Login Info Section -->
+                    <div id="password-setting-section" class="profile-content-section">
+                        <div class="card profile-card">
+                            <div class="card-header profile-section-header">
+                                <h3 class="section-title">Cài đặt mật khẩu</h3>
+                            </div>
+                            <div class="profile-divider"></div>
+                            <div class="card-body profile-section-body">
+                                <div class="external-login-info">
+                                    <div class="info-icon">
+                                        <i class="fas fa-info-circle text-info" style="font-size: 48px;"></i>
+                                    </div>
+                                    <div class="info-content mt-3">
+                                        <h5>Tài khoản đăng nhập bằng @string.Join(", ", Model.ExternalLoginProviders)</h5>
+                                        <p class="text-muted">
+                                            Tài khoản của bạn được đăng nhập thông qua @string.Join(", ", Model.ExternalLoginProviders), vì vậy không cần đặt mật khẩu riêng.
+                                            Mật khẩu được quản lý bởi @string.Join(", ", Model.ExternalLoginProviders).
+                                        </p>
+                                        <div class="external-login-badges mt-3">
+                                            @foreach (var provider in Model.ExternalLoginProviders)
+                                            {
+                                                <span class="badge bg-primary me-2">
+                                                    @if (provider == "Google")
+                                                    {
+                                                        <i class="fab fa-google me-1"></i>
+                                                    }
+                                                    @provider
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Success != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @ViewBag.Success
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/profile-new.js" asp-append-version="true"></script>
+} 

@@ -1,0 +1,312 @@
+@model IEnumerable<GauMeo.Models.Orders.Order>
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    
+    var statistics = ViewBag.Statistics;
+    var currentStatus = ViewData["CurrentStatus"]?.ToString() ?? "";
+    var orders = Model ?? new List<GauMeo.Models.Orders.Order>();
+}
+
+<div class="main-content">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class='bx bx-shopping-bag'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(statistics?.TotalOrders ?? 0)</div>
+                <div class="stat-label">Tổng đơn hàng</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class='bx bx-time-five'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(statistics?.PendingOrders ?? 0)</div>
+                <div class="stat-label">Chờ xử lý</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class='bx bx-package'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(statistics?.ShippingOrders ?? 0)</div>
+                <div class="stat-label">Đang giao</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@(statistics?.DeliveredOrders ?? 0)</div>
+                <div class="stat-label">Đã giao</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="admin-card">
+        <div class="search-filter-section">
+            <div class="search-container-admin">
+                <div class="search-input-wrapper">
+                    <i class='bx bx-search search-icon'></i>
+                    <input type="text" id="orderSearch" class="search-input-admin" placeholder="Tìm kiếm đơn hàng, khách hàng...">
+                </div>
+            </div>
+            <div class="filter-controls">
+                <select id="statusFilter" class="filter-select" onchange="filterByStatus()">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Pending" selected="@(currentStatus == "Pending")">Chờ xử lý</option>
+                    <option value="Confirmed" selected="@(currentStatus == "Confirmed")">Đã xác nhận</option>
+                    <option value="Processing" selected="@(currentStatus == "Processing")">Đang xử lý</option>
+                    <option value="Shipping" selected="@(currentStatus == "Shipping")">Đang giao</option>
+                    <option value="Delivered" selected="@(currentStatus == "Delivered")">Đã giao</option>
+                    <option value="Cancelled" selected="@(currentStatus == "Cancelled")">Đã hủy</option>
+                </select>
+                <input type="date" id="dateFilter" class="filter-select">
+            </div>
+            <div class="action-controls">
+                <a href="@Url.Action("Statistics")" class="btn-admin btn-info">
+                    <i class='bx bx-stats'></i>
+                    Thống kê
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">Danh sách đơn hàng (@orders.Count() đơn hàng)</h4>
+            <div class="view-options">
+                <button class="view-btn active" data-view="table" title="Hiển thị dạng bảng">
+                    <i class='bx bx-table'></i>
+                </button>
+                <button class="view-btn" data-view="grid" title="Hiển thị dạng lưới">
+                    <i class='bx bx-grid-alt'></i>
+                </button>
+            </div>
+        </div>
+
+        @if (orders.Any())
+        {
+            <!-- Table View -->
+            <div id="tableView" class="table-responsive">
+                <table class="admin-table" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" class="admin-checkbox">
+                            </th>
+                            <th class="sortable" data-sort="order">
+                                Mã đơn hàng
+                                <i class='bx bx-sort sort-icon'></i>
+                            </th>
+                            <th class="sortable" data-sort="customer">
+                                Khách hàng
+                                <i class='bx bx-sort sort-icon'></i>
+                            </th>
+                            <th>Số điện thoại</th>
+                            <th class="sortable" data-sort="amount">
+                                Tổng tiền
+                                <i class='bx bx-sort sort-icon'></i>
+                            </th>
+                            <th class="sortable" data-sort="status">
+                                Trạng thái
+                                <i class='bx bx-sort sort-icon'></i>
+                            </th>
+                            <th>Thanh toán</th>
+                            <th class="sortable" data-sort="date">
+                                Ngày đặt
+                                <i class='bx bx-sort sort-icon'></i>
+                            </th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in orders)
+                        {
+                            <tr class="order-row" 
+                                data-order="@order.OrderNumber.ToLower()" 
+                                data-customer="@order.CustomerName.ToLower()" 
+                                data-status="@order.Status"
+                                data-sort-order="@order.OrderNumber"
+                                data-sort-customer="@order.CustomerName"
+                                data-sort-amount="@order.TotalAmount"
+                                data-sort-status="@order.Status"
+                                data-sort-date="@order.CreatedAt.Ticks">
+                                <td>
+                                    <input type="checkbox" class="admin-checkbox order-checkbox" value="@order.Id">
+                                </td>
+                                <td>
+                                    <div class="order-info">
+                                        <div class="order-number">#@order.OrderNumber</div>
+                                        <div class="order-items-count">@(order.OrderItems?.Count ?? 0) sản phẩm</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="customer-info">
+                                        <div class="customer-name">@order.CustomerName</div>
+                                        @if (!string.IsNullOrEmpty(order.CustomerEmail))
+                                        {
+                                            <div class="customer-email-small">@order.CustomerEmail</div>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="customer-phone">@order.CustomerPhone</div>
+                                </td>
+                                <td>
+                                    <div class="order-amount">@order.TotalAmount.ToString("N0")₫</div>
+                                    @if (order.ShippingFee > 0)
+                                    {
+                                        <div class="shipping-fee-info">Phí ship: @order.ShippingFee.ToString("N0")₫</div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="status-badge @order.Status.ToLower()">
+                                        @switch (order.Status)
+                                        {
+                                            case "Pending":
+                                                @:Chờ xử lý
+                                                break;
+                                            case "Confirmed":
+                                                @:Đã xác nhận
+                                                break;
+                                            case "Processing":
+                                                @:Đang xử lý
+                                                break;
+                                            case "Shipping":
+                                                @:Đang giao
+                                                break;
+                                            case "Delivered":
+                                                @:Đã giao
+                                                break;
+                                            case "Cancelled":
+                                                @:Đã hủy
+                                                break;
+                                            default:
+                                                @order.Status
+                                                break;
+                                        }
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="payment-badge @order.PaymentStatus.ToLower()">
+                                        @switch (order.PaymentStatus)
+                                        {
+                                            case "Pending":
+                                                @:Chờ thanh toán
+                                                break;
+                                            case "Paid":
+                                                @:Đã thanh toán
+                                                break;
+                                            case "Failed":
+                                                @:Thất bại
+                                                break;
+                                            case "Refunded":
+                                                @:Đã hoàn tiền
+                                                break;
+                                            default:
+                                                @order.PaymentStatus
+                                                break;
+                                        }
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="date-text">@order.CreatedAt.ToString("dd/MM/yyyy")</span>
+                                    <div class="time-text">@order.CreatedAt.ToString("HH:mm")</div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="@Url.Action("Details", new { id = order.Id })" class="action-btn view-btn" title="Xem chi tiết">
+                                            <i class='bx bx-show'></i>
+                                        </a>
+                                        @if (order.Status == "Pending" || order.Status == "Confirmed")
+                                        {
+                                            <button class="action-btn delete-btn" onclick="showCancelModal('@order.Id', '@order.OrderNumber')" title="Hủy đơn">
+                                                <i class='bx bx-x'></i>
+                                            </button>
+                                        }
+                                        <div class="dropdown action-dropdown">
+                                            <button class="action-btn dropdown-btn" title="Thêm hành động">
+                                                <i class='bx bx-dots-vertical-rounded'></i>
+                                            </button>
+                                            <div class="dropdown-content">
+                                                @if (order.Status == "Pending")
+                                                {
+                                                    <a href="#" onclick="updateOrderStatus('@order.Id', 'Confirmed')">Xác nhận đơn</a>
+                                                }
+                                                @if (order.Status == "Confirmed")
+                                                {
+                                                    <a href="#" onclick="updateOrderStatus('@order.Id', 'Processing')">Bắt đầu xử lý</a>
+                                                }
+                                                @if (order.Status == "Processing")
+                                                {
+                                                    <a href="#" onclick="updateOrderStatus('@order.Id', 'Shipping')">Bắt đầu giao hàng</a>
+                                                }
+                                                @if (order.Status == "Shipping")
+                                                {
+                                                    <a href="#" onclick="updateOrderStatus('@order.Id', 'Delivered')">Đã giao thành công</a>
+                                                }
+                                                @if (order.PaymentStatus == "Pending")
+                                                {
+                                                    <a href="#" onclick="updatePaymentStatus('@order.Id', 'Paid')">Đánh dấu đã thanh toán</a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class='bx bx-shopping-bag'></i>
+                </div>
+                <h3>Không có đơn hàng nào</h3>
+                <p>@(string.IsNullOrEmpty(currentStatus) ? "Chưa có đơn hàng nào trong hệ thống" : $"Không có đơn hàng nào ở trạng thái '{currentStatus}'")</p>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Cancel Order Modal -->
+<div id="cancelOrderModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Hủy đơn hàng</h3>
+            <span class="close" onclick="closeCancelModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn hủy đơn hàng <span id="cancelOrderNumber"></span>?</p>
+            <div class="form-group">
+                <label for="cancelReason">Lý do hủy đơn:</label>
+                <textarea id="cancelReason" class="form-control" rows="3" placeholder="Nhập lý do hủy đơn..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeCancelModal()">Hủy</button>
+            <button type="button" class="btn btn-danger" onclick="confirmCancelOrder()">Xác nhận hủy</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/order-management.js"></script>
+}
+
+@section Styles {
+    <link href="~/css/admin/order-management.css" rel="stylesheet" />
+} 

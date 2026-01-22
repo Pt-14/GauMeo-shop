@@ -1,0 +1,190 @@
+@model IEnumerable<GauMeo.Models.Orders.CartItem>
+
+@{
+    ViewBag.Title = "Giỏ hàng - GauMeo Petshop";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/cart.css">
+}
+
+<main>
+    <div class="breadcrumb">
+        <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
+        <a href="#" class="breadcrumb-link active">Giỏ hàng</a>
+    </div>
+    <h1 class="cart-title">Giỏ hàng của bạn</h1>
+    <section class="cart-section">
+        <div class="cart-main-col">
+            <div class="cart-list">
+                <div class="cart-header">
+                    <span>Thông tin sản phẩm</span>
+                    <span>Đơn giá</span>
+                    <span>Số lượng</span>
+                    <span>Thành tiền</span>
+                    <span></span>
+                </div>
+                <div class="cart-items">
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <div class="cart-item" data-cart-item-id="@item.Id">
+                                <div class="cart-item-image">
+                                    <img src="@(item.Product.ProductImages?.FirstOrDefault()?.ImageUrl ?? "/images/products/default-product.jpg")" 
+                                         alt="@item.Product.Name">
+                                </div>
+                                <div class="cart-item-info">
+                                    <h3 class="cart-item-name">@item.Product.Name</h3>
+                                    <p class="cart-item-brand">@item.Product.Brand?.Name</p>
+                                    @if (!string.IsNullOrEmpty(item.SelectedVariants))
+                                    {
+                                        var variants = item.GetSelectedVariants();
+                                        @if (variants.Any())
+                                        {
+                                            <div class="cart-item-variants">
+                                                @foreach (var variant in variants)
+                                                {
+                                                    <span class="variant-tag">@variant.Key: @variant.Value</span>
+                                                }
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <div class="cart-item-price">
+                                    @{
+                                        // Calculate if this item has discount by comparing with original product price
+                                        bool hasDiscount = item.Product.IsOnSale && item.Product.DiscountPercent > 0;
+                                        
+                                        if (hasDiscount)
+                                        {
+                                            // Calculate original price with variants
+                                            decimal originalPrice = item.Product.OriginalPrice;
+                                            
+                                            // Add variant adjustments if any
+                                            if (!string.IsNullOrEmpty(item.SelectedVariants))
+                                            {
+                                                var variants = item.GetSelectedVariants();
+                                                foreach (var variant in variants)
+                                                {
+                                                    var productVariant = item.Product.ProductVariants?
+                                                        .FirstOrDefault(v => v.Type?.ToLower() == variant.Key.ToLower() && 
+                                                                           v.Name == variant.Value && v.IsActive);
+                                                    
+                                                    if (productVariant?.PriceAdjustment.HasValue == true)
+                                                    {
+                                                        originalPrice += productVariant.PriceAdjustment.Value;
+                                                    }
+                                                }
+                                            }
+                                    
+                                            <span class="original-price">@originalPrice.ToString("N0") đ</span>
+                                            <span class="discounted-price">@item.UnitPrice.ToString("N0") đ</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="price">@item.UnitPrice.ToString("N0") đ</span>
+                                        }
+                                    }
+                                </div>
+                                <div class="cart-item-quantity">
+                                    <div class="quantity-selector">
+                                        <button class="qty-btn minus" data-cart-item-id="@item.Id">-</button>
+                                        <input type="number" value="@item.Quantity" min="1" class="qty-input" data-cart-item-id="@item.Id">
+                                        <button class="qty-btn plus" data-cart-item-id="@item.Id">+</button>
+                                    </div>
+                                </div>
+                                <div class="cart-item-total">
+                                    <span class="subtotal">@item.GetSubTotal().ToString("N0") đ</span>
+                                </div>
+                                <div class="cart-item-actions">
+                                    <button class="cart-remove btn-icon" data-cart-item-id="@item.Id" title="Xóa sản phẩm">
+                                        <svg width="14" height="16" viewBox="0 0 448 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill="currentColor" d="M192 188v216c0 6.627-5.373 12-12 12h-24c-6.627 0-12-5.373-12-12V188c0-6.627 5.373-12 12-12h24c6.627 0 12 5.373 12 12zm100-12h-24c-6.627 0-12 5.373-12 12v216c0 6.627 5.373 12 12 12h24c6.627 0 12-5.373 12-12V188c0-6.627-5.373-12-12-12zm132-96c13.255 0 24 10.745 24 24v12c0 6.627-5.373 12-12 12h-20v336c0 26.51-21.49 48-48 48H80c-26.51 0-48-21.49-48-48V128H12c-6.627 0-12-5.373-12-12v-12c0-13.255 10.745-24 24-24h74.411l34.018-56.696A48 48 0 0 1 173.589 0h100.823a48 48 0 0 1 41.16 23.304L349.589 80H424zm-269.611 0h139.223L276.16 50.913A6 6 0 0 0 271.015 48h-94.028a6 6 0 0 0-5.145 2.913L154.389 80zM368 128H80v330a6 6 0 0 0 6 6h276a6 6 0 0 0 6-6V128z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                        <!-- Clear All Button -->
+                        <div class="clear-all-divider"></div>
+                        <div class="clear-all-section">
+                            <button class="clear-all-btn" title="Xóa hết tất cả sản phẩm">
+                                <svg width="14" height="16" viewBox="0 0 448 512" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="currentColor" d="M192 188v216c0 6.627-5.373 12-12 12h-24c-6.627 0-12-5.373-12-12V188c0-6.627 5.373-12 12-12h24c6.627 0 12 5.373 12 12zm100-12h-24c-6.627 0-12 5.373-12 12v216c0 6.627 5.373 12 12 12h24c6.627 0 12-5.373 12-12V188c0-6.627-5.373-12-12-12zm132-96c13.255 0 24 10.745 24 24v12c0 6.627-5.373 12-12 12h-20v336c0 26.51-21.49 48-48 48H80c-26.51 0-48-21.49-48-48V128H12c-6.627 0-12-5.373-12-12v-12c0-13.255 10.745-24 24-24h74.411l34.018-56.696A48 48 0 0 1 173.589 0h100.823a48 48 0 0 1 41.16 23.304L349.589 80H424zm-269.611 0h139.223L276.16 50.913A6 6 0 0 0 271.015 48h-94.028a6 6 0 0 0-5.145 2.913L154.389 80zM368 128H80v330a6 6 0 0 0 6 6h276a6 6 0 0 0 6-6V128z"></path>
+                                </svg>
+                                <span>Xóa hết tất cả</span>
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="cart-empty">
+                            <div class="empty-cart-icon">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="m1 1 4 4 10 2 2 8-12 1M7 13l-2-2m0 0L3 9m2 2 2 2"></path>
+                                </svg>
+                            </div>
+                            <h3>Giỏ hàng trống</h3>
+                            <p>Hãy thêm sản phẩm vào giỏ hàng để bắt đầu mua sắm!</p>
+                            <a href="/Home/Index" class="btn">Tiếp tục mua sắm</a>
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (Model != null && Model.Any())
+            {
+                <div class="cart-note-block">
+                    <label for="note">Ghi chú đơn hàng</label>
+                    <textarea id="note" rows="3" placeholder="Ghi chú đặc biệt cho đơn hàng..."></textarea>
+                </div>
+            }
+        </div>
+        <div class="cart-summary-block">
+            @if (Model != null && Model.Any())
+            {
+                <div class="cart-summary-title">Tóm tắt đơn hàng</div>
+                <div class="cart-summary-divider"></div>
+                <div class="cart-total-row">
+                    <span>Tổng sản phẩm (@Model.Sum(item => item.Quantity) sản phẩm)</span>
+                    <span class="cart-subtotal">@Model.Sum(item => item.GetSubTotal()).ToString("N0") đ</span>
+                </div>
+                <div class="cart-summary-divider"></div>
+                <div class="cart-total-row total-row">
+                    <span>Tổng tiền</span>
+                    <span class="cart-total">@Model.Sum(item => item.GetSubTotal()).ToString("N0") đ</span>
+                </div>
+                <div class="cart-summary-divider"></div>
+                <div class="cart-summary-note">*Phí vận chuyển sẽ được tính ở trang thanh toán.<br>Bạn cũng có thể nhập mã giảm giá ở trang thanh toán.</div>
+                <div class="cart-summary-divider"></div>
+                <div class="cart-summary-buttons">
+                    <a href="/Cart/Checkout" id="buy-now" class="btn">Tiến hành thanh toán</a>
+                    <a href="/Product" id="continue-shopping" class="btn btn-outline">Tiếp tục mua sắm</a>
+                </div>
+            }
+            else
+            {
+                <div class="cart-summary-title">Giỏ hàng trống</div>
+                <div class="cart-summary-divider"></div>
+                <div class="cart-summary-buttons">
+                    <a href="/Brand/Index" id="continue-shopping" class="btn btn-outline">Khám phá sản phẩm</a>
+                </div>
+            }
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script src="/js/cart.js"></script>
+    <script>
+        // Anti-forgery token for AJAX requests
+        $.ajaxSetup({
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('RequestVerificationToken', 
+                    $('input[name="__RequestVerificationToken"]').val());
+            }
+        });
+    </script>
+}

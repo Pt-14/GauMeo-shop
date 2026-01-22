@@ -1,0 +1,195 @@
+@model GauMeo.Models.Products.Product
+@{
+    ViewData["Title"] = "Xóa sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <!-- Header Section -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title text-danger">
+                <i class='bx bx-trash'></i>
+                Xóa sản phẩm: @Model.Name
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index")">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">Xóa</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Warning Alert -->
+    <div class="admin-card">
+        <div class="card-body">
+            <div class="alert alert-danger">
+                <i class='bx bx-error-circle'></i>
+                <strong>Cảnh báo:</strong> Bạn đang thực hiện xóa sản phẩm. Hành động này sẽ đặt trạng thái sản phẩm thành "Không hoạt động" và không thể hoàn tác.
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Information -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h5 class="card-title">
+                <i class='bx bx-info-circle'></i>
+                Thông tin sản phẩm sẽ bị xóa
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="product-summary">
+                <div class="product-header">
+                    <div class="product-image">
+                        @if (Model.ProductImages?.Any(img => img.IsMain) == true)
+                        {
+                            <img src="@Model.ProductImages.First(img => img.IsMain).ImageUrl" alt="@Model.Name" />
+                        }
+                        else
+                        {
+                            <div class="no-image">
+                                <i class='bx bx-image'></i>
+                            </div>
+                        }
+                    </div>
+                    <div class="product-info">
+                        <h4>@Model.Name</h4>
+                        <div class="product-meta">
+                            <span class="product-id">Mã SP: SP@Model.Id.ToString("D6")</span>
+                            <span class="product-category">@(Model.Category?.Name ?? "Chưa phân loại")</span>
+                            <span class="product-brand">@(Model.Brand?.Name ?? "Chưa có thương hiệu")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-details">
+                    <div class="detail-row">
+                        <div class="detail-col">
+                            <label>Giá bán hiện tại:</label>
+                            <span class="price">@Model.CurrentPrice.ToString("N0")₫</span>
+                        </div>
+                        <div class="detail-col">
+                            <label>Tồn kho:</label>
+                            <span class="stock @(Model.StockQuantity > 10 ? "high" : Model.StockQuantity > 0 ? "medium" : "low")">
+                                @Model.StockQuantity
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <div class="detail-col">
+                            <label>Đánh giá:</label>
+                            <span>@Model.Rating.ToString("F1")/5 (@Model.ReviewCount đánh giá)</span>
+                        </div>
+                        <div class="detail-col">
+                            <label>Trạng thái hiện tại:</label>
+                            <span class="status-badge @(Model.IsActive ? "active" : "inactive")">
+                                @(Model.IsActive ? "Hoạt động" : "Tạm dừng")
+                            </span>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                    {
+                        <div class="detail-row full-width">
+                            <div class="detail-col">
+                                <label>Mô tả:</label>
+                                <p>@Model.ShortDescription</p>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="detail-row">
+                        <div class="detail-col">
+                            <label>Ngày tạo:</label>
+                            <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div class="detail-col">
+                            <label>Cập nhật cuối:</label>
+                            <span>@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Data Warning -->
+                <div class="related-data-warning">
+                    <h6><i class='bx bx-info-circle'></i> Dữ liệu liên quan</h6>
+                    <ul>
+                        @if (Model.ProductImages?.Any() == true)
+                        {
+                            <li>@Model.ProductImages.Count() hình ảnh</li>
+                        }
+                        @if (Model.ProductDescriptions?.Any() == true)
+                        {
+                            <li>@Model.ProductDescriptions.Count() mô tả chi tiết</li>
+                        }
+                        @if (Model.ProductVariants?.Any() == true)
+                        {
+                            <li>@Model.ProductVariants.Count() biến thể</li>
+                        }
+                        @if (Model.ReviewCount > 0)
+                        {
+                            <li>@Model.ReviewCount đánh giá từ khách hàng</li>
+                        }
+                    </ul>
+                    <p class="text-muted">
+                        <strong>Lưu ý:</strong> Việc xóa sản phẩm sẽ chuyển trạng thái thành "Không hoạt động" 
+                        nhưng vẫn giữ lại tất cả dữ liệu liên quan để tham khảo trong tương lai.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Form -->
+    <div class="admin-card">
+        <div class="card-body">
+            <form asp-action="Delete" method="post" class="delete-form">
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="confirmation-section">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                        <label class="form-check-label" for="confirmDelete">
+                            <strong>Tôi xác nhận muốn xóa sản phẩm này</strong>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-admin btn-danger" id="deleteButton" disabled>
+                        <i class='bx bx-trash'></i>
+                        Xác nhận xóa sản phẩm
+                    </button>
+                    <a href="@Url.Action("Details", new { id = Model.Id })" class="btn-admin btn-info">
+                        <i class='bx bx-show'></i>
+                        Xem chi tiết
+                    </a>
+                    <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                        <i class='bx bx-x'></i>
+                        Hủy bỏ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Enable/disable delete button based on confirmation checkbox
+        document.getElementById('confirmDelete').addEventListener('change', function() {
+            document.getElementById('deleteButton').disabled = !this.checked;
+        });
+
+        // Add confirmation dialog on form submit
+        document.querySelector('.delete-form').addEventListener('submit', function(e) {
+            if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm "@Model.Name"? Hành động này không thể hoàn tác.')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+} 

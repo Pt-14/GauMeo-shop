@@ -1,0 +1,173 @@
+@model GauMeo.Models.Products.Review
+
+@{
+    ViewData["Title"] = "Chi tiết đánh giá";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/review-management.css" />
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Chi tiết đánh giá</h1>
+        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Thông tin đánh giá</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-section">
+                        <h6 class="section-title">Thông tin sản phẩm</h6>
+                        <div class="info-item">
+                            <label>Sản phẩm:</label>
+                            <a href="/Product/Detail/@Model.ProductId" class="text-primary">
+                                @Model.Product.Name
+                            </a>
+                        </div>
+                        <div class="info-item">
+                            <label>Đánh giá:</label>
+                            <div class="rating-stars">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= Model.Rating)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                }
+                                <span class="ms-2">(@Model.Rating/5)</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <label>Trạng thái:</label>
+                            @if (Model.IsApproved)
+                            {
+                                <span class="badge bg-success">Đã duyệt</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">Chờ duyệt</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-section">
+                        <h6 class="section-title">Thông tin người đánh giá</h6>
+                        <div class="info-item">
+                            <label>Tên khách hàng:</label>
+                            <span>@Model.CustomerName</span>
+                            @if (Model.IsVerifiedPurchase)
+                            {
+                                <span class="badge bg-success ms-2">Đã mua hàng</span>
+                            }
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span>@Model.CustomerEmail</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Ngày đánh giá:</label>
+                            <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-content mt-4">
+                <h6 class="section-title">Nội dung đánh giá</h6>
+                <div class="review-text">
+                    @Model.Comment
+                </div>
+            </div>
+
+            @if (Model.ReviewImages != null && Model.ReviewImages.Any())
+            {
+                <div class="review-images mt-4">
+                    <h6 class="section-title">Hình ảnh đánh giá</h6>
+                    <div class="row g-3">
+                        @foreach (var image in Model.ReviewImages)
+                        {
+                            <div class="col-md-3 col-sm-6">
+                                <div class="review-image">
+                                    <img src="@image.ImageUrl" alt="Review image" class="img-fluid" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        color: #1e293b;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .info-item {
+        margin-bottom: 1rem;
+    }
+
+    .info-item label {
+        font-weight: 500;
+        color: #64748b;
+        margin-bottom: 0.25rem;
+        display: block;
+    }
+
+    .info-item span {
+        color: #334155;
+    }
+
+    .review-text {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 1rem;
+        color: #334155;
+        line-height: 1.6;
+    }
+
+    .review-image {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .review-image img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .btn-outline-secondary {
+        color: #64748b;
+        border-color: #e2e8f0;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f1f5f9;
+        border-color: #e2e8f0;
+        color: #1e293b;
+    }
+</style> 

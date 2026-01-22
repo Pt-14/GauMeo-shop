@@ -1,0 +1,181 @@
+@{
+    var monthlyRevenue = ViewBag.MonthlyRevenue as IEnumerable<dynamic>;
+    var orderStats = ViewBag.OrderStats as IEnumerable<dynamic>;
+}
+
+<div class="row">
+    <!-- Revenue Chart -->
+    <div class="col-md-8">
+        <div class="admin-card">
+            <h4>
+                <i class="fas fa-chart-line text-success me-2"></i>
+                Doanh thu theo tháng (@DateTime.Now.Year)
+            </h4>
+            <canvas id="salesChart" style="height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <!-- Order Status Chart -->
+    <div class="col-md-4">
+        <div class="admin-card">
+            <h4>
+                <i class="fas fa-chart-pie text-info me-2"></i>
+                Thống kê đơn hàng
+            </h4>
+            <canvas id="ordersChart" style="height: 300px;"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Monthly Revenue Table -->
+    <div class="col-md-6">
+        <div class="admin-card">
+            <h4>
+                <i class="fas fa-table text-primary me-2"></i>
+                Chi tiết doanh thu
+            </h4>
+            <div class="admin-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tháng</th>
+                            <th>Doanh thu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (monthlyRevenue != null)
+                        {
+                            @foreach (var item in monthlyRevenue)
+                            {
+                                <tr>
+                                    <td>Tháng @item.Month</td>
+                                    <td class="fw-bold text-success">@item.Revenue.ToString("N0")₫</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">Chưa có dữ liệu</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Status Table -->
+    <div class="col-md-6">
+        <div class="admin-card">
+            <h4>
+                <i class="fas fa-list text-warning me-2"></i>
+                Chi tiết đơn hàng
+            </h4>
+            <div class="admin-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th>Số lượng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (orderStats != null)
+                        {
+                            @foreach (var item in orderStats)
+                            {
+                                <tr>
+                                    <td>@item.Status</td>
+                                    <td class="fw-bold">@item.Count</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" class="text-center text-muted">Chưa có dữ liệu</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Sample data for charts
+            const monthlyData = [
+                { month: 1, revenue: 5000000 },
+                { month: 2, revenue: 7500000 },
+                { month: 3, revenue: 6200000 },
+                { month: 4, revenue: 8100000 },
+                { month: 5, revenue: 9300000 },
+                { month: 6, revenue: 7800000 }
+            ];
+
+            // Monthly Revenue Chart
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+            new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: monthlyData.map(x => `Tháng ${x.month}`),
+                    datasets: [{
+                        label: 'Doanh thu (₫)',
+                        data: monthlyData.map(x => x.revenue),
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('vi-VN').format(value) + '₫';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Order Status Chart
+            const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+            new Chart(ordersCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hoàn thành', 'Đang xử lý', 'Chờ xử lý', 'Đã hủy'],
+                    datasets: [{
+                        data: [65, 20, 10, 5],
+                        backgroundColor: ['#27ae60', '#f39c12', '#3498db', '#e74c3c']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+} 

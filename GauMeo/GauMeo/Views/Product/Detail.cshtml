@@ -1,0 +1,486 @@
+@model GauMeo.Models.ProductDetailViewModel
+
+@{
+    ViewBag.Title = Model.Name + " - GauMeo Petshop";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/product-detail.css">
+}
+  <main>
+    <div class="breadcrumb">
+      <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
+      <a href="/Product/@(Model.Brand?.Replace(" ", ""))" class="breadcrumb-link">@Model.Brand</a> /
+      <a href="#" class="breadcrumb-link active">@Model.Name</a>
+    </div>
+    <section class="product-detail">
+      <div class="product-images">
+        <div class="thumb-container">
+          <button class="thumb-nav-btn thumb-up" aria-label="Lên" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+          </button>
+          <div class="thumb-list vertical">
+            @for (int i = 0; i < Model.Images.Count; i++)
+            {
+              <img src="@Model.Images[i]" alt="thumb@(i+1)" class="@(i == 0 ? "active" : "")">
+            }
+          </div>
+          <button class="thumb-nav-btn thumb-down" aria-label="Xuống">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+        </div>
+        <img class="main-img" src="@Model.Images.FirstOrDefault()" alt="@Model.Name">
+      </div>
+      <div class="product-info">
+        <h1 class="product-title">@Model.Name</h1>
+        <div class="product-rating">
+          @{
+            var hasReviews = Model.ReviewCount > 0;
+            var starColor = hasReviews ? "#EDA100" : "#dddddd";
+          }
+          <div class="rating-stars">
+            @for (int i = 1; i <= 5; i++)
+            {
+              if (i <= Model.Rating)
+              {
+                <svg class="star-icon" width="20" height="20" viewBox="0 0 576 512" fill="currentColor">
+                  <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                </svg>
+              }
+              else
+              {
+                <svg class="star-icon empty" width="20" height="20" viewBox="0 0 576 512" fill="currentColor">
+                  <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                </svg>
+              }
+            }
+          </div>
+          <div class="rating-review-count">@Model.ReviewCount đánh giá</div>
+        </div>
+        <div class="product-price">
+          <div class="price-row">
+            @if (Model.HasVariants)
+            {
+              @* Có variants *@
+              @if (Model.DiscountPercent > 0)
+              {
+                @* Có variants + có discount *@
+                <span class="original-price">@Model.MinPrice.ToString("N0")đ - @Model.MaxPrice.ToString("N0")đ</span>
+                <span class="current-price">@((Model.MinPrice * (100 - Model.DiscountPercent) / 100).ToString("N0"))đ - @((Model.MaxPrice * (100 - Model.DiscountPercent) / 100).ToString("N0"))đ</span>
+                <span class="discount">-@Model.DiscountPercent%</span>
+              }
+              else
+              {
+                @* Có variants + không discount *@
+                <span class="current-price">@Model.MinPrice.ToString("N0")đ - @Model.MaxPrice.ToString("N0")đ</span>
+              }
+            }
+            else
+            {
+              @* Không có variants *@
+              @if (Model.DiscountPercent > 0)
+              {
+                @* Không variants + có discount *@
+                <span class="original-price">@Model.OriginalPrice.ToString("N0")đ</span>
+                <span class="current-price">@Model.CurrentPrice.ToString("N0")đ</span>
+                <span class="discount">-@Model.DiscountPercent%</span>
+              }
+              else
+              {
+                @* Không variants + không discount *@
+                <span class="current-price">@Model.CurrentPrice.ToString("N0")đ</span>
+              }
+            }
+          </div>
+        </div>
+        @if (Model.AllVariants != null && Model.AllVariants.Any())
+        {
+          <div class="product-variants">
+            @foreach (var variantGroup in Model.AllVariants)
+            {
+              var variantType = variantGroup.Key;
+              var variants = variantGroup.Value;
+              
+              <div class="variant-group @(variantType)-group">
+                <div class="variant-options">
+                  @foreach (var variant in variants)
+                  {
+                    <button class="variant-btn @(variant.IsSelected ? "selected" : "")" 
+                            data-variant-id="@variant.Id" 
+                            data-variant-type="@variant.Type"
+                            data-original-price="@variant.OriginalPrice"
+                            data-price-adjustment="@variant.PriceAdjustment">
+                      @variant.Name
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+        <div class="quantity-section">
+          <div class="quantity-selector">
+            <button class="qty-btn minus" disabled>-</button>
+            <input type="number" value="1" min="1" class="qty-input">
+            <button class="qty-btn plus">+</button>
+          </div>
+          <div class="stock-info">@Model.StockQuantity sản phẩm có sẵn</div>
+        </div>
+        <div class="product-actions">
+          <button class="buy-now">Mua ngay</button>
+          <button class="add-to-cart" data-product-id="@Model.Id" data-product-name="@Model.Name">
+            Thêm vào giỏ hàng
+          </button>
+          <button class="favorite-btn" title="Yêu thích" data-product-id="@Model.Id" data-product-name="@Model.Name">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Promotions Section -->
+        <div class="promotions-section">
+          <svg class="svg-inline--fa fa-tags fa-w-20 mr-5px" aria-hidden="true" data-prefix="far" data-icon="tags" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" data-fa-i2svg=""><path fill="currentColor" d="M625.941 293.823L421.823 497.941c-18.746 18.746-49.138 18.745-67.882 0l-.36-.36L592 259.882 331.397 0h48.721a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882zm-128 0L293.823 497.941C284.451 507.314 272.166 512 259.882 512c-12.284 0-24.569-4.686-33.941-14.059L14.059 286.059A48 48 0 0 1 0 252.118V48C0 21.49 21.49 0 48 0h204.118a47.998 47.998 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882zM464 259.882L252.118 48H48v204.118l211.886 211.878L464 259.882zM144 96c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"></path></svg>
+          <span class="text-promotion-header">Khuyến mãi</span>
+        </div>
+
+        <!-- Shipping Note -->
+        <div class="shipping-note">
+          <svg class="svg-inline--fa fa-info-circle fa-w-16 fs-14" data-placement="top" data-toggle="tooltip" title="promotion shipping" aria-labelledby="svg-inline--fa-title-5" data-prefix="far" data-icon="info-circle" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><title id="svg-inline--fa-title-5">promotion shipping</title><path fill="currentColor" d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm0-338c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"></path></svg>
+          <span>Miễn phí vận chuyển nội thành TP.HCM cho đơn hàng từ 700.000₫</span>
+        </div>
+
+        <div class="other-channels">
+          <div class="channel-divider">
+            <span>Hoặc mua qua các kênh bán hàng</span>
+          </div>
+          <div class="channel-buttons">
+            <a href="https://shopee.vn/" class="channel-btn shopee-btn" target="_blank" rel="noopener noreferrer">
+              <img src="https://i0.wp.com/casabenedetta.com.br/wp-content/uploads/2021/10/yLB7uLfQuMFZ0ll-Shopee-Logo-PNG-File.png?fit=573%2C600&ssl=1" alt="Shopee">
+              <span>Shopee</span>
+            </a>
+            <a href="https://pages.lazada.vn/" class="channel-btn lazada-btn" target="_blank" rel="noopener noreferrer">
+              <img src="https://laz-img-cdn.alicdn.com/tfs/TB1PApewFT7gK0jSZFpXXaTkpXa-200-200.png" alt="Lazada">
+              <span>Lazada</span>
+            </a>
+            <a href="https://shop-vn.tiktok.com/" class="channel-btn tiktok-btn" target="_blank" rel="noopener noreferrer">
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQE7AkfXvflBT8ulXZKwlhtyRtIQFiqHcqitJvMpetZKh2hCjA18pDsm-8PtEd-6qQzgDs&usqp=CAU" alt="TikTok Shop">
+              <span>TikTok Shop</span>
+            </a>
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Info Tabs - Sử dụng dữ liệu từ database -->
+    <section class="product-info-tabs">
+      <div class="tab-navigation">
+        @if (Model.ProductDescriptions != null && Model.ProductDescriptions.Any())
+        {
+          @for (int i = 0; i < Model.ProductDescriptions.Count; i++)
+          {
+            var description = Model.ProductDescriptions[i];
+            <button class="tab-btn @(i == 0 ? "active" : "")" data-tab="tab-@description.Id">@description.Title</button>
+          }
+        }
+        <button class="tab-btn" data-tab="return-policy">Chính sách đổi trả</button>
+      </div>
+
+      @if (Model.ProductDescriptions != null && Model.ProductDescriptions.Any())
+      {
+        @for (int i = 0; i < Model.ProductDescriptions.Count; i++)
+        {
+          var description = Model.ProductDescriptions[i];
+          <div class="tab-content @(i == 0 ? "active" : "")" id="tab-@description.Id">
+            @if (i != 0)
+            {
+              <h4>@description.Title</h4>
+            }
+            @Html.Raw(description.Content.Replace("\n", "<br>"))
+          </div>
+        }
+      }
+
+      <div class="tab-content" id="return-policy">
+        <h4>Chính sách đổi trả</h4>
+        <div>
+          • Sản phẩm còn nguyên vẹn, chưa mở túi<br>
+          • Còn trong thời hạn đổi trả (7 ngày kể từ ngày mua)<br>
+          • Có hóa đơn mua hàng<br>
+          • Sản phẩm bị lỗi từ nhà sản xuất<br><br>
+          <b>Quy trình đổi trả:</b><br>
+          1. Liên hệ hotline: 1900-1234 để được tư vấn<br>
+          2. Gửi ảnh sản phẩm và hóa đơn qua email: support@gaumeo.com<br>
+          3. Đội ngũ kỹ thuật sẽ xác nhận và hướng dẫn đổi trả<br>
+          4. Khách hàng gửi sản phẩm về cửa hàng hoặc chúng tôi sẽ đến lấy<br>
+          5. Hoàn tiền hoặc đổi sản phẩm mới trong vòng 3-5 ngày làm việc<br><br>
+          <b>Phí đổi trả:</b><br>
+          • Miễn phí nếu lỗi từ nhà sản xuất<br>
+          • Khách hàng chịu phí vận chuyển nếu đổi ý không muốn mua
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Products Section -->
+    <section class="products related-products">
+      <h2>Sản phẩm cùng thương hiệu</h2>
+      <div class="product-slider">
+        <button class="product-slider-btn prev" aria-label="Trước" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <div class="product-list">
+          @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+          {
+            @foreach (var product in Model.RelatedProducts)
+            {
+              <div class="product-card" data-product-id="@product.Id" data-has-variants="@product.HasVariants.ToString().ToLower()">
+                <div class="product-image-section">
+                  <a href="@product.Url">
+                    <img src="@product.Image" alt="@product.Name">
+                  </a>
+                  @if (product.IsOnSale && product.DiscountPercent > 0)
+                  {
+                    <div class="sale-badge">-@product.DiscountPercent%</div>
+                  }
+                </div>
+                <div class="product-info-section">
+                  <a href="@product.Url">
+                    <h3>@product.Name</h3>
+                  </a>
+                  <div class="product-rating">
+                    <div class="rating-stars">
+                      @for (int i = 1; i <= 5; i++)
+                      {
+                        if (i <= product.Rating)
+                        {
+                          <svg class="star-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                          </svg>
+                        }
+                        else
+                        {
+                          <svg class="star-icon empty" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                          </svg>
+                        }
+                      }
+                    </div>
+                    <div class="rating-count">@product.ReviewCount đánh giá</div>
+                  </div>
+                  <div class="product-price">
+                    @if (product.IsOnSale)
+                    {
+                      <span class="sale-price">@product.CurrentPrice.ToString("N0")đ</span>
+                      <span class="original-price">@product.OriginalPrice.ToString("N0")đ</span>
+                    }
+                    else
+                    {
+                      <span class="current-price">@product.CurrentPrice.ToString("N0")đ</span>
+                    }
+                  </div>
+                  <button class="add-to-cart-btn" data-product-id="@product.Id">
+                    <svg class="cart-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="9" cy="21" r="1"/>
+                      <circle cx="20" cy="21" r="1"/>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    Thêm vào giỏ hàng
+                  </button>
+                </div>
+              </div>
+            }
+          }
+          else
+          {
+            <div class="no-products">
+              <p>Hiện tại chưa có sản phẩm liên quan nào.</p>
+            </div>
+          }
+        </div>
+        <button class="product-slider-btn next" aria-label="Sau">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 6 15 12 9 18"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <section class="product-review">
+      <div class="yotpo-container">
+        <div class="product-reviews-container">
+          <div class="review-tabs-section">
+            <div class="review-summary-top">
+              <div class="rating-summary">
+                <div class="rating-result" id="rating-result">
+                  <h2 class="rating-title" id="section-title" style="color:#111">Đánh giá</h2>
+                  <div class="rating-info-row">
+                    <div class="rating-stars" id="rating-stars-display">
+                      @for (int i = 1; i <= 5; i++)
+                      {
+                        if (Model.Rating >= i)
+                        {
+                          <svg class="star-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                          </svg>
+                        }
+                        else
+                        {
+                          <svg class="star-icon empty" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                          </svg>
+                        }
+                      }
+                    </div>
+                    <div class="rating-review-count" id="section-count">(@Model.ReviewCount đánh giá)</div>
+                  </div>
+                </div>
+              </div>
+              <div class="review-filter-section">
+                <select class="review-filter-select" id="review-filter">
+                  <option value="recommended" selected="selected">Được đề xuất</option>
+                  <option value="score_desc">Đánh giá: Cao đến thấp</option>
+                  <option value="score_asc">Đánh giá: Thấp đến cao</option>
+                  <option value="date_desc">Ngày: Mới nhất đến cũ nhất</option>
+                  <option value="date_asc">Ngày: Cũ nhất đến mới nhất</option>
+                </select>
+              </div>
+              <div class="review-tabs__actions">
+                <button class="btn btn--large gl-btn review-container-trigger active">Viết đánh giá</button>
+              </div>
+            </div>
+            <div class="open-form-divider"></div>
+            <div class="review-forms">
+              <!-- Review Form -->
+              <div class="review-form-container">
+                <div class="form-header">
+                  <h3 class="form-title">ĐÁNH GIÁ</h3>
+                  <button type="submit" class="submit-btn" form="review-form">
+                    <span>Đăng</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="form-divider"></div>
+                              <form id="review-form" class="form review-form" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ProductId" value="@Model.Id" />
+                <input type="hidden" name="Rating" id="selected-rating" value="0" />
+                
+                <div class="review-form__wrapper">
+                  <div class="review-form__column">
+                    <div class="field star-review-rating">
+                      <div id="star-review-rating">
+                        <div class="stars">
+                          <a class="star star-empty" title="1 sao" data-rating="1">★</a>
+                          <a class="star star-empty" title="2 sao" data-rating="2">★</a>
+                          <a class="star star-empty" title="3 sao" data-rating="3">★</a>
+                          <a class="star star-empty" title="4 sao" data-rating="4">★</a>
+                          <a class="star star-empty" title="5 sao" data-rating="5">★</a>
+                        </div>
+                        <div class="rating-text" id="rating-text">Chọn số sao</div>
+                      </div>
+                    </div>
+                    <div class="field">
+                      <input placeholder="Tên của bạn" type="text" name="CustomerName" id="review-name" required>
+                    </div>
+                    <div class="field">
+                      <input placeholder="Email" type="email" name="CustomerEmail" id="review-email" required>
+                    </div>
+                    <div class="field upload-field">
+                      <span class="upload-text">Bạn có thể tải hình ảnh lên tại đây (tối đa 5 ảnh)</span>
+                      <input type="file" name="Images" id="review-file" accept="image/*" multiple>
+                      <label for="review-file" class="file-upload-btn">Chọn hình ảnh</label>
+                      <div class="uploaded-images-preview" id="review-images-preview"></div>
+                    </div>
+                  </div>
+                  <div class="review-form__column">
+                    <div class="field field-review">
+                      <textarea placeholder="Viết đánh giá của bạn tại đây" name="Comment" rows="12" id="review-content"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              </div>
+
+            </div>
+          </div>
+          <div class="review-tabs">
+            <div id="tab-reviews" class="item content">
+              <div class="yotpo-list review-list" id="reviews-container">
+                @if (Model.Reviews != null && Model.Reviews.Any())
+                {
+                  foreach (var review in Model.Reviews)
+                  {
+                    <div class="yotpo-list__item" data-rating="@review.Rating" data-date="@review.CreatedAt">
+                      <div class="yotpo-list__item-row">
+                        <div class="yotpo-list__item-col">
+                          <div class="yotpo-list__item-rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                              if (i <= review.Rating)
+                              {
+                                <svg class="star-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                  <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                                </svg>
+                              }
+                              else
+                              {
+                                <svg class="star-icon empty" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                  <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                                </svg>
+                              }
+                            }
+                          </div>
+                          <p class="yotpo-list__item-name">@review.CustomerName</p>
+                        </div>
+                        <div class="yotpo-list__item-content-row">
+                          <div class="yotpo-list__item-content">
+                            <p>@review.Comment</p>
+                            @if (review.ImageUrls != null && review.ImageUrls.Any())
+                            {
+                              <div class="review-images">
+                                @foreach (var img in review.ImageUrls)
+                                {
+                                  <img src="@img" alt="Review image" class="review-image">
+                                }
+                              </div>
+                            }
+                          </div>
+                          <div class="yotpo-list__item-createdat">@review.CreatedAt.ToString("dd/MM/yyyy")</div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+                else
+                {
+                  <div class="no-reviews">
+                    <p>Chưa có đánh giá nào cho sản phẩm này.</p>
+                    <p>Hãy là người đầu tiên đánh giá!</p>
+                  </div>
+                }
+              </div>
+              <div class="pagination-container" id="pagination-container" style="display: none;">
+                <!-- Pagination will be loaded here -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  @section Scripts {
+    <script src="/js/product-detail.js"></script>
+    <script>
+      // Pass current user info and product ID to JavaScript
+      window.currentUserEmail = '@(User.Identity.IsAuthenticated ? User.Identity.Name : "")';
+      window.currentUserName = '@(User.Identity.IsAuthenticated ? (User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "") : "")';
+      window.productId = @Model.Id;
+      window.isUserAuthenticated = @(User.Identity.IsAuthenticated ? "true" : "false");
+    </script>
+}

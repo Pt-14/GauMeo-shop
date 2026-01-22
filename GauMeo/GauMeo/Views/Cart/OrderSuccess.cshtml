@@ -1,0 +1,312 @@
+@model Order
+
+@{
+    ViewBag.Title = "Đặt hàng thành công - GauMeo Petshop";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="/css/order-success.css">
+}
+
+<main>
+    <div class="breadcrumb">
+        <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
+        <a href="/Cart" class="breadcrumb-link">Giỏ hàng</a> /
+        <a href="/Cart/Checkout" class="breadcrumb-link">Thanh toán</a> /
+        <span class="breadcrumb-link active">Đặt hàng thành công</span>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="order-success-container">
+        <!-- Success Icon -->
+        <div class="success-icon">
+            <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22,4 12,14.01 9,11.01"></polyline>
+            </svg>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message">
+            <h1 class="success-title">Đặt hàng thành công!</h1>
+            <p class="success-subtitle">Cảm ơn bạn đã tin tưởng GauMeo Petshop</p>
+        </div>
+
+        <!-- Order Information -->
+        <div class="order-info">
+            <div class="order-number">
+                <span class="label">Mã đơn hàng:</span>
+                <span class="value">@Model.OrderNumber</span>
+            </div>
+            
+            <div class="order-details">
+                <div class="detail-row">
+                    <span class="label">Thời gian đặt:</span>
+                    <span class="value">@Model.CreatedAt.ToString("dd/MM/yyyy - HH:mm")</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Tạm tính:</span>
+                    <span class="value">@((Model.TotalAmount - Model.ShippingFee).ToString("N0")) đ</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Phí vận chuyển:</span>
+                    <span class="value">
+                        @if (Model.ShippingFee > 0)
+                        {
+                            @Model.ShippingFee.ToString("N0")<text> đ</text>
+                        }
+                        else
+                        {
+                            <span class="free-shipping-text">Miễn phí</span>
+                        }
+                    </span>
+                </div>
+                <div class="detail-row total-row">
+                    <span class="label">Tổng tiền:</span>
+                    <span class="value price">@Model.TotalAmount.ToString("N0") đ</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Phương thức thanh toán:</span>
+                    <span class="value">
+                        @switch (Model.PaymentMethod)
+                        {
+                            case "COD":
+                                @:Thanh toán khi nhận hàng
+                                break;
+                            case "BankTransfer":
+                                @:Chuyển khoản ngân hàng
+                                break;
+                            case "EWallet":
+                                @:Ví điện tử
+                                break;
+                            default:
+                                @Model.PaymentMethod
+                                break;
+                        }
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Trạng thái:</span>
+                    <span class="value status">
+                        @switch (Model.Status)
+                        {
+                            case "Pending":
+                                @:Đang chờ xử lý
+                                break;
+                            case "Confirmed":
+                                @:Đã xác nhận
+                                break;
+                            case "Processing":
+                                @:Đang xử lý
+                                break;
+                            case "Shipping":
+                                @:Đang giao hàng
+                                break;
+                            case "Delivered":
+                                @:Đã giao hàng
+                                break;
+                            case "Cancelled":
+                                @:Đã hủy
+                                break;
+                            default:
+                                @Model.Status
+                                break;
+                        }
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items Summary -->
+        <div class="order-items-summary">
+            <h2 class="items-title">Sản phẩm đã đặt (@Model.OrderItems.Count sản phẩm)</h2>
+            <div class="items-list">
+                @foreach (var item in Model.OrderItems)
+                {
+                    <div class="order-item">
+                        <div class="item-image">
+                            <img src="@item.ProductImageUrl" alt="@item.ProductName">
+                        </div>
+                        <div class="item-details">
+                            <h4 class="item-name">@item.ProductName</h4>
+                            @if (!string.IsNullOrEmpty(item.SelectedVariants))
+                            {
+                                var variants = item.GetSelectedVariants();
+                                @if (variants.Any())
+                                {
+                                    <div class="item-variants">
+                                        @foreach (var variant in variants)
+                                        {
+                                            <span class="variant-tag">@variant.Key: @variant.Value</span>
+                                        }
+                                    </div>
+                                }
+                            }
+                            <div class="item-quantity">Số lượng: @item.Quantity</div>
+                        </div>
+                        <div class="item-price">
+                            @item.SubTotal.ToString("N0") đ
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="customer-info">
+            <h2 class="info-title">Thông tin giao hàng</h2>
+            <div class="info-details">
+                <div class="info-row">
+                    <span class="info-label">Người nhận:</span>
+                    <span class="info-value">@Model.CustomerName</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Số điện thoại:</span>
+                    <span class="info-value">@Model.CustomerPhone</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                {
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">@Model.CustomerEmail</span>
+                    </div>
+                }
+                <div class="info-row">
+                    <span class="info-label">Địa chỉ giao hàng:</span>
+                    <span class="info-value">@Model.ShippingAddress</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <div class="info-row">
+                        <span class="info-label">Ghi chú:</span>
+                        <span class="info-value">@Model.Notes</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="next-steps">
+            <h2 class="steps-title">Thông tin quan trọng</h2>
+            <div class="steps-content">
+                <div class="step-item">
+                    <div class="step-icon">📞</div>
+                    <div class="step-text">
+                        <strong>Xác nhận đơn hàng:</strong> Chúng tôi sẽ liên hệ với bạn trong vòng 2-4 giờ để xác nhận đơn hàng
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">📦</div>
+                    <div class="step-text">
+                        <strong>Chuẩn bị hàng:</strong> Đơn hàng sẽ được chuẩn bị và đóng gói trong 1-2 ngày làm việc
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">🚚</div>
+                    <div class="step-text">
+                        <strong>Giao hàng:</strong> Thời gian giao hàng dự kiến từ 2-5 ngày làm việc tùy theo khu vực
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">📱</div>
+                    <div class="step-text">
+                        <strong>Theo dõi đơn hàng:</strong> Bạn sẽ nhận được SMS/Email thông báo khi đơn hàng thay đổi trạng thái
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Information -->
+        <div class="support-info">
+            <h3 class="support-title">Cần hỗ trợ?</h3>
+            <div class="support-content">
+                <div class="support-item">
+                    <span class="support-icon">📞</span>
+                    <span>Hotline: <strong>1900 1234</strong> (8:00 - 22:00)</span>
+                </div>
+                <div class="support-item">
+                    <span class="support-icon">✉️</span>
+                    <span>Email: <strong>support@gaumeo.com</strong></span>
+                </div>
+                <div class="support-item">
+                    <span class="support-icon">💬</span>
+                    <span>Live Chat trên website (8:00 - 22:00)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="/Home/Index" class="btn btn-primary">Tiếp tục mua sắm</a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="/Account/Profile#order-history" class="btn btn-outline">Xem đơn hàng của tôi</a>
+            }
+        </div>
+
+        <!-- Share Section -->
+        <div class="share-section">
+            <p class="share-text">Chia sẻ trải nghiệm của bạn với GauMeo</p>
+            <div class="share-buttons">
+                <a href="#" class="share-btn facebook">
+                    <span class="share-icon">📘</span>
+                    Facebook
+                </a>
+                <a href="#" class="share-btn instagram">
+                    <span class="share-icon">📷</span>
+                    Instagram
+                </a>
+                <a href="#" class="share-btn review">
+                    <span class="share-icon">⭐</span>
+                    Đánh giá
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        // Pass order data from server to JavaScript
+        window.orderData = {
+            id: @Model.Id,
+            orderNumber: '@Model.OrderNumber',
+            customerName: '@Model.CustomerName',
+            customerPhone: '@Model.CustomerPhone',
+            customerEmail: '@(Model.CustomerEmail ?? "")',
+            shippingAddress: '@Html.Raw(Html.Encode(Model.ShippingAddress).ToString().Replace("'", "\\'"))',
+            paymentMethod: '@Model.PaymentMethod',
+            status: '@Model.Status',
+            totalAmount: @Model.TotalAmount,
+            shippingFee: @Model.ShippingFee,
+            createdAt: '@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")',
+            notes: '@Html.Raw(Html.Encode(Model.Notes ?? "").ToString().Replace("'", "\\'"))',
+            orderItems: [
+                @foreach (var item in Model.OrderItems)
+                {
+                    <text>{
+                        id: @item.Id,
+                        productName: '@Html.Raw(Html.Encode(item.ProductName).ToString().Replace("'", "\\'"))',
+                        productBrand: '@Html.Raw(Html.Encode(item.ProductBrand ?? "").ToString().Replace("'", "\\'"))',
+                        productImageUrl: '@item.ProductImageUrl',
+                        quantity: @item.Quantity,
+                        unitPrice: @item.UnitPrice,
+                        subTotal: @item.SubTotal,
+                        selectedVariants: '@Html.Raw(Html.Encode(item.SelectedVariants ?? "").ToString().Replace("'", "\\'"))'
+                    }</text>
+                    @if (item != Model.OrderItems.Last())
+                    {
+                        <text>,</text>
+                    }
+                }
+            ]
+        };
+    </script>
+    <script src="~/js/order-success.js"></script>
+} 

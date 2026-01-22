@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh toán - GauMeo Petshop</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/checkout.css">
+    <link rel="stylesheet" href="/css/payment.css">
+</head>
+<body>
+    <main>
+        <div class="breadcrumb">
+            <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
+            <a href="/Cart/Index" class="breadcrumb-link">Giỏ hàng</a> /
+            <a href="/Cart/Checkout" class="breadcrumb-link">Thanh toán</a> /
+            <span class="breadcrumb-link active">Phương thức thanh toán</span>
+        </div>
+
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h1 class="checkout-title">Phương thức thanh toán</h1>
+                <div class="checkout-steps">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span class="step-text">Thông tin giao hàng</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step active">
+                        <span class="step-number">2</span>
+                        <span class="step-text">Thanh toán</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-text">Hoàn thành</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkout-content">
+                <!-- Phần bên trái - Phương thức thanh toán -->
+                <div class="checkout-left">
+                    <div class="payment-methods-section">
+                        <h2 class="section-title">Chọn phương thức thanh toán</h2>
+                        <div class="payment-methods">
+                            <div class="payment-method active" data-method="cod">
+                                <div class="payment-radio">
+                                    <input type="radio" id="cod" name="payment" value="cod" checked>
+                                    <label for="cod"></label>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Thanh toán khi nhận hàng (COD)</div>
+                                    <div class="payment-desc">Thanh toán bằng tiền mặt khi nhận hàng</div>
+                                </div>
+                                <div class="payment-icon">💰</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="bank">
+                                <div class="payment-radio">
+                                    <input type="radio" id="bank" name="payment" value="bank">
+                                    <label for="bank"></label>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Chuyển khoản ngân hàng</div>
+                                    <div class="payment-desc">Chuyển khoản qua tài khoản ngân hàng</div>
+                                </div>
+                                <div class="payment-icon">🏦</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="momo">
+                                <div class="payment-radio">
+                                    <input type="radio" id="momo" name="payment" value="momo">
+                                    <label for="momo"></label>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-name">Ví MoMo</div>
+                                    <div class="payment-desc">Thanh toán qua ví điện tử MoMo</div>
+                                </div>
+                                <div class="payment-icon">📱</div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="zalopay">
+                                <div class="payment-radio">
+                                    <input type="radio" id="zalopay" name="payment" value="zalopay">
+                                    <label for="zalopay"></label>
+                                </div>
+                                <div class="payment-info">
+                                    <div class="payment-name">ZaloPay</div>
+                                    <div class="payment-desc">Thanh toán qua ví điện tử ZaloPay</div>
+                                </div>
+                                <div class="payment-icon">💳</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin chuyển khoản (ẩn mặc định) -->
+                    <div class="bank-info-section" id="bank-info" style="display: none;">
+                        <h3 class="section-title">Thông tin chuyển khoản</h3>
+                        <div class="bank-details">
+                            <div class="bank-item">
+                                <strong>Ngân hàng:</strong> Vietcombank
+                            </div>
+                            <div class="bank-item">
+                                <strong>Số tài khoản:</strong> 1234567890
+                            </div>
+                            <div class="bank-item">
+                                <strong>Tên tài khoản:</strong> CONG TY GAUMEO PETSHOP
+                            </div>
+                            <div class="bank-item">
+                                <strong>Nội dung:</strong> <span id="transfer-content">GauMeo [Mã đơn hàng]</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Button actions -->
+                    <div class="checkout-actions">
+                        <button type="button" class="btn-complete-order">Hoàn tất đặt hàng</button>
+                        <a href="/Cart/Checkout" class="btn-back">← Quay lại thông tin giao hàng</a>
+                    </div>
+                </div>
+
+                <!-- Phần bên phải - Tóm tắt đơn hàng -->
+                <div class="checkout-right">
+                    <div class="order-summary">
+                        <h2 class="section-title">Tóm tắt đơn hàng</h2>
+                        
+                        <!-- Danh sách sản phẩm -->
+                        <div class="order-items">
+                            <!-- Items sẽ được load bằng JavaScript -->
+                        </div>
+
+                        <!-- Tóm tắt giá -->
+                        <div class="price-summary">
+                            <div class="price-row">
+                                <span>Tạm tính</span>
+                                <span id="subtotal">0đ</span>
+                            </div>
+                            <div class="price-row">
+                                <span>Phí vận chuyển</span>
+                                <span id="shipping-fee">30.000đ</span>
+                            </div>
+                            <div class="price-row discount-row" id="discount-row" style="display: none;">
+                                <span>Giảm giá</span>
+                                <span id="discount-amount">-0đ</span>
+                            </div>
+                            <div class="checkout-price-divider"></div>
+                            <div class="price-row total-row">
+                                <span>Tổng cộng</span>
+                                <span id="total-amount">0đ</span>
+                            </div>
+                        </div>
+
+                        <!-- Thông tin liên hệ -->
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <span class="contact-icon">📞</span>
+                                <span>Hotline: 1900 1234</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">✉️</span>
+                                <span>Email: support@gaumeo.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/payment.js"></script>
+</body>
+</html> 

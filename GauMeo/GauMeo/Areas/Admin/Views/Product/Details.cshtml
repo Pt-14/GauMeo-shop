@@ -1,0 +1,244 @@
+@model GauMeo.Models.Products.Product
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <!-- Header Section -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">
+                <i class='bx bx-show'></i>
+                Chi tiết sản phẩm: @Model.Name
+            </h4>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index")">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">Chi tiết</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="details-grid">
+        <!-- Basic Information -->
+        <div class="admin-card">
+            <div class="card-header-admin">
+                <h5 class="card-title">
+                    <i class='bx bx-info-circle'></i>
+                    Thông tin cơ bản
+                </h5>
+                <div class="status-badge-container">
+                    <span class="status-badge @(Model.IsActive ? "active" : "inactive")">
+                        @(Model.IsActive ? "Hoạt động" : "Tạm dừng")
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>Tên sản phẩm:</label>
+                        <span>@Model.Name</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Mã sản phẩm:</label>
+                        <span>SP@Model.Id.ToString("D6")</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Danh mục:</label>
+                        <span>@(Model.Category?.Name ?? "Chưa phân loại")</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Thương hiệu:</label>
+                        <span>@(Model.Brand?.Name ?? "Chưa có thương hiệu")</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Loại thú cưng:</label>
+                        <span>
+                            @switch(Model.AnimalType?.ToLower())
+                            {
+                                case "dog": <text>Chó</text>; break;
+                                case "cat": <text>Mèo</text>; break;
+                                case "both": <text>Cả hai</text>; break;
+                                default: <text>@Model.AnimalType</text>; break;
+                            }
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Tags:</label>
+                        <span>@(string.IsNullOrEmpty(Model.Tags) ? "Không có" : Model.Tags)</span>
+                    </div>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                {
+                    <div class="description-section">
+                        <label>Mô tả ngắn:</label>
+                        <p>@Model.ShortDescription</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Product Images -->
+        <div class="admin-card">
+            <div class="card-header-admin">
+                <h5 class="card-title">
+                    <i class='bx bx-image'></i>
+                    Hình ảnh sản phẩm
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="image-gallery">
+                    @if (Model.ProductImages?.Any() == true)
+                    {
+                        @foreach (var image in Model.ProductImages.OrderBy(img => img.DisplayOrder))
+                        {
+                            <div class="image-item @(image.IsMain ? "main-image" : "")">
+                                <img src="@image.ImageUrl" alt="@image.AltText" />
+                                @if (image.IsMain)
+                                {
+                                    <span class="main-badge">Ảnh chính</span>
+                                }
+                                @if (!string.IsNullOrEmpty(image.AltText))
+                                {
+                                    <div class="image-caption">@image.AltText</div>
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="no-images">
+                            <i class='bx bx-image'></i>
+                            <p>Chưa có hình ảnh</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Information -->
+        <div class="admin-card">
+            <div class="card-header-admin">
+                <h5 class="card-title">
+                    <i class='bx bx-money'></i>
+                    Thông tin giá
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="pricing-info">
+                    <div class="price-item">
+                        <label>Giá gốc:</label>
+                        <span class="original-price">@Model.OriginalPrice.ToString("N0")₫</span>
+                    </div>
+                    <div class="price-item">
+                        <label>Giảm giá:</label>
+                        <span class="discount">@Model.DiscountPercent%</span>
+                    </div>
+                    <div class="price-item final-price">
+                        <label>Giá bán cuối cùng:</label>
+                        <span class="current-price">@Model.CurrentPrice.ToString("N0")₫</span>
+                    </div>
+                    @if (Model.DiscountPercent > 0)
+                    {
+                        <div class="savings">
+                            Tiết kiệm: @((Model.OriginalPrice - Model.CurrentPrice).ToString("N0"))₫
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory & Statistics -->
+        <div class="admin-card">
+            <div class="card-header-admin">
+                <h5 class="card-title">
+                    <i class='bx bx-package'></i>
+                    Kho hàng & Thống kê
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value @(Model.StockQuantity > 10 ? "high" : Model.StockQuantity > 0 ? "medium" : "low")">
+                            @Model.StockQuantity
+                        </div>
+                        <div class="stat-label">Tồn kho</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">@Model.Rating.ToString("F1")</div>
+                        <div class="stat-label">Đánh giá</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">@Model.ReviewCount</div>
+                        <div class="stat-label">Số review</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">@Model.PopularityScore</div>
+                        <div class="stat-label">Điểm phổ biến</div>
+                    </div>
+                </div>
+
+                <div class="feature-badges">
+                    @if (Model.IsFeatured)
+                    {
+                        <span class="feature-badge featured">Nổi bật</span>
+                    }
+                    @if (Model.IsOnSale)
+                    {
+                        <span class="feature-badge sale">Đang giảm giá</span>
+                    }
+                    @if (Model.FreeShipping)
+                    {
+                        <span class="feature-badge shipping">Miễn phí ship</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Timestamps -->
+        <div class="admin-card full-width">
+            <div class="card-header-admin">
+                <h5 class="card-title">
+                    <i class='bx bx-time'></i>
+                    Thông tin thời gian
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="timestamps">
+                    <div class="timestamp-item">
+                        <label>Ngày tạo:</label>
+                        <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                    </div>
+                    <div class="timestamp-item">
+                        <label>Cập nhật cuối:</label>
+                        <span>@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="admin-card">
+        <div class="card-body">
+            <div class="form-actions">
+                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn-admin btn-primary">
+                    <i class='bx bx-edit'></i>
+                    Chỉnh sửa
+                </a>
+                <a href="@Url.Action("Delete", new { id = Model.Id })" class="btn-admin btn-danger">
+                    <i class='bx bx-trash'></i>
+                    Xóa sản phẩm
+                </a>
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-arrow-back'></i>
+                    Quay lại danh sách
+                </a>
+            </div>
+        </div>
+    </div>
+</div> 

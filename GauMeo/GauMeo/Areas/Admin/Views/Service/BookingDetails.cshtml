@@ -1,0 +1,353 @@
+@model GauMeo.Models.Services.ServiceBooking
+@{
+    ViewData["Title"] = "Chi tiết đặt lịch";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/service-management.css" />
+    <link rel="stylesheet" href="~/css/admin/booking-management.css" />
+}
+
+<div class="page-header">
+    <div class="header-content">
+        <h1>
+            <i class='bx bx-calendar-check'></i>
+            Chi tiết đặt lịch
+        </h1>
+        <div class="breadcrumb">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })">Trang chủ</a>
+            <span>/</span>
+            <a href="@Url.Action("Bookings", "Service")">Quản lý đặt lịch</a>
+            <span>/</span>
+            <span>Chi tiết</span>
+        </div>
+    </div>
+    <div class="header-actions">
+        <a href="@Url.Action("Bookings")" class="btn-admin btn-secondary">
+            <i class='bx bx-arrow-back'></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="details-container">
+        <!-- Booking Status -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-info-circle'></i>
+                    Trạng thái đặt lịch
+                </h3>
+                <div class="status-badge @Model.Status.ToLower()">
+                    @(Model.Status switch
+                    {
+                        "Pending" => "Chờ xác nhận",
+                        "Confirmed" => "Đã xác nhận",
+                        "InProgress" => "Đang thực hiện",
+                        "Completed" => "Hoàn thành",
+                        "Cancelled" => "Đã hủy",
+                        _ => Model.Status
+                    })
+                </div>
+            </div>
+            <div class="detail-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Ngày đặt:</label>
+                        <span>@Model.BookingDate.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Giờ đặt:</label>
+                        <span>@Model.BookingTime</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Ngày tạo:</label>
+                        <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    @if (Model.ConfirmedAt.HasValue)
+                    {
+                        <div class="info-item">
+                            <label>Ngày xác nhận:</label>
+                            <span>@Model.ConfirmedAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    }
+                    @if (Model.CompletedAt.HasValue)
+                    {
+                        <div class="info-item">
+                            <label>Ngày hoàn thành:</label>
+                            <span>@Model.CompletedAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Information -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-user'></i>
+                    Thông tin khách hàng
+                </h3>
+            </div>
+            <div class="detail-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Họ tên:</label>
+                        <span>@Model.CustomerName</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Số điện thoại:</label>
+                        <span>@Model.CustomerPhone</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                    {
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span>@Model.CustomerEmail</span>
+                        </div>
+                    }
+                    @if (Model.User != null)
+                    {
+                        <div class="info-item">
+                            <label>Tài khoản:</label>
+                            <span>@Model.User.UserName</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Pet Information -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-dog'></i>
+                    Thông tin thú cưng
+                </h3>
+            </div>
+            <div class="detail-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Tên thú cưng:</label>
+                        <span>@Model.PetName</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Loại:</label>
+                        <span>@(Model.PetType == "dog" ? "Chó" : Model.PetType == "cat" ? "Mèo" : "Khác")</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.PetBreed))
+                    {
+                        <div class="info-item">
+                            <label>Giống:</label>
+                            <span>@Model.PetBreed</span>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.PetSize))
+                    {
+                        <div class="info-item">
+                            <label>Kích thước:</label>
+                            <span>@Model.PetSize</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Information -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-spa'></i>
+                    Thông tin dịch vụ
+                </h3>
+            </div>
+            <div class="detail-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Dịch vụ:</label>
+                        <span>@Model.Service.Name</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Loại dịch vụ:</label>
+                        <span>@Model.ServiceVariant.Name</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Thời gian:</label>
+                        <span>@Model.ServiceVariant.Duration</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Giá dịch vụ:</label>
+                        <span class="price">@Model.ServiceVariant.Price.ToString("N0") VNĐ</span>
+                    </div>
+                </div>
+
+                @if (Model.ServiceBookingAddons.Any())
+                {
+                    <div class="addons-section">
+                        <h4>Dịch vụ thêm</h4>
+                        <div class="addons-list">
+                            @foreach (var addon in Model.ServiceBookingAddons)
+                            {
+                                <div class="addon-item">
+                                    <span class="addon-name">@addon.ServiceAddon.Name</span>
+                                    <span class="addon-price">@addon.Price.ToString("N0") VNĐ</span>
+                                </div>
+                            }
+                        </div>
+                        <div class="total-price">
+                            <span>Tổng cộng:</span>
+                            <span class="price">@Model.EstimatedPrice.ToString("N0") VNĐ</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Special Requests & Notes -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-note'></i>
+                    Yêu cầu đặc biệt & Ghi chú
+                </h3>
+            </div>
+            <div class="detail-content">
+                @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+                {
+                    <div class="special-requests">
+                        <h4>Yêu cầu từ khách hàng:</h4>
+                        <p>@Model.SpecialRequests</p>
+                    </div>
+                }
+                
+                <div class="notes-section">
+                    <h4>Ghi chú nội bộ:</h4>
+                    <div class="notes-editor">
+                        <textarea id="notesEditor" class="form-control" rows="4">@Model.Notes</textarea>
+                        <button class="btn-admin btn-primary btn-save-notes mt-2" data-id="@Model.Id">
+                            <i class='bx bx-save'></i>
+                            Lưu ghi chú
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        @if (Model.Status != "Cancelled" && Model.Status != "Completed")
+        {
+            <div class="detail-actions">
+                @if (Model.Status == "Pending")
+                {
+                    <button class="btn-admin btn-success btn-update-status" data-id="@Model.Id" data-status="Confirmed">
+                        <i class='bx bx-check'></i>
+                        Xác nhận đặt lịch
+                    </button>
+                    <button class="btn-admin btn-danger btn-update-status" data-id="@Model.Id" data-status="Cancelled">
+                        <i class='bx bx-x'></i>
+                        Hủy đặt lịch
+                    </button>
+                }
+                else if (Model.Status == "Confirmed")
+                {
+                    <button class="btn-admin btn-info btn-update-status" data-id="@Model.Id" data-status="InProgress">
+                        <i class='bx bx-play'></i>
+                        Bắt đầu thực hiện
+                    </button>
+                    <button class="btn-admin btn-danger btn-update-status" data-id="@Model.Id" data-status="Cancelled">
+                        <i class='bx bx-x'></i>
+                        Hủy đặt lịch
+                    </button>
+                }
+                else if (Model.Status == "InProgress")
+                {
+                    <button class="btn-admin btn-success btn-update-status" data-id="@Model.Id" data-status="Completed">
+                        <i class='bx bx-check-double'></i>
+                        Hoàn thành
+                    </button>
+                    <button class="btn-admin btn-danger btn-update-status" data-id="@Model.Id" data-status="Cancelled">
+                        <i class='bx bx-x'></i>
+                        Hủy đặt lịch
+                    </button>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            function updateBookingStatus(id, status) {
+                if (!confirm('Bạn có chắc muốn cập nhật trạng thái?')) {
+                    return;
+                }
+
+                var notes = $('#notesEditor').val();
+
+                $.ajax({
+                    url: '@Url.Action("UpdateBookingStatus", "Service", new { area = "Admin" })',
+                    type: 'POST',
+                    data: { 
+                        id: id, 
+                        status: status,
+                        notes: notes,
+                        __RequestVerificationToken: token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.');
+                        }
+                    },
+                    error: function() {
+                        alert('Đã có lỗi xảy ra. Vui lòng thử lại.');
+                    }
+                });
+            }
+
+            function updateNotes(id) {
+                $.ajax({
+                    url: '@Url.Action("UpdateBookingStatus", "Service", new { area = "Admin" })',
+                    type: 'POST',
+                    data: { 
+                        id: id, 
+                        status: '@Model.Status',
+                        notes: $('#notesEditor').val(),
+                        __RequestVerificationToken: token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Đã lưu ghi chú');
+                        } else {
+                            alert(response.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.');
+                        }
+                    },
+                    error: function() {
+                        alert('Đã có lỗi xảy ra. Vui lòng thử lại.');
+                    }
+                });
+            }
+
+            // Attach event handlers
+            $('.btn-update-status').click(function() {
+                var id = $(this).data('id');
+                var status = $(this).data('status');
+                updateBookingStatus(id, status);
+            });
+
+            $('.btn-save-notes').click(function() {
+                var id = $(this).data('id');
+                updateNotes(id);
+            });
+        });
+    </script>
+}
+
+@Html.AntiForgeryToken() 

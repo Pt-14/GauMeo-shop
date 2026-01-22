@@ -1,0 +1,82 @@
+@model List<dynamic>
+@{
+    var products = Model ?? ViewBag.Products as List<dynamic>;
+}
+
+@if (products != null && products.Count > 0)
+{
+    <div class="products-grid">
+    @foreach (var product in products)
+    {
+        <div class="product-card" data-product-id="@product.Id">
+            <div class="product-image">
+                <img src="@product.Image" alt="@product.Name" loading="lazy">
+                @if (product.IsOnSale)
+                {
+                    <div class="sale-badge">-@product.DiscountPercent%</div>
+                }
+                <div class="product-actions-overlay">
+                    <button class="quick-view-btn" title="Xem nhanh">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="add-to-wishlist-btn" title="Yêu thích">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="product-info">
+                <div class="product-brand">@product.Brand</div>
+                <h3 class="product-name">@product.Name</h3>
+                <div class="product-rating">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="fas fa-star @(i <= product.Rating ? "active" : "")"></i>
+                    }
+                    <span class="rating-text">(@product.Rating)</span>
+                </div>
+                <div class="product-price">
+                    @if (product.IsOnSale && product.DiscountPercent > 0)
+                    {
+                        <span class="original-price">@product.OriginalPrice.ToString("N0")đ</span>
+                        <span class="current-price">@((product.OriginalPrice * (100 - product.DiscountPercent) / 100).ToString("N0"))đ</span>
+                    }
+                    else
+                    {
+                        <span class="current-price">@product.OriginalPrice.ToString("N0")đ</span>
+                    }
+                </div>
+                <button class="add-to-cart-btn" onclick="addToCart(@product.Id)">
+                    <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                </button>
+            </div>
+        </div>
+    }
+    </div>
+}
+else
+{
+    <div class="no-products">
+        <i class="fas fa-search"></i>
+        <h3>Không tìm thấy sản phẩm</h3>
+        <p>Không có sản phẩm nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
+        @{
+            var breadcrumbsForGrid = ViewBag.Breadcrumbs as List<object>;
+            if (breadcrumbsForGrid != null && breadcrumbsForGrid.Count > 1)
+            {
+                var parentBreadcrumb = breadcrumbsForGrid[breadcrumbsForGrid.Count - 2];
+                var parentName = parentBreadcrumb.GetType().GetProperty("Name")?.GetValue(parentBreadcrumb)?.ToString();
+                var parentUrl = parentBreadcrumb.GetType().GetProperty("Url")?.GetValue(parentBreadcrumb)?.ToString();
+                
+                <a href="@parentUrl" class="back-to-all-btn">
+                    <i class="fas fa-arrow-left"></i> Quay lại @parentName
+                </a>
+            }
+            else
+            {
+                <a href="/Product" class="back-to-all-btn">
+                    <i class="fas fa-arrow-left"></i> Xem tất cả sản phẩm
+                </a>
+            }
+        }
+    </div>
+}

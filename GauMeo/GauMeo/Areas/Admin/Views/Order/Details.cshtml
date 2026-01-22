@@ -1,0 +1,323 @@
+@model GauMeo.Models.Orders.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <!-- Header Section -->
+    <div class="admin-card">
+        <div class="order-header">
+            <div class="order-header-left">
+                <h2>Đơn hàng #@Model.OrderNumber</h2>
+                <div class="order-meta">
+                    <span class="order-date">
+                        <i class='bx bx-calendar'></i>
+                        @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                    </span>
+                    <span class="status-badge @Model.Status.ToLower()">
+                        @switch (Model.Status)
+                        {
+                            case "Pending":
+                                @:Chờ xử lý
+                                break;
+                            case "Confirmed":
+                                @:Đã xác nhận
+                                break;
+                            case "Processing":
+                                @:Đang xử lý
+                                break;
+                            case "Shipping":
+                                @:Đang giao hàng
+                                break;
+                            case "Delivered":
+                                @:Đã giao hàng
+                                break;
+                            case "Cancelled":
+                                @:Đã hủy
+                                break;
+                            default:
+                                @Model.Status
+                                break;
+                        }
+                    </span>
+                    <span class="payment-badge @Model.PaymentStatus.ToLower()">
+                        @switch (Model.PaymentStatus)
+                        {
+                            case "Pending":
+                                @:Chờ thanh toán
+                                break;
+                            case "Paid":
+                                @:Đã thanh toán
+                                break;
+                            case "Failed":
+                                @:Thanh toán thất bại
+                                break;
+                            case "Refunded":
+                                @:Đã hoàn tiền
+                                break;
+                            default:
+                                @Model.PaymentStatus
+                                break;
+                        }
+                    </span>
+                </div>
+            </div>
+            <div class="order-header-right">
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-arrow-back'></i>
+                    Quay lại
+                </a>
+                @if (Model.Status == "Pending" || Model.Status == "Confirmed")
+                {
+                    <button class="btn-admin btn-danger" onclick="showCancelModal('@Model.Id', '@Model.OrderNumber')">
+                        <i class='bx bx-x'></i>
+                        Hủy đơn hàng
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="order-details-grid">
+        <!-- Customer Information -->
+        <div class="admin-card customer-info-card">
+            <div class="card-header-admin">
+                <h4 class="card-title">
+                    <i class='bx bx-user'></i>
+                    Thông tin khách hàng
+                </h4>
+            </div>
+            <div class="customer-details">
+                <div class="detail-row">
+                    <label>Họ tên:</label>
+                    <span>@Model.CustomerName</span>
+                </div>
+                <div class="detail-row">
+                    <label>Số điện thoại:</label>
+                    <span>@Model.CustomerPhone</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.CustomerEmail))
+                {
+                    <div class="detail-row">
+                        <label>Email:</label>
+                        <span>@Model.CustomerEmail</span>
+                    </div>
+                }
+                <div class="detail-row">
+                    <label>Địa chỉ giao hàng:</label>
+                    <span>@Model.ShippingAddress</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.BillingAddress) && Model.BillingAddress != Model.ShippingAddress)
+                {
+                    <div class="detail-row">
+                        <label>Địa chỉ hóa đơn:</label>
+                        <span>@Model.BillingAddress</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Notes))
+                {
+                    <div class="detail-row">
+                        <label>Ghi chú:</label>
+                        <span>@Model.Notes</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Order Actions -->
+        <div class="admin-card order-actions-card">
+            <div class="card-header-admin">
+                <h4 class="card-title">
+                    <i class='bx bx-cog'></i>
+                    Cập nhật đơn hàng
+                </h4>
+            </div>
+            <div class="action-section">
+                <div class="action-group">
+                    <label>Trạng thái đơn hàng:</label>
+                    <form asp-action="UpdateStatus" method="post" class="status-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <select name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="Pending" selected="@(Model.Status == "Pending")">Chờ xử lý</option>
+                            <option value="Confirmed" selected="@(Model.Status == "Confirmed")">Đã xác nhận</option>
+                            <option value="Processing" selected="@(Model.Status == "Processing")">Đang xử lý</option>
+                            <option value="Shipping" selected="@(Model.Status == "Shipping")">Đang giao hàng</option>
+                            <option value="Delivered" selected="@(Model.Status == "Delivered")">Đã giao hàng</option>
+                            <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Đã hủy</option>
+                        </select>
+                    </form>
+                </div>
+
+                <div class="action-group">
+                    <label>Trạng thái thanh toán:</label>
+                    <form asp-action="UpdatePaymentStatus" method="post" class="status-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <select name="paymentStatus" class="form-select" onchange="this.form.submit()">
+                            <option value="Pending" selected="@(Model.PaymentStatus == "Pending")">Chờ thanh toán</option>
+                            <option value="Paid" selected="@(Model.PaymentStatus == "Paid")">Đã thanh toán</option>
+                            <option value="Failed" selected="@(Model.PaymentStatus == "Failed")">Thanh toán thất bại</option>
+                            <option value="Refunded" selected="@(Model.PaymentStatus == "Refunded")">Đã hoàn tiền</option>
+                        </select>
+                    </form>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.AdminNotes))
+                {
+                    <div class="action-group">
+                        <label>Ghi chú của admin:</label>
+                        <div class="admin-notes">@Model.AdminNotes</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Items -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">
+                <i class='bx bx-package'></i>
+                Sản phẩm đặt hàng (@(Model.OrderItems?.Count ?? 0) sản phẩm)
+            </h4>
+        </div>
+        
+        @if (Model.OrderItems != null && Model.OrderItems.Any())
+        {
+            <div class="order-items-list">
+                @foreach (var item in Model.OrderItems)
+                {
+                    <div class="order-item-card">
+                        <div class="item-image">
+                            <img src="@item.ProductImageUrl" alt="@item.ProductName" />
+                        </div>
+                        <div class="item-details">
+                            <h5 class="item-name">@item.ProductName</h5>
+                            @if (!string.IsNullOrEmpty(item.ProductBrand))
+                            {
+                                <div class="item-brand">Thương hiệu: @item.ProductBrand</div>
+                            }
+                            @if (!string.IsNullOrEmpty(item.SelectedVariants))
+                            {
+                                var variants = item.GetSelectedVariants();
+                                @if (variants.Any())
+                                {
+                                    <div class="item-variants">
+                                        @foreach (var variant in variants)
+                                        {
+                                            <span class="variant-tag">@variant.Key: @variant.Value</span>
+                                        }
+                                    </div>
+                                }
+                            }
+                            <div class="item-pricing">
+                                <span class="item-price">@item.UnitPrice.ToString("N0")₫ x @item.Quantity</span>
+                                @if (item.OriginalPrice > item.UnitPrice)
+                                {
+                                    <span class="original-price">@item.OriginalPrice.ToString("N0")₫</span>
+                                    <span class="discount">-@item.DiscountPercent%</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="item-total">
+                            @item.SubTotal.ToString("N0")₫
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Order Summary -->
+    <div class="admin-card order-summary-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">
+                <i class='bx bx-receipt'></i>
+                Tổng kết đơn hàng
+            </h4>
+        </div>
+        <div class="order-summary">
+            <div class="summary-row">
+                <span>Tạm tính:</span>
+                <span>@((Model.TotalAmount - Model.ShippingFee).ToString("N0"))₫</span>
+            </div>
+            <div class="summary-row">
+                <span>Phí vận chuyển:</span>
+                <span>
+                    @if (Model.ShippingFee > 0)
+                    {
+                        @Model.ShippingFee.ToString("N0")<text>₫</text>
+                    }
+                    else
+                    {
+                        <span class="free-shipping">Miễn phí</span>
+                    }
+                </span>
+            </div>
+            @if (Model.DiscountAmount > 0)
+            {
+                <div class="summary-row discount-row">
+                    <span>Giảm giá:</span>
+                    <span>-@Model.DiscountAmount.ToString("N0")₫</span>
+                </div>
+            }
+            <div class="summary-divider"></div>
+            <div class="summary-row total-row">
+                <span>Tổng cộng:</span>
+                <span>@Model.TotalAmount.ToString("N0")₫</span>
+            </div>
+            <div class="payment-method">
+                <span>Phương thức thanh toán:</span>
+                <span>
+                    @switch (Model.PaymentMethod)
+                    {
+                        case "COD":
+                            @:Thanh toán khi nhận hàng
+                            break;
+                        case "BankTransfer":
+                            @:Chuyển khoản ngân hàng
+                            break;
+                        case "EWallet":
+                            @:Ví điện tử
+                            break;
+                        default:
+                            @Model.PaymentMethod
+                            break;
+                    }
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Order Modal -->
+<div id="cancelOrderModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Hủy đơn hàng</h3>
+            <span class="close" onclick="closeCancelModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có chắc chắn muốn hủy đơn hàng <span id="cancelOrderNumber"></span>?</p>
+            <div class="form-group">
+                <label for="cancelReason">Lý do hủy đơn:</label>
+                <textarea id="cancelReason" class="form-control" rows="3" placeholder="Nhập lý do hủy đơn..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeCancelModal()">Đóng</button>
+            <button type="button" class="btn btn-danger" onclick="confirmCancelOrder()">Xác nhận hủy</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/order-management.js"></script>
+}
+
+@section Styles {
+    <link href="~/css/admin/order-management.css" rel="stylesheet" />
+} 

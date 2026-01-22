@@ -1,0 +1,784 @@
+@model IEnumerable<GauMeo.Models.Services.Service>
+@{
+    ViewData["Title"] = "Quản lý dịch vụ";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/service-management.css" />
+}
+
+<!-- Add CSRF Token -->
+<form asp-antiforgery="true" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="main-content">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class='bx bx-spa'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count()</div>
+                <div class="stat-label">Tổng dịch vụ</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(s => s.IsActive)</div>
+                <div class="stat-label">Đang hoạt động</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class='bx bx-x-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(s => !s.IsActive)</div>
+                <div class="stat-label">Tạm dừng</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class='bx bx-star'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(s => s.IsFeatured)</div>
+                <div class="stat-label">Nổi bật</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Management Card with Tabs -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">Quản lý dịch vụ</h4>
+            <div class="action-controls">
+                <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                    <i class='bx bx-plus'></i>
+                    Thêm dịch vụ
+                </a>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="services">
+                    <i class='bx bx-spa'></i>
+                    Dịch vụ (@Model.Count())
+                </button>
+                <button class="tab-btn" data-tab="images">
+                    <i class='bx bx-image'></i>
+                    Hình ảnh (@Model.Sum(s => s.ServiceImages?.Count() ?? 0))
+                </button>
+                <button class="tab-btn" data-tab="variants">
+                    <i class='bx bx-category'></i>
+                    Biến thể (@Model.Sum(s => s.ServiceVariants?.Count() ?? 0))
+                </button>
+                <button class="tab-btn" data-tab="addons">
+                    <i class='bx bx-plus-circle'></i>
+                    Addon (@Model.Sum(s => s.ServiceAddons?.Count() ?? 0))
+                </button>
+                <button class="tab-btn" data-tab="faqs">
+                    <i class='bx bx-help-circle'></i>
+                    FAQ (@Model.Sum(s => s.ServiceFAQs?.Count() ?? 0))
+                </button>
+                <button class="tab-btn" data-tab="notes">
+                    <i class='bx bx-note'></i>
+                    Ghi chú (@Model.Sum(s => s.ServiceNotes?.Count() ?? 0))
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Services Tab -->
+            <div id="services" class="tab-pane active">
+                <div class="search-filter-section">
+                    <div class="search-container-admin">
+                        <div class="search-input-wrapper">
+                            <i class='bx bx-search search-icon'></i>
+                            <input type="text" id="serviceSearch" class="search-input-admin" placeholder="Tìm kiếm dịch vụ...">
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="active">Đang hoạt động</option>
+                            <option value="inactive">Tạm dừng</option>
+                        </select>
+                        <select id="featuredFilter" class="filter-select">
+                            <option value="">Tất cả</option>
+                            <option value="featured">Nổi bật</option>
+                            <option value="normal">Thường</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table" id="servicesTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll" class="admin-checkbox">
+                                </th>
+                                <th class="sortable" data-sort="name">
+                                    Tên dịch vụ
+                                    <i class='bx bx-sort sort-icon'></i>
+                                </th>
+                                <th class="sortable" data-sort="price">
+                                    Giá
+                                    <i class='bx bx-sort sort-icon'></i>
+                                </th>
+                                <th class="sortable" data-sort="duration">
+                                    Thời gian
+                                    <i class='bx bx-sort sort-icon'></i>
+                                </th>
+                                <th class="sortable" data-sort="status">
+                                    Trạng thái
+                                    <i class='bx bx-sort sort-icon'></i>
+                                </th>
+                                <th>Chi tiết</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var service in Model)
+                            {
+                                <tr class="service-row" 
+                                    data-name="@service.Name.ToLower()" 
+                                    data-status="@(service.IsActive ? "active" : "inactive")"
+                                    data-featured="@(service.IsFeatured ? "featured" : "normal")"
+                                    data-sort-name="@service.Name"
+                                    data-sort-price="@(service.MinPrice ?? 0)"
+                                    data-sort-duration="@service.Duration"
+                                    data-sort-status="@(service.IsActive ? "1" : "0")"
+                                    data-sort-date="@service.CreatedAt.Ticks">
+                                    <td>
+                                        <input type="checkbox" class="admin-checkbox service-checkbox" value="@service.Id">
+                                    </td>
+                                    <td>
+                                        <div class="service-info">
+                                            <div class="service-name">
+                                                @service.Name
+                                                @if (service.IsFeatured)
+                                                {
+                                                    <span class="badge badge-warning">Nổi bật</span>
+                                                }
+                                            </div>
+                                            <div class="service-description">@service.Description</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="price">@service.Price</span>
+                                    </td>
+                                    <td>
+                                        <span class="duration">@service.Duration</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge @(service.IsActive ? "active" : "inactive")">
+                                            @(service.IsActive ? "Đang hoạt động" : "Tạm dừng")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="service-details">
+                                            <span class="detail-item">
+                                                <i class='bx bx-image'></i>
+                                                @(service.ServiceImages?.Count() ?? 0) ảnh
+                                            </span>
+                                            <span class="detail-item">
+                                                <i class='bx bx-category'></i>
+                                                @(service.ServiceVariants?.Count() ?? 0) biến thể
+                                            </span>
+                                            <span class="detail-item">
+                                                <i class='bx bx-plus-circle'></i>
+                                                @(service.ServiceAddons?.Count() ?? 0) addon
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="@Url.Action("Details", new { id = service.Id })" class="action-btn view-btn" title="Xem chi tiết">
+                                                <i class='bx bx-show'></i>
+                                            </a>
+                                            <a href="@Url.Action("Edit", new { id = service.Id })" class="action-btn edit-btn" title="Chỉnh sửa">
+                                                <i class='bx bx-edit'></i>
+                                            </a>
+                                            <button class="action-btn toggle-btn" onclick="toggleServiceStatus(@service.Id)" title="Chuyển đổi trạng thái">
+                                                <i class='bx @(service.IsActive ? "bx-pause" : "bx-play")'></i>
+                                            </button>
+                                            <button class="action-btn delete-btn" onclick="deleteService('@service.Id')" title="Xóa">
+                                                <i class='bx bx-trash'></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Images Tab -->
+            <div id="images" class="tab-pane">
+                <div class="images-management">
+                    <div class="images-header">
+                        <h5>Quản lý hình ảnh dịch vụ</h5>
+                        <button class="btn-admin btn-primary" onclick="showAddImageModal()">
+                            <i class='bx bx-plus'></i>
+                            Thêm hình ảnh
+                        </button>
+                    </div>
+                    
+                    <div class="images-grid">
+                        @foreach (var service in Model)
+                        {
+                            @if (service.ServiceImages?.Any() == true)
+                            {
+                                <div class="service-images-section">
+                                    <h6 class="service-name">@service.Name</h6>
+                                    <div class="images-row">
+                                        @foreach (var image in service.ServiceImages.OrderBy(i => i.DisplayOrder))
+                                        {
+                                            <div class="image-card">
+                                                <div class="image-preview">
+                                                    <img src="@image.ImageUrl" alt="@image.AltText" />
+                                                    @if (image.IsMain)
+                                                    {
+                                                        <span class="main-badge">Chính</span>
+                                                    }
+                                                </div>
+                                                <div class="image-info">
+                                                    <div class="image-title">@image.Title</div>
+                                                    <div class="image-description">@image.Description</div>
+                                                    <div class="image-actions">
+                                                        <button class="btn-sm btn-edit" onclick="editImage(@image.Id)">
+                                                            <i class='bx bx-edit'></i>
+                                                        </button>
+                                                        <button class="btn-sm btn-delete" onclick="deleteImage(@image.Id)">
+                                                            <i class='bx bx-trash'></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variants Tab -->
+            <div id="variants" class="tab-pane">
+                <div class="variants-management">
+                    <div class="variants-header">
+                        <h5>Quản lý biến thể dịch vụ</h5>
+                        <button class="btn-admin btn-primary" onclick="showAddVariantModal()">
+                            <i class='bx bx-plus'></i>
+                            Thêm biến thể
+                        </button>
+                    </div>
+                    
+                    <div class="variants-list">
+                        @foreach (var service in Model)
+                        {
+                            @if (service.ServiceVariants?.Any() == true)
+                            {
+                                <div class="service-variants-section">
+                                    <h6 class="service-name">@service.Name</h6>
+                                    <div class="variants-table">
+                                        <table class="admin-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tên biến thể</th>
+                                                    <th>Loại thú cưng</th>
+                                                    <th>Kích thước</th>
+                                                    <th>Giá</th>
+                                                    <th>Thời gian</th>
+                                                    <th>Trạng thái</th>
+                                                    <th>Thao tác</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var variant in service.ServiceVariants.OrderBy(v => v.DisplayOrder))
+                                                {
+                                                    <tr>
+                                                        <td>@variant.Name</td>
+                                                        <td>
+                                                            <span class="pet-type-badge pet-@variant.PetType">
+                                                                @(variant.PetType == "dog" ? "Chó" : variant.PetType == "cat" ? "Mèo" : "Cả hai")
+                                                            </span>
+                                                        </td>
+                                                        <td>@variant.PetSize</td>
+                                                        <td>@variant.Price.ToString("N0") VNĐ</td>
+                                                        <td>@variant.Duration</td>
+                                                        <td>
+                                                            <span class="status-badge @(variant.IsActive ? "active" : "inactive")">
+                                                                @(variant.IsActive ? "Hoạt động" : "Tạm dừng")
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="action-buttons">
+                                                                <button class="action-btn edit-btn" onclick="editVariant(@variant.Id)">
+                                                                    <i class='bx bx-edit'></i>
+                                                                </button>
+                                                                <button class="action-btn delete-btn" onclick="deleteVariant(@variant.Id)">
+                                                                    <i class='bx bx-trash'></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Addons Tab -->
+            <div id="addons" class="tab-pane">
+                <div class="addons-management">
+                    <div class="addons-header">
+                        <h5>Quản lý addon dịch vụ</h5>
+                        <button class="btn-admin btn-primary" onclick="showAddAddonModal()">
+                            <i class='bx bx-plus'></i>
+                            Thêm addon
+                        </button>
+                    </div>
+                    
+                    <div class="addons-list">
+                        @foreach (var service in Model)
+                        {
+                            @if (service.ServiceAddons?.Any() == true)
+                            {
+                                <div class="service-addons-section">
+                                    <h6 class="service-name">@service.Name</h6>
+                                    <div class="addons-grid">
+                                        @foreach (var addon in service.ServiceAddons.OrderBy(a => a.DisplayOrder))
+                                        {
+                                            <div class="addon-card">
+                                                <div class="addon-header">
+                                                    <h6 class="addon-name">@addon.Name</h6>
+                                                    <span class="addon-price">@addon.Price.ToString("N0") VNĐ</span>
+                                                </div>
+                                                <div class="addon-description">@addon.Description</div>
+                                                <div class="addon-footer">
+                                                    <span class="status-badge @(addon.IsActive ? "active" : "inactive")">
+                                                        @(addon.IsActive ? "Hoạt động" : "Tạm dừng")
+                                                    </span>
+                                                    <div class="addon-actions">
+                                                        <button class="action-btn edit-btn" onclick="editAddon(@addon.Id)">
+                                                            <i class='bx bx-edit'></i>
+                                                        </button>
+                                                        <button class="action-btn delete-btn" onclick="deleteAddon(@addon.Id)">
+                                                            <i class='bx bx-trash'></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQs Tab -->
+            <div id="faqs" class="tab-pane">
+                <div class="faqs-management">
+                    <div class="faqs-header">
+                        <h5>Quản lý FAQ dịch vụ</h5>
+                        <button class="btn-admin btn-primary" onclick="showAddFAQModal()">
+                            <i class='bx bx-plus'></i>
+                            Thêm FAQ
+                        </button>
+                    </div>
+                    
+                    <div class="faqs-list">
+                        @foreach (var service in Model)
+                        {
+                            @if (service.ServiceFAQs?.Any() == true)
+                            {
+                                <div class="service-faqs-section">
+                                    <h6 class="service-name">@service.Name</h6>
+                                    <div class="faqs-accordion">
+                                        @foreach (var faq in service.ServiceFAQs.OrderBy(f => f.DisplayOrder))
+                                        {
+                                            <div class="faq-item">
+                                                <div class="faq-question">
+                                                    <h6>@faq.Question</h6>
+                                                    <div class="faq-actions">
+                                                        <span class="status-badge @(faq.IsActive ? "active" : "inactive")">
+                                                            @(faq.IsActive ? "Hoạt động" : "Tạm dừng")
+                                                        </span>
+                                                        <button class="action-btn edit-btn" onclick="editFAQ(@faq.Id)">
+                                                            <i class='bx bx-edit'></i>
+                                                        </button>
+                                                        <button class="action-btn delete-btn" onclick="deleteFAQ(@faq.Id)">
+                                                            <i class='bx bx-trash'></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="faq-answer">@faq.Answer</div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div id="notes" class="tab-pane">
+                <div class="notes-management">
+                    <div class="notes-header">
+                        <h5>Quản lý ghi chú dịch vụ</h5>
+                        <button class="btn-admin btn-primary" onclick="showAddNoteModal()">
+                            <i class='bx bx-plus'></i>
+                            Thêm ghi chú
+                        </button>
+                    </div>
+                    
+                    <div class="notes-list">
+                        @foreach (var service in Model)
+                        {
+                            @if (service.ServiceNotes?.Any() == true)
+                            {
+                                <div class="service-notes-section">
+                                    <h6 class="service-name">@service.Name</h6>
+                                    <div class="notes-grid">
+                                        @foreach (var note in service.ServiceNotes.OrderBy(n => n.DisplayOrder))
+                                        {
+                                            <div class="note-card note-@note.NoteType">
+                                                <div class="note-header">
+                                                    <div class="note-icon">@note.Icon</div>
+                                                    <h6 class="note-title">@note.Title</h6>
+                                                    <span class="note-type">@note.NoteType</span>
+                                                </div>
+                                                <div class="note-content">@note.Content</div>
+                                                <div class="note-footer">
+                                                    <span class="status-badge @(note.IsActive ? "active" : "inactive")">
+                                                        @(note.IsActive ? "Hiển thị" : "Ẩn")
+                                                    </span>
+                                                    <div class="note-actions">
+                                                        <button class="action-btn edit-btn" onclick="editNote(@note.Id)">
+                                                            <i class='bx bx-edit'></i>
+                                                        </button>
+                                                        <button class="action-btn delete-btn" onclick="deleteNote(@note.Id)">
+                                                            <i class='bx bx-trash'></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/service-management.js"></script>
+    <script>
+        // CSRF Token handler
+        function getCSRFToken() {
+            return document.querySelector('input[name="__RequestVerificationToken"]')?.value ||
+                   $('input[name="__RequestVerificationToken"]').val();
+        }
+
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Remove active class from all tabs and panes
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding pane
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        });
+
+        // Notification system
+        function showNotification(type, message) {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease-out;
+                background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class='bx ${type === 'success' ? 'bx-check-circle' : type === 'error' ? 'bx-error-circle' : 'bx-info-circle'}'></i>
+                    <span>${message}</span>
+                    <button type="button" onclick="this.parentElement.parentElement.remove()" style="background: transparent; border: none; color: white; font-size: 18px; cursor: pointer; margin-left: 10px;">×</button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Service management functions
+        function toggleServiceStatus(serviceId) {
+            const token = getCSRFToken();
+            
+            fetch(`/Admin/Service/ToggleStatus/${serviceId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', data.message);
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification('error', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Có lỗi xảy ra khi thực hiện thao tác');
+            });
+        }
+
+        function deleteService(serviceId) {
+            if (confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')) {
+                window.location.href = `/Admin/Service/Delete/${serviceId}`;
+            }
+        }
+
+        // =================
+        // IMAGE MANAGEMENT
+        // =================
+        function showAddImageModal() {
+            const services = @Html.Raw(Json.Serialize(Model.Select(s => new { s.Id, s.Name })));
+            
+            const modalHtml = `
+                <div class="modal-overlay" id="imageModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+                    <div class="modal-content" style="background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;">
+                        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h5 style="margin: 0;">Thêm hình ảnh dịch vụ</h5>
+                            <button type="button" onclick="closeModal('imageModal')" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addImageForm">
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">Chọn dịch vụ *</label>
+                                    <select id="imageServiceId" class="form-control" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                                        <option value="">-- Chọn dịch vụ --</option>
+                                        ${services.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">URL hình ảnh *</label>
+                                    <input type="url" id="imageUrl" class="form-control" required placeholder="https://..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">Tiêu đề</label>
+                                    <input type="text" id="imageTitle" class="form-control" placeholder="Tiêu đề hình ảnh" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">Alt text</label>
+                                    <input type="text" id="imageAltText" class="form-control" placeholder="Mô tả cho SEO" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">Mô tả</label>
+                                    <textarea id="imageDescription" class="form-control" rows="3" placeholder="Mô tả chi tiết" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+                                </div>
+                                <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+                                    <div style="flex: 1;">
+                                        <label style="display: block; margin-bottom: 5px; font-weight: 500;">Thứ tự hiển thị</label>
+                                        <input type="number" id="imageDisplayOrder" class="form-control" value="0" min="0" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+                                    </div>
+                                    <div style="flex: 1; display: flex; align-items: end;">
+                                        <label style="display: flex; align-items: center; gap: 5px;">
+                                            <input type="checkbox" id="imageIsMain" />
+                                            Hình ảnh chính
+                                        </label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                            <button type="button" onclick="closeModal('imageModal')" style="padding: 8px 16px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 4px; cursor: pointer;">Hủy</button>
+                            <button type="button" onclick="addImage()" style="padding: 8px 16px; border: none; background: #28a745; color: white; border-radius: 4px; cursor: pointer;">Thêm hình ảnh</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function addImage() {
+            const token = getCSRFToken();
+            const formData = {
+                ServiceId: document.getElementById('imageServiceId').value,
+                ImageUrl: document.getElementById('imageUrl').value,
+                Title: document.getElementById('imageTitle').value,
+                AltText: document.getElementById('imageAltText').value,
+                Description: document.getElementById('imageDescription').value,
+                IsMain: document.getElementById('imageIsMain').checked,
+                DisplayOrder: parseInt(document.getElementById('imageDisplayOrder').value) || 0
+            };
+
+            if (!formData.ServiceId || !formData.ImageUrl) {
+                showNotification('error', 'Vui lòng điền đầy đủ thông tin bắt buộc');
+                return;
+            }
+
+            const urlParams = new URLSearchParams();
+            Object.keys(formData).forEach(key => {
+                urlParams.append(key, formData[key]);
+            });
+            urlParams.append('__RequestVerificationToken', token);
+
+            fetch('/Admin/Service/AddImage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: urlParams.toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', data.message || 'Thêm hình ảnh thành công');
+                    closeModal('imageModal');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification('error', data.message || 'Có lỗi xảy ra');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Có lỗi xảy ra khi thêm hình ảnh');
+            });
+        }
+
+        function editImage(id) {
+            showNotification('info', 'Tính năng chỉnh sửa hình ảnh đang được phát triển');
+        }
+
+        function deleteImage(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')) {
+                const token = getCSRFToken();
+                
+                const urlParams = new URLSearchParams();
+                urlParams.append('id', id);
+                urlParams.append('__RequestVerificationToken', token);
+
+                fetch('/Admin/Service/DeleteImage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: urlParams.toString()
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('success', data.message || 'Xóa hình ảnh thành công');
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        showNotification('error', data.message || 'Có lỗi xảy ra khi xóa');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('error', 'Có lỗi xảy ra khi xóa hình ảnh');
+                });
+            }
+        }
+
+        // Similar implementation for Variants, Addons, FAQs, Notes...
+        function showAddVariantModal() {
+            showNotification('info', 'Tính năng thêm biến thể đang được phát triển');
+        }
+
+        function showAddAddonModal() {
+            showNotification('info', 'Tính năng thêm addon đang được phát triển');
+        }
+
+        function showAddFAQModal() {
+            showNotification('info', 'Tính năng thêm FAQ đang được phát triển');
+        }
+
+        function showAddNoteModal() {
+            showNotification('info', 'Tính năng thêm ghi chú đang được phát triển');
+        }
+
+        function editVariant(id) { showNotification('info', 'Tính năng chỉnh sửa biến thể đang được phát triển'); }
+        function deleteVariant(id) { showNotification('info', 'Tính năng xóa biến thể đang được phát triển'); }
+        function editAddon(id) { showNotification('info', 'Tính năng chỉnh sửa addon đang được phát triển'); }
+        function deleteAddon(id) { showNotification('info', 'Tính năng xóa addon đang được phát triển'); }
+        function editFAQ(id) { showNotification('info', 'Tính năng chỉnh sửa FAQ đang được phát triển'); }
+        function deleteFAQ(id) { showNotification('info', 'Tính năng xóa FAQ đang được phát triển'); }
+        function editNote(id) { showNotification('info', 'Tính năng chỉnh sửa ghi chú đang được phát triển'); }
+        function deleteNote(id) { showNotification('info', 'Tính năng xóa ghi chú đang được phát triển'); }
+
+        // Modal utilities
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal-overlay')) {
+                e.target.remove();
+            }
+        });
+    </script>
+} 

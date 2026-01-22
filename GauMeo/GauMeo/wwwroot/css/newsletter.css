@@ -1,0 +1,378 @@
+/* Newsletter Section Styling - Exact Match Design */
+.newsletter-section {
+    background-color: #f8f9fa;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.newsletter-container {
+    position: relative;
+    overflow: hidden;
+    max-width: 900px;
+    padding-left: 15px;
+    padding-right: 220px;
+    margin: 0 auto;
+}
+
+.newsletter-content {
+    height: 272px;
+    flex: 1;
+}
+
+.newsletter-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+}
+
+.newsletter-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #002828;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.paper-airplane {
+    width: 340px;
+    z-index: 2;
+}
+
+/* Dashed line effect */
+
+
+.newsletter-subtitle {
+    font-size: 1.1rem;
+    color: #002828;
+    margin: 0 0 14px 0;
+    line-height: 1.5;
+}
+
+.newsletter-form-container {
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    position: relative;
+}
+
+.newsletter-form {
+    width: 100%;
+    max-width: 500px;
+}
+
+.form-fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.form-wrap {
+    display: flex;
+    border: 1px solid #002828;
+    border-radius: 25px;
+    overflow: hidden;
+    background: white;
+    height: 40px;
+    position: relative;
+}
+
+/* Placeholder animation styling */
+.input-container {
+    position: relative;
+    flex: 1;
+}
+
+.form-input.input-subscribe {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    z-index: 2; 
+    padding: 0 20px;
+    font-size: 14px;
+    width: 100%;
+    max-width: 380px;
+    height: 100%;
+}
+
+.floating-placeholder {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 14px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.form-input.input-subscribe:focus + .floating-placeholder,
+.form-input.input-subscribe:not(:placeholder-shown) + .floating-placeholder {
+    transform: translateY(-50%) translateX(20px);
+    opacity: 0;
+}
+
+.form-input.input-subscribe::placeholder {
+    color: transparent;
+}
+
+.btn-subscribe {
+    background: #00AA28;
+    color: #f8f9fa;
+    border: none;
+    padding: 0 25px;
+    font-size: 16px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    border-radius: 25px;
+    margin: 4px;
+    font-family: "Quicksand", sans-serif;
+    z-index: 1;
+}
+/*#002828 #1d5715 #00AA28 D6D6D6 00871E F0FFF0 */
+
+.btn-subscribe:hover {
+    background: #00871E;
+}
+
+.btn-subscribe:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Cat image positioned at bottom right edge */
+.newsletter-container > img.cat-image {
+    position: absolute;
+    bottom: 0;
+    right: 60px;
+    width: 242px;
+    height: auto;
+    z-index: 1;
+}
+
+.newsletter-message {
+    margin-top: 15px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    display: none;
+    font-weight: 500;
+    text-align: left;
+}
+
+.newsletter-message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.newsletter-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+/* Footer About Section Styling - Override existing styles */
+.footer-about-section {
+    padding: 40px 0;
+    margin-bottom: 0;
+    background: #002828 !important;
+    color: #ffffff !important;
+}
+
+.footer-title-center {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #ffffff !important;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 0 200px 0 250px;
+    gap: 10px;
+}
+
+
+
+.about-content-wrapper {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.about-text {
+    flex: 1;
+    color: #ffffff !important;
+    line-height: 1.7;
+    max-width: 600px;
+    padding: 0 90px;
+}
+
+.about-text p {
+    margin-bottom: 15px;
+    font-size: 0.97rem;
+    color: #ffffff !important;
+}
+
+.about-image {
+    flex: 0 0 300px;
+}
+
+.pets-image {
+    width: 100%;
+    height: auto;
+}
+
+/* Override footer-main to remove flex layout since about section is separate */
+.footer-main {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+    font-size: 15px !important;
+    color: #FFFFFF !important;
+    margin-bottom: 0 !important;
+    flex-wrap: nowrap !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    background: #002828 !important;
+    border-bottom: none !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+/* Ensure footer columns work correctly with existing styles */
+.footer-col {
+    flex: 1 !important;
+    min-width: 0 !important;
+    max-width: 300px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    padding: 28px 28px 18px 28px !important;
+    background: #002828 !important;
+    height: 100% !important;
+    position: relative !important;
+    font-size: 14px !important;
+    color: #FFFFFF !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .newsletter-container {
+        height: auto;
+        flex-direction: column;
+        padding: 30px 20px;
+    }
+    
+    .newsletter-content {
+        height: auto;
+        padding: 0;
+        text-align: center;
+        max-width: 100%;
+    }
+    
+    .newsletter-form-container {
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .newsletter-title {
+        font-size: 1.8rem;
+    }
+    
+    .newsletter-header {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .newsletter-header::after {
+        display: none;
+    }
+    
+    .paper-airplane {
+        position: absolute;
+        -webkit-transform: rotateY(180deg);
+        width: 316px;
+        margin-left: -80px;
+        margin-top: 365px;
+    }
+    
+    .newsletter-container > img.cat-image {
+        position: relative;
+        width: 242px;
+        margin: 40px auto -30px;
+        display: block;
+    }
+    
+    .form-wrap {
+        margin: 0 auto;
+        justify-content: center;
+    }
+
+    /* Footer responsive */
+    .about-content-wrapper {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .about-image {
+        flex: none;
+        align-self: center;
+    }
+
+    .pets-image {
+        max-width: 250px;
+    }
+
+    .footer-main {
+        flex-wrap: wrap !important;
+    }
+
+    .footer-col {
+        flex: 1 1 calc(50% - 10px) !important;
+        max-width: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .newsletter-title {
+        font-size: 1.5rem;
+    }
+    
+    .newsletter-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .newsletter-container > img.cat-image {
+        width: 150px;
+    }
+    
+    .form-input.input-subscribe,
+    .btn-subscribe {
+        font-size: 13px;
+    }
+
+    .footer-col {
+        flex: 1 1 100% !important;
+        max-width: none !important;
+    }
+
+    .footer-title-center {
+        font-size: 1.3rem;
+    }
+
+    .about-text p {
+        font-size: 0.9rem;
+    }
+} 

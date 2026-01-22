@@ -1,0 +1,371 @@
+@{
+    ViewData["Title"] = "Phương thức thanh toán & vận chuyển";
+}
+
+<link rel="stylesheet" href="~/css/header-footer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/helpcus-footer.css" asp-append-version="true" />
+
+<main class="policy-page payment-page">
+    <div class="policy-container">
+        <div class="policy-header">
+            <h1 class="policy-title">Phương thức thanh toán & vận chuyển</h1>
+            <p class="policy-subtitle">Đa dạng lựa chọn thanh toán và giao hàng nhanh chóng, an toàn</p>
+            <div class="policy-updated">Cập nhật lần cuối: 15/01/2025</div>
+        </div>
+
+        <div class="policy-content">
+            <section class="policy-section">
+                <h2 class="section-title">
+                    <span class="section-icon">💳</span>
+                    Phương thức thanh toán
+                </h2>
+                <p>GauMeo hỗ trợ đa dạng phương thức thanh toán để khách hàng có thể lựa chọn cách thức phù hợp nhất.</p>
+                
+                <div class="payment-methods">
+                    <div class="payment-category">
+                        <h3>💰 Thanh toán khi nhận hàng (COD)</h3>
+                        <div class="payment-item">
+                            <div class="payment-icon">📦</div>
+                            <div class="payment-details">
+                                <h4>Tiền mặt khi giao hàng</h4>
+                                <p>Thanh toán trực tiếp cho nhân viên giao hàng</p>
+                                <div class="payment-fee">Phí dịch vụ: 15.000đ</div>
+                                <div class="payment-limit">Tối đa: 5.000.000đ/đơn</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-category">
+                        <h3>🏧 Chuyển khoản ngân hàng</h3>
+                        <div class="bank-list">
+                            <div class="bank-item">
+                                <div class="bank-logo">🏦</div>
+                                <div class="bank-info">
+                                    <h4>Vietcombank</h4>
+                                    <p>STK: 1234567890</p>
+                                    <p>Chủ TK: CÔNG TY GAUMEO PETSHOP</p>
+                                </div>
+                            </div>
+                            <div class="bank-item">
+                                <div class="bank-logo">🏛️</div>
+                                <div class="bank-info">
+                                    <h4>Techcombank</h4>
+                                    <p>STK: 0987654321</p>
+                                    <p>Chủ TK: CÔNG TY GAUMEO PETSHOP</p>
+                                </div>
+                            </div>
+                            <div class="bank-item">
+                                <div class="bank-logo">🏪</div>
+                                <div class="bank-info">
+                                    <h4>ACB Bank</h4>
+                                    <p>STK: 1122334455</p>
+                                    <p>Chủ TK: CÔNG TY GAUMEO PETSHOP</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="transfer-note">
+                            <p><strong>Lưu ý:</strong> Vui lòng ghi rõ mã đơn hàng trong nội dung chuyển khoản</p>
+                        </div>
+                    </div>
+
+                    <div class="payment-category">
+                        <h3>📱 Ví điện tử</h3>
+                        <div class="ewallet-grid">
+                            <div class="ewallet-item">
+                                <div class="ewallet-icon">💚</div>
+                                <h4>MoMo</h4>
+                                <p>Thanh toán nhanh chóng, bảo mật cao</p>
+                            </div>
+                            <div class="ewallet-item">
+                                <div class="ewallet-icon">💙</div>
+                                <h4>ZaloPay</h4>
+                                <p>Tích hợp nhiều ưu đãi hấp dẫn</p>
+                            </div>
+                            <div class="ewallet-item">
+                                <div class="ewallet-icon">🧡</div>
+                                <h4>ShopeePay</h4>
+                                <p>Hoàn xu cho mỗi giao dịch</p>
+                            </div>
+                            <div class="ewallet-item">
+                                <div class="ewallet-icon">💜</div>
+                                <h4>VNPay</h4>
+                                <p>Kết nối với nhiều ngân hàng</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-category">
+                        <h3>💳 Thẻ tín dụng/ghi nợ</h3>
+                        <div class="card-types">
+                            <div class="card-item">
+                                <div class="card-icon">💳</div>
+                                <h4>Visa / Mastercard</h4>
+                                <p>Thanh toán quốc tế, bảo mật SSL</p>
+                            </div>
+                            <div class="card-item">
+                                <div class="card-icon">🏧</div>
+                                <h4>ATM nội địa</h4>
+                                <p>Các ngân hàng Việt Nam</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="policy-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🚚</span>
+                    Phương thức vận chuyển
+                </h2>
+                <div class="shipping-options">
+                    <div class="shipping-method">
+                        <div class="method-header">
+                            <div class="method-icon">⚡</div>
+                            <h3>Giao hàng nhanh (Nội thành TP.HCM)</h3>
+                        </div>
+                        <div class="method-details">
+                            <div class="detail-item">
+                                <strong>Thời gian:</strong> 2-4 giờ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Phí ship:</strong> 25.000đ - 35.000đ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Miễn phí:</strong> Đơn hàng từ 700.000đ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Khung giờ:</strong> 8:00 - 20:00
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shipping-method">
+                        <div class="method-header">
+                            <div class="method-icon">🌟</div>
+                            <h3>Giao hàng tiêu chuẩn</h3>
+                        </div>
+                        <div class="method-details">
+                            <div class="detail-item">
+                                <strong>Thời gian:</strong> 1-3 ngày
+                            </div>
+                            <div class="detail-item">
+                                <strong>Phí ship:</strong> 30.000đ - 60.000đ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Miễn phí:</strong> Đơn hàng từ 500.000đ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Vùng phủ:</strong> Toàn quốc
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shipping-method">
+                        <div class="method-header">
+                            <div class="method-icon">🚛</div>
+                            <h3>Giao hàng tiết kiệm</h3>
+                        </div>
+                        <div class="method-details">
+                            <div class="detail-item">
+                                <strong>Thời gian:</strong> 3-7 ngày
+                            </div>
+                            <div class="detail-item">
+                                <strong>Phí ship:</strong> 20.000đ - 40.000đ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Miễn phí:</strong> Đơn hàng từ 300.000đ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Phù hợp:</strong> Đơn hàng không gấp
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="shipping-method special">
+                        <div class="method-header">
+                            <div class="method-icon">🏪</div>
+                            <h3>Nhận tại cửa hàng</h3>
+                        </div>
+                        <div class="method-details">
+                            <div class="detail-item">
+                                <strong>Thời gian:</strong> 30 phút sau khi đặt
+                            </div>
+                            <div class="detail-item">
+                                <strong>Phí ship:</strong> 0đ
+                            </div>
+                            <div class="detail-item">
+                                <strong>Địa chỉ:</strong> 123 Đường ABC, Q.1, TP.HCM
+                            </div>
+                            <div class="detail-item">
+                                <strong>Giờ mở cửa:</strong> 8:00 - 20:00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="policy-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📍</span>
+                    Vùng phủ sóng giao hàng
+                </h2>
+                <div class="coverage-areas">
+                    <div class="coverage-item priority">
+                        <h3>🌟 Khu vực ưu tiên (Giao nhanh trong ngày)</h3>
+                        <div class="area-list">
+                            <span class="area-tag">TP. Hồ Chí Minh</span>
+                            <span class="area-tag">Hà Nội</span>
+                            <span class="area-tag">Đà Nẵng</span>
+                            <span class="area-tag">Cần Thơ</span>
+                            <span class="area-tag">Biên Hòa</span>
+                            <span class="area-tag">Thủ Dầu Một</span>
+                        </div>
+                    </div>
+                    <div class="coverage-item standard">
+                        <h3>🚚 Khu vực tiêu chuẩn (1-3 ngày)</h3>
+                        <div class="area-list">
+                            <span class="area-tag">Các tỉnh thành miền Nam</span>
+                            <span class="area-tag">Các tỉnh thành miền Bắc</span>
+                            <span class="area-tag">Các tỉnh thành miền Trung</span>
+                        </div>
+                    </div>
+                    <div class="coverage-item remote">
+                        <h3>🏔️ Khu vực xa (5-7 ngày)</h3>
+                        <div class="area-list">
+                            <span class="area-tag">Vùng núi cao</span>
+                            <span class="area-tag">Đảo xa</span>
+                            <span class="area-tag">Vùng sâu vùng xa</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="policy-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🎁</span>
+                    Chương trình freeship
+                </h2>
+                <div class="freeship-programs">
+                    <div class="freeship-item">
+                        <div class="freeship-icon">🆓</div>
+                        <h3>Freeship theo giá trị đơn hàng</h3>
+                        <ul>
+                            <li>Đơn từ 300.000đ: Freeship tiết kiệm</li>
+                            <li>Đơn từ 500.000đ: Freeship tiêu chuẩn</li>
+                            <li>Đơn từ 700.000đ: Freeship nhanh nội thành</li>
+                        </ul>
+                    </div>
+                    <div class="freeship-item">
+                        <div class="freeship-icon">⭐</div>
+                        <h3>Freeship thành viên VIP</h3>
+                        <ul>
+                            <li>Thành viên Bạc: Giảm 50% phí ship</li>
+                            <li>Thành viên Vàng: Freeship mọi đơn hàng</li>
+                            <li>Thành viên Kim Cương: Freeship + giao ưu tiên</li>
+                        </ul>
+                    </div>
+                    <div class="freeship-item">
+                        <div class="freeship-icon">📅</div>
+                        <h3>Freeship theo thời gian</h3>
+                        <ul>
+                            <li>Thứ 2 đầu tháng: Freeship toàn bộ đơn hàng</li>
+                            <li>Black Friday: Freeship không giới hạn</li>
+                            <li>Sinh nhật thú cưng: Freeship đặc biệt</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="policy-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🔒</span>
+                    Bảo mật thanh toán
+                </h2>
+                <div class="security-features">
+                    <div class="security-item">
+                        <div class="security-icon">🛡️</div>
+                        <h3>Mã hóa SSL 256-bit</h3>
+                        <p>Bảo vệ thông tin thẻ tín dụng và dữ liệu cá nhân</p>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-icon">🔐</div>
+                        <h3>Xác thực 3D Secure</h3>
+                        <p>Lớp bảo mật bổ sung cho giao dịch thẻ quốc tế</p>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-icon">✅</div>
+                        <h3>Xác nhận OTP</h3>
+                        <p>Mã xác thực được gửi qua SMS để đảm bảo an toàn</p>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-icon">💳</div>
+                        <h3>Không lưu trữ thông tin thẻ</h3>
+                        <p>Chúng tôi không lưu trữ thông tin thẻ của khách hàng</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="policy-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📦</span>
+                    Đóng gói & bảo quản
+                </h2>
+                <div class="packaging-info">
+                    <div class="packaging-item">
+                        <h3>🥶 Sản phẩm đông lạnh</h3>
+                        <p>Sử dụng túi giữ lạnh và gel mát, đảm bảo nhiệt độ trong suốt quá trình vận chuyển</p>
+                    </div>
+                    <div class="packaging-item">
+                        <h3>🍼 Sản phẩm lỏng</h3>
+                        <p>Đóng gói kỹ lưỡng với màng bọc chống tràn và hộp chống sốc</p>
+                    </div>
+                    <div class="packaging-item">
+                        <h3>🥫 Thức ăn khô</h3>
+                        <p>Sử dụng túi chống ẩm và hộp carton cứng để bảo vệ sản phẩm</p>
+                    </div>
+                    <div class="packaging-item">
+                        <h3>🧸 Đồ chơi & phụ kiện</h3>
+                        <p>Đóng gói cẩn thận với xốp bọc khí để tránh va đập</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="policy-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📞</span>
+                    Hỗ trợ thanh toán & vận chuyển
+                </h2>
+                <div class="support-info">
+                    <p>Nếu bạn gặp vấn đề trong quá trình thanh toán hoặc cần hỗ trợ về vận chuyển, vui lòng liên hệ:</p>
+                    <div class="support-contacts">
+                        <div class="support-contact">
+                            <div class="contact-icon">📞</div>
+                            <div class="contact-info">
+                                <h4>Hotline thanh toán</h4>
+                                <p><strong>1900 1234</strong> (ext 1)</p>
+                                <span>24/7 - Hỗ trợ khẩn cấp</span>
+                            </div>
+                        </div>
+                        <div class="support-contact">
+                            <div class="contact-icon">🚚</div>
+                            <div class="contact-info">
+                                <h4>Hotline vận chuyển</h4>
+                                <p><strong>1900 1234</strong> (ext 2)</p>
+                                <span>8:00 - 20:00 hàng ngày</span>
+                            </div>
+                        </div>
+                        <div class="support-contact">
+                            <div class="contact-icon">💬</div>
+                            <div class="contact-info">
+                                <h4>Chat trực tuyến</h4>
+                                <p><strong>Live chat trên website</strong></p>
+                                <span>Phản hồi ngay lập tức</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</main> 

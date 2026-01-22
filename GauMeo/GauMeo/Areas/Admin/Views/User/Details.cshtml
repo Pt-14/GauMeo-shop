@@ -1,0 +1,488 @@
+@model GauMeo.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+    var userRoles = ViewBag.UserRoles as IList<string> ?? new List<string>();
+    var recentOrders = ViewBag.RecentOrders as IEnumerable<GauMeo.Models.Orders.Order> ?? new List<GauMeo.Models.Orders.Order>();
+    var isAdmin = userRoles.Contains("Admin");
+    var isLocked = Model.LockoutEnd.HasValue && Model.LockoutEnd > DateTimeOffset.Now;
+}
+
+<div class="user-details-container">
+    <!-- Header Section -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">
+                <i class='bx bx-user'></i>
+                @ViewData["Title"]
+            </h4>
+            <div class="card-actions">
+                @if (isAdmin)
+                {
+                    <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn-admin btn-primary">
+                        <i class='bx bx-edit'></i>
+                        Chỉnh sửa
+                    </a>
+                }
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-arrow-back'></i>
+                    Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- User Info Card -->
+        <div class="col-md-4">
+            <div class="admin-card user-profile-card">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        @if (!string.IsNullOrEmpty(Model.Avatar))
+                        {
+                            <img src="@Model.Avatar" alt="@(Model.FullName ?? Model.UserName)" class="avatar-image">
+                        }
+                        else
+                        {
+                            <div class="no-avatar large">
+                                @((Model.FullName ?? Model.UserName).Substring(0, 1).ToUpper())
+                            </div>
+                        }
+                    </div>
+                    <div class="profile-info">
+                        <h3 class="profile-name">@(Model.FullName ?? Model.UserName)</h3>
+                        <p class="profile-username">@@@Model.UserName</p>
+                        <div class="profile-badges">
+                            @if (isLocked)
+                            {
+                                <span class="badge badge-danger">
+                                    <i class='bx bx-lock'></i>
+                                    Đã khóa
+                                </span>
+                            }
+                            else if (Model.EmailConfirmed)
+                            {
+                                <span class="badge badge-success">
+                                    <i class='bx bx-check-circle'></i>
+                                    Đã xác thực
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">
+                                    <i class='bx bx-x-circle'></i>
+                                    Chưa xác thực
+                                </span>
+                            }
+                            
+                            @if (isAdmin)
+                            {
+                                <span class="badge badge-primary">
+                                    <i class='bx bx-crown'></i>
+                                    Quản trị viên
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-secondary">
+                                    <i class='bx bx-user'></i>
+                                    Người dùng
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="admin-card">
+                <div class="card-header-admin">
+                    <h5 class="card-title">
+                        <i class='bx bx-phone'></i>
+                        Thông tin liên hệ
+                    </h5>
+                </div>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class='bx bx-envelope'></i>
+                        <div class="info-content">
+                            <label>Email</label>
+                            <span>@Model.Email</span>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <div class="info-item">
+                            <i class='bx bx-phone'></i>
+                            <div class="info-content">
+                                <label>Số điện thoại</label>
+                                <span>@Model.PhoneNumber</span>
+                            </div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                        <div class="info-item">
+                            <i class='bx bx-map'></i>
+                            <div class="info-content">
+                                <label>Địa chỉ</label>
+                                <span>@Model.Address</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Account Info -->
+            <div class="admin-card">
+                <div class="card-header-admin">
+                    <h5 class="card-title">
+                        <i class='bx bx-info-circle'></i>
+                        Thông tin tài khoản
+                    </h5>
+                </div>
+                <div class="account-info">
+                    <div class="info-item">
+                        <i class='bx bx-calendar'></i>
+                        <div class="info-content">
+                            <label>Ngày tạo</label>
+                            <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    </div>
+                    @if (Model.DateOfBirth.HasValue)
+                    {
+                        <div class="info-item">
+                            <i class='bx bx-cake'></i>
+                            <div class="info-content">
+                                <label>Ngày sinh</label>
+                                <span>@Model.DateOfBirth.Value.ToString("dd/MM/yyyy")</span>
+                            </div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Gender))
+                    {
+                        <div class="info-item">
+                            <i class='bx bx-user'></i>
+                            <div class="info-content">
+                                <label>Giới tính</label>
+                                <span>@Model.Gender</span>
+                            </div>
+                        </div>
+                    }
+                    @if (Model.IsExternalLogin)
+                    {
+                        <div class="info-item">
+                            <i class='bx bx-link'></i>
+                            <div class="info-content">
+                                <label>Đăng nhập qua</label>
+                                <span>@(Model.LoginProvider ?? "Google")</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-8">
+            <!-- Statistics -->
+            <div class="admin-card">
+                <div class="card-header-admin">
+                    <h5 class="card-title">
+                        <i class='bx bx-bar-chart'></i>
+                        Thống kê hoạt động
+                    </h5>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon bg-primary">
+                            <i class='bx bx-shopping-bag'></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">@recentOrders.Count()</div>
+                            <div class="stat-label">Đơn hàng gần đây</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon bg-success">
+                            <i class='bx bx-check-circle'></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">@recentOrders.Count(o => o.Status == "Completed")</div>
+                            <div class="stat-label">Đơn hoàn thành</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon bg-info">
+                            <i class='bx bx-time'></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">@recentOrders.Count(o => o.Status == "Processing")</div>
+                            <div class="stat-label">Đang xử lý</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon bg-warning">
+                            <i class='bx bx-dollar'></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">@recentOrders.Sum(o => o.TotalAmount).ToString("N0")</div>
+                            <div class="stat-label">Tổng giá trị</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="admin-card">
+                <div class="card-header-admin">
+                    <h5 class="card-title">
+                        <i class='bx bx-list-ul'></i>
+                        Đơn hàng gần đây
+                    </h5>
+                </div>
+                @if (recentOrders.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã đơn</th>
+                                    <th>Ngày đặt</th>
+                                    <th>Trạng thái</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in recentOrders.Take(5))
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="order-id">#@order.Id</span>
+                                        </td>
+                                        <td>@order.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <span class="status-badge @order.Status.ToLower()">
+                                                @order.Status
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="price">@order.TotalAmount.ToString("N0") ₫</span>
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("Details", "Order", new { id = order.Id })" class="action-btn view-btn">
+                                                <i class='bx bx-show'></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class='bx bx-shopping-bag'></i>
+                        </div>
+                        <p class="empty-text">Chưa có đơn hàng nào</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .user-details-container {
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .profile-avatar {
+            margin-bottom: 20px;
+        }
+        
+        .avatar-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .no-avatar.large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .profile-name {
+            margin: 0 0 5px 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .profile-username {
+            color: #718096;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .profile-badges {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .badge-success { background-color: #10b981; color: white; }
+        .badge-warning { background-color: #f59e0b; color: white; }
+        .badge-danger { background-color: #ef4444; color: white; }
+        .badge-primary { background-color: #3b82f6; color: white; }
+        .badge-secondary { background-color: #6b7280; color: white; }
+        
+        .contact-info, .account-info {
+            padding: 20px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-item i {
+            color: #667eea;
+            font-size: 18px;
+            margin-top: 2px;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-content label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .info-content span {
+            color: #374151;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .stat-icon i {
+            font-size: 20px;
+        }
+        
+        .stat-content {
+            flex: 1;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .order-id {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+        
+        .price {
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .empty-icon i {
+            font-size: 48px;
+            color: #d1d5db;
+            margin-bottom: 16px;
+        }
+        
+        .empty-text {
+            color: #6b7280;
+            font-size: 14px;
+            margin: 0;
+        }
+    </style>
+} 

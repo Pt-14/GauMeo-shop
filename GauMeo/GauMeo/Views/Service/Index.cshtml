@@ -1,0 +1,297 @@
+@model GauMeo.Models.ViewModels.ServiceIndexViewModel
+@{
+    ViewData["Title"] = "Dịch vụ - GauMeo Petshop";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/service.css" asp-append-version="true" />
+}
+
+<div class="service-container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="/Home/Index">Trang chủ</a> / 
+        <span>Dịch vụ</span>
+    </div>
+    
+    <!-- Page Header -->
+    <div class="service-page-header">
+        <h1 class="service-page-title">Dịch Vụ Chăm Sóc Thú Cưng</h1>
+        <p class="service-page-subtitle">
+            Khám phá những dịch vụ chăm sóc tốt nhất dành cho thú cưng yêu quý của bạn. 
+            Chúng tôi cam kết mang đến sự chăm sóc tận tình và chuyên nghiệp nhất.
+        </p>
+    </div>
+    
+    <!-- Service Tabs Navigation -->
+    <div class="service-tabs-nav">
+        @foreach (var service in Model.Services)
+        {
+            <button class="service-tab-btn @(service.Id == Model.CurrentServiceId ? "active" : "")" 
+                    data-service-id="@service.Id">
+                <div class="service-tab-name">@service.ShortName</div>
+                <div class="service-tab-desc">@service.Description</div>
+            </button>
+        }
+    </div>
+    
+    <!-- Service Content Area -->
+    <div class="service-content-area">
+        @foreach (var service in Model.Services)
+        {
+            <div class="service-detail @(service.Id == Model.CurrentServiceId ? "active" : "")" id="service-@service.Id">
+                
+                <!-- Service Hero Section -->
+                <div class="service-hero">
+                    <div class="service-hero-content">
+                        <h1 class="service-hero-title">@service.Name</h1>
+                        <p class="service-hero-description">@service.FullDescription</p>
+                        <div class="service-hero-actions">
+                            <a href="@Url.Action("Booking", "Service", new { id = service.Id })" class="hero-btn primary">Đặt Lịch Ngay</a>
+                            <a href="#" class="hero-btn secondary">Liên Hệ Tư Vấn</a>
+                        </div>
+                    </div>
+                    <div class="service-hero-image" style="background-image: url('@service.Image');">
+                    </div>
+                </div>
+                
+                <!-- Service Images Slider -->
+                <div class="service-images">
+                    <h2 class="images-title">Bộ Sưu Tập Ảnh Dịch Vụ (@service.Name - @service.Images.Count ảnh)</h2>
+                    <div class="image-slider-container">
+                        <div class="image-slide">
+                            @foreach (var image in service.Images)
+                            {
+                                <div class="slide-item" style="background-image: url('@image.ImageUrl');">
+                                    <div class="slide-content">
+                                        <div class="slide-name">@image.Title @(image.IsMain ? "(Main)" : "")</div>
+                                        <div class="slide-description">@image.Description</div>
+                                        <button class="slide-btn">Xem Chi Tiết</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="slider-buttons">
+                            <button class="slider-prev"><i class="fa-solid fa-arrow-left"></i></button>
+                            <button class="slider-next"><i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pricing Table -->
+                <div class="service-pricing">
+                    <h2 class="pricing-title">Bảng Giá Chi Tiết</h2>
+                    
+                    @if (service.Id == 3) 
+                    {
+                        <!-- Swimming chỉ có cho chó -->
+                        <div class="pricing-content active">
+                            <div class="pricing-table">
+                                <div class="pricing-header">
+                                    <div>Gói Dịch Vụ</div>
+                                    <div>Kích Thước</div>
+                                    <div>Giá (VNĐ)</div>
+                                    <div>Thời Gian</div>
+                                    <div>Nội Dung</div>
+                                </div>
+                                @foreach (var price in service.DogPricing)
+                                {
+                                    <div class="pricing-row">
+                                        <div class="pricing-cell package">@price.Package</div>
+                                        <div class="pricing-cell">@price.Size</div>
+                                        <div class="pricing-cell price">@price.Price</div>
+                                        <div class="pricing-cell">@price.Duration</div>
+                                        <div class="pricing-cell">@price.Features</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else 
+                    {
+                        <!-- Các dịch vụ khác có cả chó và mèo -->
+                        <div class="pricing-tabs">
+                            <button class="pricing-tab-btn active" data-pet="dog" data-service="@service.Id">
+                                @service.ShortName cho Chó 🐕
+                            </button>
+                            <button class="pricing-tab-btn" data-pet="cat" data-service="@service.Id">
+                                @service.ShortName cho Mèo 🐱
+                            </button>
+                        </div>
+                        
+                        <div class="pricing-content active" id="dog-pricing-@service.Id">
+                            <div class="pricing-table">
+                                <div class="pricing-header">
+                                    <div>Gói Dịch Vụ</div>
+                                    <div>Kích Thước</div>
+                                    <div>Giá (VNĐ)</div>
+                                    <div>Thời Gian</div>
+                                    <div>Nội Dung</div>
+                                </div>
+                                @foreach (var price in service.DogPricing)
+                                {
+                                    <div class="pricing-row">
+                                        <div class="pricing-cell package">@price.Package</div>
+                                        <div class="pricing-cell">@price.Size</div>
+                                        <div class="pricing-cell price">@price.Price</div>
+                                        <div class="pricing-cell">@price.Duration</div>
+                                        <div class="pricing-cell">@price.Features</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-content" id="cat-pricing-@service.Id">
+                            <div class="pricing-table">
+                                <div class="pricing-header">
+                                    <div>Gói Dịch Vụ</div>
+                                    <div>Kích Thước</div>
+                                    <div>Giá (VNĐ)</div>
+                                    <div>Thời Gian</div>
+                                    <div>Nội Dung</div>
+                                </div>
+                                @foreach (var price in service.CatPricing)
+                                {
+                                    <div class="pricing-row">
+                                        <div class="pricing-cell package">@price.Package</div>
+                                        <div class="pricing-cell">@price.Size</div>
+                                        <div class="pricing-cell price">@price.Price</div>
+                                        <div class="pricing-cell">@price.Duration</div>
+                                        <div class="pricing-cell">@price.Features</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <!-- Additional Services -->
+                <div class="service-additional">
+                    <h2 class="additional-title">Dịch Vụ Đi Kèm</h2>
+                    <div class="additional-grid">
+                        @foreach (var addon in service.Addons)
+                        {
+                            <div class="additional-item">
+                                <div class="additional-item-name">@addon.Name</div>
+                                <div class="additional-item-price">@addon.Price</div>
+                                <div class="additional-item-desc">@addon.Description</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                
+                <!-- Notes Section -->
+                <div class="service-notes">
+                    <h2 class="notes-title">Lưu Ý Quan Trọng</h2>
+                    <div class="notes-content">
+                        @foreach (var note in service.Notes)
+                        {
+                            <div class="note-item">
+                                <span class="note-icon">@note.Icon</span>
+                                <span><strong>@note.Title:</strong> @note.Content</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+                
+                <!-- Service Features -->
+                <div class="service-features">
+                    <h2 class="features-title">Dịch Vụ Bao Gồm</h2>
+                    <div class="features-grid">
+                        @foreach (var feature in service.Features)
+                        {
+                            <div class="feature-card">
+                                <div class="feature-icon">✓</div>
+                                <div class="feature-text">@feature</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                
+                <!-- Booking Steps -->
+                <div class="service-booking-steps">
+                    <div class="booking-steps-container">
+                        <div class="booking-steps-left">
+                            <h2 class="booking-steps-title">
+                                <span>Đặt Lịch Dịch Vụ @service.Name</span>
+                            </h2>
+                            <p class="booking-steps-subtitle">
+                                Gọi điện hoặc đặt lịch trực tuyến để được tư vấn chi tiết về dịch vụ, xem bảng giá và lên lịch phù hợp với thú cưng của bạn.
+                            </p>
+                            <a href="@Url.Action("Booking", "Service", new { id = service.Id })" class="booking-cta-btn">Đặt Lịch Ngay</a>
+                        </div>
+                        <div class="booking-steps-right">
+                            <div class="booking-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <div class="step-title">Liên Hệ & Tư Vấn</div>
+                                    <div class="step-text">
+                                        <span>Gọi điện hoặc đặt lịch online để được tư vấn về dịch vụ @service.Name phù hợp với nhu cầu và tình trạng của thú cưng.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="booking-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <div class="step-title">Xem Chi Tiết & Bảng Giá</div>
+                                    <div class="step-text">
+                                        Tham khảo bảng giá chi tiết trên website, xem thông tin dịch vụ và chọn gói phù hợp với nhu cầu và ngân sách của bạn.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="booking-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <div class="step-title">Đặt Lịch & Xác Nhận</div>
+                                    <div class="step-text">
+                                        Đặt lịch hẹn cụ thể qua điện thoại hoặc website. Chúng tôi sẽ xác nhận lại thông tin và gửi lời nhắc trước ngày hẹn.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Section -->
+                <div class="service-faq">
+                    <div class="faq-container">
+                        <div class="faq-image" style="background-image: url('@service.FaqImage');">
+                        </div>
+                        <div class="faq-questions">
+                            <h2 class="faq-title">Câu Hỏi Thường Gặp</h2>
+                            @foreach (var faq in service.FAQ)
+                            {
+                                <div class="faq-item">
+                                    <button class="faq-question">
+                                        @faq.Question
+                                    </button>
+                                    <div class="faq-answer">
+                                        @faq.Answer
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Call to Action -->
+                <div class="service-cta">
+                    <h2 class="cta-title">Sẵn Sàng Đặt Dịch Vụ?</h2>
+                    <p class="cta-subtitle">
+                        Liên hệ với chúng tôi ngay hôm nay để đặt lịch và nhận ưu đãi đặc biệt!
+                    </p>
+                    <div class="cta-buttons">
+                        <a href="@Url.Action("Booking", "Service", new { id = service.Id })" class="cta-btn primary">Đặt Lịch Ngay</a>
+                        <a href="tel:0123456789" class="cta-btn secondary">Gọi Tư Vấn: 0123.456.789</a>
+                    </div>
+                </div>
+                
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/service.js" asp-append-version="true"></script>
+}

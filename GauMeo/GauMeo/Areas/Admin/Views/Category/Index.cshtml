@@ -1,0 +1,245 @@
+@model IEnumerable<GauMeo.Models.Categories.Category>
+@{
+    ViewData["Title"] = "Quản lý danh mục";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class='bx bx-category'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count()</div>
+                <div class="stat-label">Tổng danh mục</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(c => c.IsActive)</div>
+                <div class="stat-label">Đang hoạt động</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class='bx bx-pause-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(c => !c.IsActive)</div>
+                <div class="stat-label">Ngừng hoạt động</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class='bx bx-calendar-plus'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(c => c.CreatedAt.Date == DateTime.Today)</div>
+                <div class="stat-label">Mới hôm nay</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="admin-card">
+        <div class="search-filter-section">
+            <div class="search-container-admin">
+                <div class="search-input-wrapper">
+                    <i class='bx bx-search search-icon'></i>
+                    <input type="text" id="categorySearch" class="search-input-admin" placeholder="Tìm kiếm danh mục...">
+                </div>
+            </div>
+            <div class="filter-controls">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active">Đang hoạt động</option>
+                    <option value="inactive">Ngừng hoạt động</option>
+                </select>
+            </div>
+            <div class="action-controls">
+                <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                    <i class='bx bx-plus'></i>
+                    Thêm danh mục
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">Danh sách danh mục</h4>
+            <div class="view-options">
+                <button class="view-btn active" data-view="table" title="Hiển thị dạng bảng">
+                    <i class='bx bx-table'></i>
+                </button>
+                <button class="view-btn" data-view="grid" title="Hiển thị dạng lưới">
+                    <i class='bx bx-grid-alt'></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div id="tableView" class="table-responsive">
+            <table class="admin-table" id="categoriesTable">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll" class="admin-checkbox">
+                        </th>
+                        <th>Hình ảnh</th>
+                        <th class="sortable" data-sort="name">
+                            Tên danh mục
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th>Mô tả</th>
+                        <th class="sortable" data-sort="status">
+                            Trạng thái
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th class="sortable" data-sort="date">
+                            Ngày tạo
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in Model)
+                    {
+                        <tr class="category-row" 
+                            data-name="@category.Name.ToLower()" 
+                            data-status="@(category.IsActive ? "active" : "inactive")"
+                            data-sort-name="@category.Name"
+                            data-sort-status="@(category.IsActive ? "1" : "0")"
+                            data-sort-date="@category.CreatedAt.Ticks">
+                            <td>
+                                <input type="checkbox" class="admin-checkbox category-checkbox" value="@category.Id">
+                            </td>
+                            <td>
+                                <div class="category-image">
+                                    @if (!string.IsNullOrEmpty(category.ImageUrl))
+                                    {
+                                        <img src="@category.ImageUrl" alt="@category.Name">
+                                    }
+                                    else
+                                    {
+                                        <div class="no-image">
+                                            <i class='bx bx-category'></i>
+                                        </div>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <div class="category-info">
+                                    <div class="category-name">@category.Name</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="category-desc">
+                                    @(string.IsNullOrEmpty(category.Description) ? "Chưa có mô tả" : 
+                                      category.Description.Length > 100 ? category.Description.Substring(0, 100) + "..." : category.Description)
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge @(category.IsActive ? "active" : "inactive")">
+                                    @(category.IsActive ? "Hoạt động" : "Ngừng")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="date-text">@category.CreatedAt.ToString("dd/MM/yyyy")</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="@Url.Action("Details", new { id = category.Id })" class="action-btn view-btn" title="Xem chi tiết">
+                                        <i class='bx bx-show'></i>
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = category.Id })" class="action-btn edit-btn" title="Chỉnh sửa">
+                                        <i class='bx bx-edit'></i>
+                                    </a>
+                                    <button class="action-btn delete-btn" onclick="deleteCategory('@category.Id')" title="Xóa">
+                                        <i class='bx bx-trash'></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grid View -->
+        <div id="gridView" class="category-grid" style="display: none;">
+            @foreach (var category in Model)
+            {
+                <div class="category-card" 
+                     data-name="@category.Name.ToLower()" 
+                     data-status="@(category.IsActive ? "active" : "inactive")">
+                    <div class="category-card-header">
+                        <div class="category-card-image">
+                            @if (!string.IsNullOrEmpty(category.ImageUrl))
+                            {
+                                <img src="@category.ImageUrl" alt="@category.Name">
+                            }
+                            else
+                            {
+                                <div class="no-image">
+                                    <i class='bx bx-category'></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="category-card-overlay">
+                            <div class="overlay-actions">
+                                <a href="@Url.Action("Details", new { id = category.Id })" class="overlay-btn">
+                                    <i class='bx bx-show'></i>
+                                </a>
+                                <a href="@Url.Action("Edit", new { id = category.Id })" class="overlay-btn">
+                                    <i class='bx bx-edit'></i>
+                                </a>
+                                <button class="overlay-btn delete" onclick="deleteCategory('@category.Id')">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="category-card-content">
+                        <h5 class="category-card-name">@category.Name</h5>
+                        <div class="category-card-desc">
+                            @(string.IsNullOrEmpty(category.Description) ? "Chưa có mô tả" : category.Description)
+                        </div>
+                        <div class="category-card-footer">
+                            <span class="status @(category.IsActive ? "active" : "inactive")">
+                                @(category.IsActive ? "Hoạt động" : "Ngừng")
+                            </span>
+                            <span class="date">@category.CreatedAt.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class='bx bx-category'></i>
+                </div>
+                <h5 class="empty-title">Chưa có danh mục nào</h5>
+                <p class="empty-description">Hãy thêm danh mục đầu tiên của bạn!</p>
+                <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                    <i class='bx bx-plus'></i>
+                    Thêm danh mục mới
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/category-management.js" asp-append-version="true"></script>
+} 

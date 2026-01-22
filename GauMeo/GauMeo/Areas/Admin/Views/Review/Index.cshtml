@@ -1,0 +1,242 @@
+@model IEnumerable<GauMeo.Models.Products.Review>
+
+@{
+    ViewData["Title"] = "Quản lý đánh giá";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var stats = ViewBag.Statistics as dynamic;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/review-management.css" />
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Quản lý đánh giá</h1>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon purple-gradient">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@stats.TotalReviews</div>
+                <div class="stat-label">Tổng đánh giá</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green-gradient">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@stats.ApprovedReviews</div>
+                <div class="stat-label">Đã duyệt</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon orange-gradient">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@stats.PendingReviews</div>
+                <div class="stat-label">Chờ duyệt</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon blue-gradient">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@stats.VerifiedReviews</div>
+                <div class="stat-label">Đã mua hàng</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon green-gradient">
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@stats.AverageRating</div>
+                <div class="stat-label">Đánh giá trung bình</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon purple-gradient">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@stats.TodayReviews</div>
+                <div class="stat-label">Hôm nay</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Danh sách đánh giá</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>
+                                <a href="@Url.Action("Index", new { productId = ViewBag.ProductId, sortOrder = ViewBag.RatingSortParam })" class="text-dark">
+                                    Đánh giá
+                                    @if (ViewBag.CurrentSort == "rating_desc")
+                                    {
+                                        <i class="fas fa-sort-down"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "rating_asc")
+                                    {
+                                        <i class="fas fa-sort-up"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th>Người đánh giá</th>
+                            <th>
+                                <a href="@Url.Action("Index", new { productId = ViewBag.ProductId, sortOrder = ViewBag.DateSortParam })" class="text-dark">
+                                    Ngày đánh giá
+                                    @if (ViewBag.CurrentSort == "date_desc")
+                                    {
+                                        <i class="fas fa-sort-down"></i>
+                                    }
+                                    else if (ViewBag.CurrentSort == "date_asc")
+                                    {
+                                        <i class="fas fa-sort-up"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-sort"></i>
+                                    }
+                                </a>
+                            </th>
+                            <th>Trạng thái</th>
+                            <th class="text-end">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="/Product/Detail/@item.ProductId" class="text-primary">
+                                        @item.Product.Name
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="rating-stars">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= item.Rating)
+                                                {
+                                                    <i class="fas fa-star text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="far fa-star text-warning"></i>
+                                                }
+                                            }
+                                        </div>
+                                        <span class="ms-2">(@item.Rating/5)</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @item.CustomerName
+                                    @if (item.IsVerifiedPurchase)
+                                    {
+                                        <span class="badge bg-success ms-1">Đã mua hàng</span>
+                                    }
+                                </td>
+                                <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @if (item.IsApproved)
+                                    {
+                                        <span class="badge bg-success">Đã duyệt</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Chờ duyệt</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-link text-primary">
+                                        Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (ViewBag.TotalPages > 1)
+            {
+                <div class="card-footer">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0">
+                            @if (ViewBag.CurrentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, sortOrder = ViewBag.CurrentSort, productId = ViewBag.ProductId })">
+                                        Trước
+                                    </a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = i, sortOrder = ViewBag.CurrentSort, productId = ViewBag.ProductId })">
+                                        @i
+                                    </a>
+                                </li>
+                            }
+
+                            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, sortOrder = ViewBag.CurrentSort, productId = ViewBag.ProductId })">
+                                        Sau
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Highlight current sort column
+            var currentSort = '@ViewBag.CurrentSort';
+            if (currentSort) {
+                $('.sort-' + currentSort).addClass('active');
+            }
+        });
+    </script>
+} 

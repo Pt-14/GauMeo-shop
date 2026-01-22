@@ -1,0 +1,108 @@
+@model GauMeo.Models.ViewModels.CreateAdminViewModel
+
+@{
+    ViewData["Title"] = "Tạo tài khoản quản trị viên";
+}
+
+<div class="admin-card">
+    <div class="card-header-admin">
+        <h4 class="card-title">
+            <i class='bx bx-user-plus'></i>
+            @ViewData["Title"]
+        </h4>
+        <div class="card-actions">
+            <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                <i class='bx bx-arrow-back'></i>
+                Quay lại
+            </a>
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post" class="admin-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="UserName" class="form-label required"></label>
+                <input asp-for="UserName" class="form-control" placeholder="Nhập tên đăng nhập">
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="form-label required"></label>
+                <input asp-for="Email" class="form-control" placeholder="Nhập địa chỉ email">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="FullName" class="form-label required"></label>
+                <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên đầy đủ">
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại">
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Address" class="form-label"></label>
+            <textarea asp-for="Address" class="form-control" rows="3" placeholder="Nhập địa chỉ"></textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label asp-for="Password" class="form-label required"></label>
+                <div class="password-input-wrapper">
+                    <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu">
+                    <button type="button" class="password-toggle" onclick="togglePassword('Password')">
+                        <i class='bx bx-hide' id="Password-icon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+                <small class="form-text text-muted">Mật khẩu phải có ít nhất 6 ký tự</small>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="form-label required"></label>
+                <div class="password-input-wrapper">
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu">
+                    <button type="button" class="password-toggle" onclick="togglePassword('ConfirmPassword')">
+                        <i class='bx bx-hide' id="ConfirmPassword-icon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-admin btn-success">
+                <i class='bx bx-save'></i>
+                Tạo tài khoản
+            </button>
+            <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                <i class='bx bx-x'></i>
+                Hủy bỏ
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const icon = document.getElementById(fieldId + '-icon');
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.className = 'bx bx-show';
+            } else {
+                passwordField.type = 'password';
+                icon.className = 'bx bx-hide';
+            }
+        }
+    </script>
+} 

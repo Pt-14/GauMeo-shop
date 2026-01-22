@@ -1,0 +1,138 @@
+@model GauMeo.Models.Categories.Brand
+@{
+    ViewData["Title"] = "Thêm thương hiệu mới";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">@ViewData["Title"]</h4>
+            <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                <i class='bx bx-arrow-back'></i>
+                Quay lại
+            </a>
+        </div>
+
+        <form asp-action="Create" method="post" class="admin-form">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Name" class="form-label">Tên thương hiệu <span class="required">*</span></label>
+                        <input asp-for="Name" class="form-control" placeholder="Nhập tên thương hiệu..." />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ShortName" class="form-label">Tên viết tắt <span class="required">*</span></label>
+                        <input asp-for="ShortName" class="form-control" placeholder="VD: RC, PD..." maxlength="10" />
+                        <span asp-validation-for="ShortName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Founded" class="form-label">Năm thành lập</label>
+                        <input asp-for="Founded" class="form-control" placeholder="VD: 1968" />
+                        <span asp-validation-for="Founded" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Origin" class="form-label">Xuất xứ</label>
+                        <input asp-for="Origin" class="form-control" placeholder="VD: Pháp, Mỹ..." />
+                        <span asp-validation-for="Origin" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Website" class="form-label">Website</label>
+                        <input asp-for="Website" class="form-control" placeholder="VD: www.example.com" />
+                        <span asp-validation-for="Website" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Image" class="form-label">Logo URL</label>
+                        <input asp-for="Image" class="form-control" placeholder="/images/brands/logo.png" />
+                        <span asp-validation-for="Image" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="form-label">Mô tả ngắn</label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả ngắn về thương hiệu..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FullDescription" class="form-label">Mô tả chi tiết</label>
+                <textarea asp-for="FullDescription" class="form-control" rows="5" placeholder="Mô tả chi tiết về thương hiệu..."></textarea>
+                <span asp-validation-for="FullDescription" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Features" class="form-label">Đặc điểm nổi bật</label>
+                <textarea asp-for="Features" class="form-control" rows="3" placeholder='["Đặc điểm 1","Đặc điểm 2","Đặc điểm 3"]'></textarea>
+                <span asp-validation-for="Features" class="text-danger"></span>
+                <small class="form-text text-muted">Nhập dạng JSON array, VD: ["Chất lượng cao","Giá cả hợp lý"]</small>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="DisplayOrder" class="form-label">Thứ tự hiển thị</label>
+                        <input asp-for="DisplayOrder" class="form-control" type="number" value="0" />
+                        <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="form-check-group">
+                            <div class="form-check">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+                                <label asp-for="IsActive" class="form-check-label">Kích hoạt</label>
+                            </div>
+                            <div class="form-check">
+                                <input asp-for="IsFeatured" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsFeatured" class="form-check-label">Thương hiệu nổi bật</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-success">
+                    <i class='bx bx-save'></i>
+                    Lưu thương hiệu
+                </button>
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-x'></i>
+                    Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Auto generate short name từ name
+        document.getElementById('Name').addEventListener('input', function() {
+            const name = this.value;
+            const shortName = name.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 10);
+            document.getElementById('ShortName').value = shortName;
+        });
+    </script>
+} 

@@ -1,0 +1,237 @@
+@model IEnumerable<GauMeo.Models.Promotions.Promotion>
+@{
+    ViewData["Title"] = "Quản lý khuyến mãi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/promotion-management.css" />
+}
+
+<div class="main-content">
+    <!-- Stats Section -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary">
+                <i class='bx bx-gift'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count()</div>
+                <div class="stat-label">Tổng khuyến mãi</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-success">
+                <i class='bx bx-play-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(p => p.IsActive && p.StartDate <= DateTime.Now && p.EndDate >= DateTime.Now)</div>
+                <div class="stat-label">Đang chạy</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-warning">
+                <i class='bx bx-time-five'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(p => p.StartDate > DateTime.Now)</div>
+                <div class="stat-label">Sắp diễn ra</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon bg-info">
+                <i class='bx bx-check-circle'></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-number">@Model.Count(p => p.EndDate < DateTime.Now)</div>
+                <div class="stat-label">Đã kết thúc</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="admin-card">
+        <div class="search-filter-section">
+            <div class="search-container-admin">
+                <div class="search-input-wrapper">
+                    <i class='bx bx-search search-icon'></i>
+                    <input type="text" id="promotionSearch" class="search-input-admin" placeholder="Tìm kiếm khuyến mãi...">
+                </div>
+            </div>
+            <div class="filter-controls">
+                <select id="statusFilter" class="filter-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="running">Đang chạy</option>
+                    <option value="upcoming">Sắp diễn ra</option>
+                    <option value="expired">Đã kết thúc</option>
+                </select>
+                <select id="discountFilter" class="filter-select">
+                    <option value="">Tất cả mức giảm</option>
+                    <option value="low">Dưới 20%</option>
+                    <option value="medium">20% - 40%</option>
+                    <option value="high">Trên 40%</option>
+                </select>
+            </div>
+            <div class="action-controls">
+                <a href="@Url.Action("Create")" class="btn-admin btn-success">
+                    <i class='bx bx-plus'></i>
+                    Tạo khuyến mãi
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Section -->
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <h4 class="card-title">Danh sách khuyến mãi</h4>
+            <div class="view-options">
+                <button class="view-btn active" data-view="table" title="Hiển thị dạng bảng">
+                    <i class='bx bx-table'></i>
+                </button>
+                <button class="view-btn" data-view="grid" title="Hiển thị dạng lưới">
+                    <i class='bx bx-grid-alt'></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Table View -->
+        <div id="tableView" class="table-responsive">
+            <table class="admin-table" id="promotionsTable">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAll" class="admin-checkbox">
+                        </th>
+                        <th class="sortable" data-sort="name">
+                            Tên khuyến mãi
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th class="sortable" data-sort="discount">
+                            Giảm giá
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th class="sortable" data-sort="start-date">
+                            Ngày bắt đầu
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th class="sortable" data-sort="end-date">
+                            Ngày kết thúc
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th class="sortable" data-sort="status">
+                            Trạng thái
+                            <i class='bx bx-sort sort-icon'></i>
+                        </th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var promotion in Model)
+                    {
+                        var status = promotion.StartDate > DateTime.Now ? "upcoming" : 
+                                   promotion.EndDate < DateTime.Now ? "expired" : "running";
+                        var statusText = status == "upcoming" ? "Sắp diễn ra" : 
+                                       status == "expired" ? "Đã kết thúc" : "Đang chạy";
+                        
+                        <tr class="promotion-row" 
+                            data-name="@promotion.Name.ToLower()" 
+                            data-status="@status"
+                            data-sort-name="@promotion.Name"
+                            data-sort-discount="@promotion.DiscountPercentage"
+                            data-sort-start-date="@promotion.StartDate.ToString("yyyyMMdd")"
+                            data-sort-end-date="@promotion.EndDate.ToString("yyyyMMdd")"
+                            data-sort-status="@status"
+                            data-discount-range="@(promotion.DiscountPercentage < 20 ? "low" : promotion.DiscountPercentage <= 40 ? "medium" : "high")">
+                            <td>
+                                <input type="checkbox" class="admin-checkbox promotion-checkbox" value="@promotion.Id">
+                            </td>
+                            <td>
+                                <div class="promotion-info">
+                                    <div class="promotion-name">@promotion.Name</div>
+                                    <div class="promotion-description">@promotion.Description</div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="discount-badge">@promotion.DiscountPercentage%</span>
+                            </td>
+                            <td>
+                                <span class="date-text">@promotion.StartDate.ToString("dd/MM/yyyy")</span>
+                            </td>
+                            <td>
+                                <span class="date-text">@promotion.EndDate.ToString("dd/MM/yyyy")</span>
+                            </td>
+                            <td>
+                                <span class="status-badge @status">@statusText</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn view-btn" title="Xem chi tiết">
+                                        <i class='bx bx-show'></i>
+                                    </button>
+                                    <button class="action-btn edit-btn" title="Chỉnh sửa">
+                                        <i class='bx bx-edit'></i>
+                                    </button>
+                                    <button class="action-btn delete-btn" onclick="deletePromotion('@promotion.Id')" title="Xóa">
+                                        <i class='bx bx-trash'></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grid View -->
+        <div id="gridView" class="promotion-grid" style="display: none;">
+            @foreach (var promotion in Model)
+            {
+                var status = promotion.StartDate > DateTime.Now ? "upcoming" : 
+                           promotion.EndDate < DateTime.Now ? "expired" : "running";
+                var statusText = status == "upcoming" ? "Sắp diễn ra" : 
+                               status == "expired" ? "Đã kết thúc" : "Đang chạy";
+                
+                <div class="promotion-card" 
+                     data-name="@promotion.Name.ToLower()" 
+                     data-status="@status"
+                     data-discount-range="@(promotion.DiscountPercentage < 20 ? "low" : promotion.DiscountPercentage <= 40 ? "medium" : "high")">
+                    <div class="promotion-card-header">
+                        <div class="promotion-discount">@promotion.DiscountPercentage%</div>
+                        <div class="promotion-status @status">@statusText</div>
+                        <div class="promotion-actions">
+                            <button class="action-btn view-btn" title="Xem chi tiết">
+                                <i class='bx bx-show'></i>
+                            </button>
+                            <button class="action-btn edit-btn" title="Chỉnh sửa">
+                                <i class='bx bx-edit'></i>
+                            </button>
+                            <button class="action-btn delete-btn" onclick="deletePromotion('@promotion.Id')" title="Xóa">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="promotion-card-body">
+                        <h3 class="promotion-name">@promotion.Name</h3>
+                        <p class="promotion-description">@promotion.Description</p>
+                        <div class="promotion-dates">
+                            <div class="date-item">
+                                <i class='bx bx-calendar-check'></i>
+                                <span>@promotion.StartDate.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="date-separator"></div>
+                            <div class="date-item">
+                                <i class='bx bx-calendar-x'></i>
+                                <span>@promotion.EndDate.ToString("dd/MM/yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin/promotion-management.js"></script>
+} 

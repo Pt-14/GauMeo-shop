@@ -1,0 +1,247 @@
+@model GauMeo.Models.Categories.Category
+@{
+    ViewData["Title"] = "Thêm danh mục mới";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="main-content">
+    <div class="admin-card">
+        <div class="card-header-admin">
+            <div class="header-left">
+                <h4 class="card-title">
+                    <i class='bx bx-plus'></i>
+                    Thêm danh mục mới
+                </h4>
+                <p class="card-subtitle">Tạo danh mục mới cho sản phẩm</p>
+            </div>
+            <div class="header-actions">
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-arrow-back'></i>
+                    Quay lại
+                </a>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" class="admin-form">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+            <div class="form-grid">
+                <!-- Thông tin cơ bản -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class='bx bx-info-circle'></i>
+                        Thông tin cơ bản
+                    </h5>
+
+                    <div class="form-group">
+                        <label asp-for="Name" class="form-label required">Tên danh mục</label>
+                        <input asp-for="Name" class="form-control" placeholder="Nhập tên danh mục..." />
+                        <span asp-validation-for="Name" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Slug" class="form-label">Slug (URL thân thiện)</label>
+                        <div class="input-group">
+                            <input asp-for="Slug" class="form-control" placeholder="Slug sẽ được tạo tự động..." />
+                            <button type="button" id="generateSlugBtn" class="btn-admin btn-outline">
+                                <i class='bx bx-refresh'></i>
+                                Tạo tự động
+                            </button>
+                        </div>
+                        <span asp-validation-for="Slug" class="field-validation-error"></span>
+                        <small class="form-text">Nếu để trống, slug sẽ được tạo tự động từ tên danh mục</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Description" class="form-label">Mô tả</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Nhập mô tả cho danh mục..."></textarea>
+                        <span asp-validation-for="Description" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Icon" class="form-label">Icon (Emoji)</label>
+                        <input asp-for="Icon" class="form-control" placeholder="🥣" maxlength="2" />
+                        <span asp-validation-for="Icon" class="field-validation-error"></span>
+                        <small class="form-text">Emoji đại diện cho danh mục (ví dụ: 🥣, 🥫, 🦴)</small>
+                    </div>
+                </div>
+
+                <!-- Cấu trúc phân cấp -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class='bx bx-sitemap'></i>
+                        Cấu trúc phân cấp
+                    </h5>
+
+                    <div class="form-group">
+                        <label asp-for="Level" class="form-label required">Cấp độ</label>
+                        <select asp-for="Level" class="form-control" id="levelSelect">
+                            <option value="">-- Chọn cấp độ --</option>
+                            <option value="1">Cấp 1 - Danh mục chính (Chó, Mèo)</option>
+                            <option value="2">Cấp 2 - Danh mục cha (Thức ăn, Đồ chơi)</option>
+                            <option value="3">Cấp 3 - Danh mục con (Thức ăn hạt, Bánh thưởng)</option>
+                        </select>
+                        <span asp-validation-for="Level" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group" id="animalTypeGroup">
+                        <label asp-for="AnimalType" class="form-label">Loại thú cưng</label>
+                        <select asp-for="AnimalType" class="form-control">
+                            <option value="">-- Chọn loại thú cưng --</option>
+                            <option value="dog">Chó</option>
+                            <option value="cat">Mèo</option>
+                            <option value="both">Cả hai</option>
+                        </select>
+                        <span asp-validation-for="AnimalType" class="field-validation-error"></span>
+                        <small class="form-text">Chỉ áp dụng cho danh mục cấp 1</small>
+                    </div>
+
+                    <div class="form-group" id="parentCategoryGroup" style="display: none;">
+                        <label asp-for="ParentCategoryId" class="form-label">Danh mục cha</label>
+                        <select asp-for="ParentCategoryId" class="form-control">
+                            <option value="">-- Chọn danh mục cha --</option>
+                            @if (ViewBag.ParentCategories != null)
+                            {
+                                @foreach (var parent in (IEnumerable<GauMeo.Models.Categories.Category>)ViewBag.ParentCategories)
+                                {
+                                    <option value="@parent.Id">
+                                        @(string.IsNullOrEmpty(parent.AnimalType) ? "" : $"[{(parent.AnimalType == "dog" ? "Chó" : parent.AnimalType == "cat" ? "Mèo" : "Cả hai")}] ")@parent.Name
+                                    </option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="ParentCategoryId" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DisplayOrder" class="form-label">Thứ tự hiển thị</label>
+                        <input asp-for="DisplayOrder" type="number" class="form-control" value="0" min="0" />
+                        <span asp-validation-for="DisplayOrder" class="field-validation-error"></span>
+                        <small class="form-text">Số thứ tự hiển thị (nhỏ hơn = hiển thị trước)</small>
+                    </div>
+                </div>
+
+                <!-- Hình ảnh và hiển thị -->
+                <div class="form-section">
+                    <h5 class="section-title">
+                        <i class='bx bx-image'></i>
+                        Hình ảnh và hiển thị
+                    </h5>
+
+                    <div class="form-group">
+                        <label asp-for="ImageUrl" class="form-label">URL hình ảnh</label>
+                        <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                        <span asp-validation-for="ImageUrl" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="IconUrl" class="form-label">URL icon</label>
+                        <input asp-for="IconUrl" class="form-control" placeholder="https://example.com/icon.svg" />
+                        <span asp-validation-for="IconUrl" class="field-validation-error"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <div class="form-check">
+                                <input asp-for="IsActive" type="checkbox" class="form-check-input" checked />
+                                <label asp-for="IsActive" class="form-check-label">Kích hoạt</label>
+                            </div>
+                            <div class="form-check">
+                                <input asp-for="IsShowOnHome" type="checkbox" class="form-check-input" />
+                                <label asp-for="IsShowOnHome" class="form-check-label">Hiển thị trên trang chủ</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-admin btn-success">
+                    <i class='bx bx-save'></i>
+                    Lưu danh mục
+                </button>
+                <a href="@Url.Action("Index")" class="btn-admin btn-secondary">
+                    <i class='bx bx-x'></i>
+                    Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Handle level selection
+            $('#levelSelect').change(function() {
+                var level = $(this).val();
+                var animalTypeGroup = $('#animalTypeGroup');
+                var parentCategoryGroup = $('#parentCategoryGroup');
+                
+                if (level == '1') {
+                    animalTypeGroup.show();
+                    parentCategoryGroup.hide();
+                    $('#ParentCategoryId').val('');
+                } else if (level == '2' || level == '3') {
+                    animalTypeGroup.hide();
+                    parentCategoryGroup.show();
+                    $('#AnimalType').val('');
+                } else {
+                    animalTypeGroup.hide();
+                    parentCategoryGroup.hide();
+                }
+            });
+
+            // Auto-generate slug from name
+            $('#Name').on('input', function() {
+                if ($('#Slug').val() === '') {
+                    generateSlugFromName();
+                }
+            });
+
+            // Manual slug generation
+            $('#generateSlugBtn').click(function() {
+                generateSlugFromName();
+            });
+
+            function generateSlugFromName() {
+                var name = $('#Name').val();
+                if (name) {
+                    $.ajax({
+                        url: '@Url.Action("GenerateSlug")',
+                        method: 'POST',
+                        data: JSON.stringify(name),
+                        contentType: 'application/json',
+                        success: function(response) {
+                            if (response.success) {
+                                $('#Slug').val(response.slug);
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Check slug uniqueness
+            $('#Slug').on('blur', function() {
+                var slug = $(this).val();
+                if (slug) {
+                    $.ajax({
+                        url: '@Url.Action("CheckSlug")',
+                        method: 'POST',
+                        data: JSON.stringify({ slug: slug, excludeId: null }),
+                        contentType: 'application/json',
+                        success: function(response) {
+                            if (!response.isUnique) {
+                                alert('Slug này đã được sử dụng. Vui lòng chọn slug khác.');
+                                $('#Slug').focus();
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Initialize on page load
+            $('#levelSelect').trigger('change');
+        });
+    </script>
+} 

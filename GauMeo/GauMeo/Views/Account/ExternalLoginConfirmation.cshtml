@@ -1,0 +1,61 @@
+@model ExternalLoginConfirmationViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Xác nhận tài khoản Google";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true">
+}
+
+<div class="auth-container">
+    <div class="container">
+        <div class="form">
+            <h2>Xác nhận tài khoản</h2>
+            
+            <div class="google-welcome">
+                <div class="google-info">
+                    <i class="fab fa-google google-icon"></i>
+                    <p>Bạn đã đăng nhập thành công bằng <strong>@ViewData["LoginProvider"]</strong></p>
+                    <p class="subtitle">Vui lòng xác nhận và bổ sung thông tin để hoàn tất tạo tài khoản</p>
+                </div>
+            </div>
+            
+            <form asp-action="ExternalLoginConfirmation" asp-controller="Account" method="post" style="height: auto;">
+                <input type="hidden" asp-for="LoginProvider" />
+                <input type="hidden" asp-for="ProviderKey" />
+                <input type="hidden" asp-for="ReturnUrl" />
+                
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="inputBox">
+                    <input asp-for="Email" required="required" readonly>
+                    <i class="fa-regular fa-envelope"></i>
+                    <span asp-validation-for="Email" class="text-danger">Email</span>
+                </div>
+                
+                <div class="inputBox">
+                    <input asp-for="FullName" required="required">
+                    <i class="fa-regular fa-user"></i>
+                    <span asp-validation-for="FullName" class="text-danger">Họ và tên</span>
+                </div>
+                
+                <div class="inputBox">
+                    <input asp-for="Address" placeholder="Nhập địa chỉ (không bắt buộc)">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Địa chỉ</span>
+                </div>
+                
+                <div class="inputBox">
+                    <input type="submit" value="Hoàn tất tạo tài khoản" class="btn-google-confirm">
+                </div>
+                
+                <div class="terms-notice">
+                    <p><i class="fa-solid fa-info-circle"></i> Bằng cách tạo tài khoản, bạn đồng ý với các điều khoản sử dụng của chúng tôi.</p>
+                </div>
+            </form>
+            
+            <p><a asp-action="Login" asp-controller="Account">← Quay lại đăng nhập</a></p>
+        </div>
+    </div>
+</div> 

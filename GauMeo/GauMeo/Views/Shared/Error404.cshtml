@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "404 - Không tìm thấy trang";
+    var statusCode = ViewData["StatusCode"] ?? "404";
+    var errorTitle = ViewData["ErrorTitle"] ?? "Ối zời ơi, lạc đường zồi! Zời đất quỷ thần!";
+    var errorMessage = ViewData["ErrorMessage"] ?? "Tui thề tui thấy trang này hồi sáng giờ nó trốn đâu mất tiêu!";
+}
+
+<section class="page_404">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 text-center" style="padding-top: 40px;">
+                <div class="four_zero_four_bg">
+                    <h1 class="text-center">@statusCode</h1>
+                </div>
+                
+                <div class="contant_box_404">
+                    <h3 class="h2">
+                        @errorTitle
+                    </h3>
+                    
+                    <p>@errorMessage</p>
+                    
+                    <a href="/" class="link_404">Về trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/error404.css" asp-append-version="true" />
+} 

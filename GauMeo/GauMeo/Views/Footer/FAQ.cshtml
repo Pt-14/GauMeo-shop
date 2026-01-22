@@ -1,0 +1,423 @@
+@{
+    ViewData["Title"] = "Câu hỏi thường gặp";
+}
+
+<link rel="stylesheet" href="~/css/header-footer.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/helpcus-footer.css" asp-append-version="true" />
+
+<main class="faq-page">
+    <div class="faq-container">
+        <div class="faq-header">
+            <h1 class="faq-title">Câu hỏi thường gặp</h1>
+            <p class="faq-subtitle">Tìm hiểu thêm về GauMeo Pet Shop và dịch vụ của chúng tôi</p>
+            <div class="faq-search">
+                <input type="text" id="faqSearch" placeholder="Tìm kiếm câu hỏi..." />
+                <button type="button" onclick="searchFAQ()">🔍</button>
+            </div>
+        </div>
+
+        <div class="faq-categories">
+            <button class="category-btn active" onclick="filterFAQ('all')">Tất cả</button>
+            <button class="category-btn" onclick="filterFAQ('general')">Chung</button>
+            <button class="category-btn" onclick="filterFAQ('orders')">Đặt hàng</button>
+            <button class="category-btn" onclick="filterFAQ('shipping')">Vận chuyển</button>
+            <button class="category-btn" onclick="filterFAQ('payment')">Thanh toán</button>
+            <button class="category-btn" onclick="filterFAQ('products')">Sản phẩm</button>
+            <button class="category-btn" onclick="filterFAQ('services')">Dịch vụ</button>
+            <button class="category-btn" onclick="filterFAQ('account')">Tài khoản</button>
+        </div>
+
+        <div class="faq-content">
+            <!-- General Questions -->
+            <div class="faq-section" data-category="general">
+                <h2 class="section-title">
+                    <span class="section-icon">🏪</span>
+                    Câu hỏi chung
+                </h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>GauMeo Pet Shop là gì?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>GauMeo Pet Shop là cửa hàng chuyên cung cấp thức ăn, phụ kiện và dịch vụ chăm sóc cho thú cưng. Chúng tôi cam kết mang đến những sản phẩm chất lượng cao và dịch vụ tận tâm để thú cưng của bạn luôn khỏe mạnh và hạnh phúc.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Cửa hàng có những sản phẩm gì?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Chúng tôi cung cấp đa dạng sản phẩm:</p>
+                            <ul>
+                                <li>Thức ăn cho chó, mèo (hạt, ướt, pate)</li>
+                                <li>Đồ chơi và phụ kiện</li>
+                                <li>Sản phẩm chăm sóc sức khỏe</li>
+                                <li>Đồ dùng vệ sinh</li>
+                                <li>Quần áo và phụ kiện thời trang</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Giờ hoạt động của cửa hàng?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Cửa hàng mở cửa từ <strong>8:00 - 20:00</strong> tất cả các ngày trong tuần, kể cả cuối tuần và ngày lễ. Website hoạt động 24/7 để bạn có thể đặt hàng bất cứ lúc nào.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Questions -->
+            <div class="faq-section" data-category="orders">
+                <h2 class="section-title">
+                    <span class="section-icon">🛒</span>
+                    Đặt hàng
+                </h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Làm thế nào để đặt hàng?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Bạn có thể đặt hàng theo 3 cách:</p>
+                            <ol>
+                                <li><strong>Online:</strong> Truy cập website, chọn sản phẩm và thanh toán</li>
+                                <li><strong>Điện thoại:</strong> Gọi hotline 1900 1234</li>
+                                <li><strong>Trực tiếp:</strong> Đến cửa hàng tại 123 Đường ABC, Q.1, TP.HCM</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Có thể thay đổi hoặc hủy đơn hàng không?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Có, bạn có thể thay đổi hoặc hủy đơn hàng trong vòng <strong>30 phút</strong> sau khi đặt hàng. Sau thời gian này, đơn hàng sẽ được xử lý và không thể thay đổi.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Giá trị đơn hàng tối thiểu là bao nhiêu?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Không có giá trị đơn hàng tối thiểu. Tuy nhiên, để được freeship, đơn hàng cần đạt:</p>
+                            <ul>
+                                <li>300.000đ: Freeship tiết kiệm</li>
+                                <li>500.000đ: Freeship tiêu chuẩn</li>
+                                <li>700.000đ: Freeship nhanh nội thành</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Questions -->
+            <div class="faq-section" data-category="shipping">
+                <h2 class="section-title">
+                    <span class="section-icon">🚚</span>
+                    Vận chuyển
+                </h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>GauMeo Shop có giao hàng toàn quốc không?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Có, chúng tôi giao hàng toàn quốc với nhiều phương thức vận chuyển khác nhau:</p>
+                            <ul>
+                                <li><strong>Nội thành TP.HCM:</strong> 2-4 giờ</li>
+                                <li><strong>Các tỉnh thành lớn:</strong> 1-3 ngày</li>
+                                <li><strong>Vùng xa:</strong> 3-7 ngày</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Phí vận chuyển như thế nào?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Phí vận chuyển dao động từ <strong>20.000đ - 60.000đ</strong> tùy theo khu vực và phương thức giao hàng. Miễn phí vận chuyển cho đơn hàng từ 300.000đ trở lên.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Làm thế nào để theo dõi đơn hàng?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Sau khi đặt hàng, bạn sẽ nhận được mã tracking qua SMS/Email. Bạn có thể:</p>
+                            <ul>
+                                <li>Đăng nhập tài khoản để xem trạng thái đơn hàng</li>
+                                <li>Sử dụng mã tracking để tra cứu trên website</li>
+                                <li>Gọi hotline để được hỗ trợ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Questions -->
+            <div class="faq-section" data-category="payment">
+                <h2 class="section-title">
+                    <span class="section-icon">💳</span>
+                    Thanh toán
+                </h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Các phương thức thanh toán nào được hỗ trợ?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Chúng tôi hỗ trợ đa dạng phương thức thanh toán:</p>
+                            <ul>
+                                <li>Tiền mặt khi nhận hàng (COD)</li>
+                                <li>Chuyển khoản ngân hàng</li>
+                                <li>Ví điện tử (MoMo, ZaloPay, VNPay)</li>
+                                <li>Thẻ tín dụng/ghi nợ (Visa, Mastercard, ATM)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Thanh toán COD có phí không?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Có, phí COD là <strong>15.000đ</strong> cho đơn hàng dưới 1.000.000đ. Miễn phí COD cho đơn hàng từ 1.000.000đ trở lên.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Thông tin thanh toán có an toàn không?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Hoàn toàn an toàn! Chúng tôi sử dụng:</p>
+                            <ul>
+                                <li>Mã hóa SSL 256-bit</li>
+                                <li>Xác thực 3D Secure</li>
+                                <li>Không lưu trữ thông tin thẻ</li>
+                                <li>Hệ thống giám sát 24/7</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Questions -->
+            <div class="faq-section" data-category="products">
+                <h2 class="section-title">
+                    <span class="section-icon">🐕</span>
+                    Sản phẩm
+                </h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Làm thế nào để chọn thức ăn phù hợp cho thú cưng?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Để chọn thức ăn phù hợp, hãy xem xét:</p>
+                            <ul>
+                                <li><strong>Độ tuổi:</strong> Puppy/Kitten, Adult, Senior</li>
+                                <li><strong>Kích thước:</strong> Small, Medium, Large breed</li>
+                                <li><strong>Tình trạng sức khỏe:</strong> Dị ứng, béo phì, tiêu hóa</li>
+                                <li><strong>Sở thích:</strong> Vị thịt, cá, gà...</li>
+                            </ul>
+                            <p>Đội ngũ chuyên gia của chúng tôi sẵn sàng tư vấn miễn phí!</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Sản phẩm có bảo hành không?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Có, tất cả sản phẩm đều có chính sách bảo hành:</p>
+                            <ul>
+                                <li><strong>Thức ăn:</strong> Đổi trả trong 7 ngày nếu chưa mở</li>
+                                <li><strong>Đồ chơi:</strong> Bảo hành 15 ngày</li>
+                                <li><strong>Phụ kiện:</strong> Bảo hành 30 ngày</li>
+                                <li><strong>Sản phẩm điện tử:</strong> Bảo hành 6-12 tháng</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Có sản phẩm cho thú cưng có nhu cầu đặc biệt không?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Có, chúng tôi có nhiều sản phẩm chuyên biệt:</p>
+                            <ul>
+                                <li>Thức ăn cho thú cưng bị dị ứng</li>
+                                <li>Thức ăn kiểm soát cân nặng</li>
+                                <li>Sản phẩm hỗ trợ tiêu hóa</li>
+                                <li>Thức ăn cho thú cưng già, ốm</li>
+                                <li>Sản phẩm dinh dưỡng đặc biệt</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Questions -->
+            <div class="faq-section" data-category="services">
+                <h2 class="section-title">
+                    <span class="section-icon">✂️</span>
+                    Dịch vụ
+                </h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>GauMeo có những dịch vụ gì?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Chúng tôi cung cấp các dịch vụ chuyên nghiệp:</p>
+                            <ul>
+                                <li><strong>Pet's Spa:</strong> Tắm, sấy, massage thư giãn</li>
+                                <li><strong>Pet's Grooming:</strong> Cắt tỉa lông, tạo kiểu</li>
+                                <li><strong>Pet's Hotel:</strong> Gửi thú cưng ngắn/dài hạn</li>
+                                <li><strong>Pet Swimming:</strong> Bể bơi và vận động</li>
+                                <li><strong>Tư vấn thú y:</strong> Khám sức khỏe, tư vấn dinh dưỡng</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Cần đặt lịch trước khi sử dụng dịch vụ không?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Nên đặt lịch trước để đảm bảo chỗ và thời gian phù hợp:</p>
+                            <ul>
+                                <li><strong>Spa & Grooming:</strong> Đặt trước 1-2 ngày</li>
+                                <li><strong>Hotel:</strong> Đặt trước 3-7 ngày</li>
+                                <li><strong>Swimming:</strong> Có thể đến trực tiếp</li>
+                                <li><strong>Tư vấn thú y:</strong> Đặt lịch trước</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Giá dịch vụ như thế nào?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Giá dịch vụ phụ thuộc vào kích thước và giống thú cưng:</p>
+                            <ul>
+                                <li><strong>Spa cơ bản:</strong> 150.000đ - 400.000đ</li>
+                                <li><strong>Grooming:</strong> 200.000đ - 600.000đ</li>
+                                <li><strong>Hotel (1 ngày):</strong> 100.000đ - 300.000đ</li>
+                                <li><strong>Swimming:</strong> 50.000đ - 100.000đ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Questions -->
+            <div class="faq-section" data-category="account">
+                <h2 class="section-title">
+                    <span class="section-icon">👤</span>
+                    Tài khoản
+                </h2>
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Làm sao để đăng ký thành viên?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Rất đơn giản! Bạn có thể:</p>
+                            <ol>
+                                <li>Nhấn nút "Đăng ký" trên website</li>
+                                <li>Điền thông tin cơ bản (email, số điện thoại)</li>
+                                <li>Xác thực qua OTP</li>
+                                <li>Hoàn tất hồ sơ và bắt đầu mua sắm</li>
+                            </ol>
+                            <p>Hoặc đăng ký nhanh bằng Google/Facebook!</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Lợi ích khi trở thành thành viên?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Thành viên GauMeo được hưởng nhiều ưu đãi:</p>
+                            <ul>
+                                <li>Tích điểm với mỗi lần mua hàng</li>
+                                <li>Ưu đãi độc quyền và flash sale</li>
+                                <li>Miễn phí giao hàng ưu tiên</li>
+                                <li>Tư vấn miễn phí từ chuyên gia</li>
+                                <li>Nhận thông báo sản phẩm mới sớm nhất</li>
+                                <li>Chương trình tri ân sinh nhật</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Quên mật khẩu thì làm sao?</span>
+                            <div class="faq-icon">+</div>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Đừng lo lắng! Làm theo các bước sau:</p>
+                            <ol>
+                                <li>Nhấn "Quên mật khẩu" ở trang đăng nhập</li>
+                                <li>Nhập email đã đăng ký</li>
+                                <li>Kiểm tra email và nhấn link reset</li>
+                                <li>Tạo mật khẩu mới</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-support">
+            <h3>Không tìm thấy câu trả lời?</h3>
+            <p>Đội ngũ hỗ trợ của chúng tôi luôn sẵn sàng giúp đỡ bạn!</p>
+            <div class="support-buttons">
+                <a href="tel:19001234" class="support-btn phone">
+                    📞 Gọi ngay: 1900 1234
+                </a>
+                <a href="#" class="support-btn chat" onclick="openChat()">
+                    💬 Chat trực tuyến
+                </a>
+                <a href="mailto:support@gaumeopetshop.com" class="support-btn email">
+                    📧 Gửi email
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="~/js/faq.js" asp-append-version="true"></script> 

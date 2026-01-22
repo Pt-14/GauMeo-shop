@@ -1,0 +1,385 @@
+@model GauMeo.Models.Services.Service
+
+@{
+    ViewData["Title"] = "Chi tiết dịch vụ";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin/admin.css" />
+}
+
+<div class="page-header">
+    <div class="header-content">
+        <h1>
+            <i class='bx bx-info-circle'></i>
+            Chi tiết dịch vụ
+        </h1>
+        <div class="breadcrumb">
+            <a href="@Url.Action("Index", "Home", new { area = "Admin" })">Trang chủ</a>
+            <span>/</span>
+            <a href="@Url.Action("Index", "Service")">Quản lý dịch vụ</a>
+            <span>/</span>
+            <span>Chi tiết</span>
+        </div>
+    </div>
+    <div class="header-actions">
+        <a class="btn-admin btn-success" asp-action="Edit" asp-route-id="@Model.Id">
+            <i class='bx bx-edit'></i>
+            Chỉnh sửa
+        </a>
+        <a class="btn-admin btn-danger" asp-action="Delete" asp-route-id="@Model.Id">
+            <i class='bx bx-trash'></i>
+            Xóa
+        </a>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="details-container">
+        <!-- Service Overview -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-info'></i>
+                    Thông tin tổng quan
+                </h3>
+                <div class="status-badge @(Model.IsActive ? "active" : "inactive")">
+                    @(Model.IsActive ? "Đang hoạt động" : "Tạm dừng")
+                </div>
+            </div>
+            <div class="detail-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Tên dịch vụ:</label>
+                        <span>@Model.Name</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Tên ngắn:</label>
+                        <span>@Model.ShortName</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Giá hiển thị:</label>
+                        <span class="price">@Model.Price</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Thời gian:</label>
+                        <span>@Model.Duration</span>
+                    </div>
+                    @if (Model.MinPrice.HasValue || Model.MaxPrice.HasValue)
+                    {
+                        <div class="info-item">
+                            <label>Khoảng giá:</label>
+                            <span>
+                                @if (Model.MinPrice.HasValue)
+                                {
+                                    @Model.MinPrice.Value.ToString("N0") 
+                                }
+                                @if (Model.MinPrice.HasValue && Model.MaxPrice.HasValue)
+                                {
+                                    <text> - </text>
+                                }
+                                @if (Model.MaxPrice.HasValue)
+                                {
+                                    @Model.MaxPrice.Value.ToString("N0")
+                                }
+                                VNĐ
+                            </span>
+                        </div>
+                    }
+                    <div class="info-item">
+                        <label>Thứ tự hiển thị:</label>
+                        <span>@Model.DisplayOrder</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Dịch vụ nổi bật:</label>
+                        <span class="@(Model.IsFeatured ? "text-success" : "text-muted")">
+                            @(Model.IsFeatured ? "Có" : "Không")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Image -->
+        @if (!string.IsNullOrEmpty(Model.Image))
+        {
+            <div class="detail-section">
+                <div class="section-header">
+                    <h3>
+                        <i class='bx bx-image'></i>
+                        Hình ảnh dịch vụ
+                    </h3>
+                </div>
+                <div class="detail-content">
+                    <div class="service-image">
+                        <img src="@Model.Image" alt="@Model.Name" style="max-width: 400px; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Descriptions -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-text'></i>
+                    Mô tả dịch vụ
+                </h3>
+            </div>
+            <div class="detail-content">
+                @if (!string.IsNullOrEmpty(Model.Description))
+                {
+                    <div class="description-item">
+                        <h4>Mô tả ngắn</h4>
+                        <p>@Model.Description</p>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.FullDescription))
+                {
+                    <div class="description-item">
+                        <h4>Mô tả đầy đủ</h4>
+                        <div>@Html.Raw(Model.FullDescription.Replace("\n", "<br/>"))</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Features -->
+        @if (!string.IsNullOrEmpty(Model.Features))
+        {
+            <div class="detail-section">
+                <div class="section-header">
+                    <h3>
+                        <i class='bx bx-star'></i>
+                        Đặc điểm dịch vụ
+                    </h3>
+                </div>
+                <div class="detail-content">
+                    <div class="features-list">
+                        @{
+                            var features = Model.GetFeaturesList();
+                        }
+                        @if (features != null && features.Any())
+                        {
+                            @foreach (var feature in features)
+                            {
+                                <div class="feature-item">
+                                    <i class='bx bx-check-circle'></i>
+                                    <span>@feature</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="feature-item">
+                                <i class='bx bx-info-circle'></i>
+                                <span>Chưa có đặc điểm nào được thêm</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Service Variants -->
+        @if (Model.ServiceVariants != null && Model.ServiceVariants.Any())
+        {
+            <div class="detail-section">
+                <div class="section-header">
+                    <h3>
+                        <i class='bx bx-list-ul'></i>
+                        Các biến thể dịch vụ
+                    </h3>
+                </div>
+                <div class="detail-content">
+                    <div class="variants-grid">
+                        @foreach (var variant in Model.ServiceVariants.OrderBy(v => v.DisplayOrder))
+                        {
+                            <div class="variant-card">
+                                <h5>@variant.Name</h5>
+                                <p>@variant.Description</p>
+                                <div class="variant-details">
+                                    <span class="pet-type">@variant.PetType</span>
+                                    <span class="pet-size">@variant.PetSize</span>
+                                    <span class="price">@variant.Price.ToString("N0") VNĐ</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Service Images -->
+        @if (Model.ServiceImages != null && Model.ServiceImages.Any())
+        {
+            <div class="detail-section">
+                <div class="section-header">
+                    <h3>
+                        <i class='bx bx-images'></i>
+                        Thư viện ảnh
+                    </h3>
+                </div>
+                <div class="detail-content">
+                    <div class="images-gallery">
+                        @foreach (var image in Model.ServiceImages.OrderBy(i => i.DisplayOrder))
+                        {
+                            <div class="gallery-item">
+                                <img src="@image.ImageUrl" alt="@image.AltText" />
+                                <div class="image-caption">@image.AltText</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- System Information -->
+        <div class="detail-section">
+            <div class="section-header">
+                <h3>
+                    <i class='bx bx-cog'></i>
+                    Thông tin hệ thống
+                </h3>
+            </div>
+            <div class="detail-content">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>ID:</label>
+                        <span>@Model.Id</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Ngày tạo:</label>
+                        <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Cập nhật lần cuối:</label>
+                        <span>@Model.UpdatedAt.ToString("dd/MM/yyyy HH:mm:ss")</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Số biến thể:</label>
+                        <span>@(Model.ServiceVariants?.Count ?? 0)</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Số hình ảnh:</label>
+                        <span>@(Model.ServiceImages?.Count ?? 0)</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Số lượt đặt:</label>
+                        <span>@(Model.ServiceBookings?.Count ?? 0)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="detail-actions">
+            <a class="btn-admin btn-success" asp-action="Edit" asp-route-id="@Model.Id">
+                <i class='bx bx-edit'></i>
+                Chỉnh sửa
+            </a>
+            <a class="btn-admin btn-secondary" asp-action="Index">
+                <i class='bx bx-arrow-back'></i>
+                Quay lại danh sách
+            </a>
+            <button type="button" class="btn-admin btn-warning" onclick="toggleServiceStatus(@Model.Id, @Model.IsActive.ToString().ToLower())">
+                <i class='bx bx-toggle-left'></i>
+                @(Model.IsActive ? "Tạm dừng" : "Kích hoạt")
+            </button>
+            <a class="btn-admin btn-danger" asp-action="Delete" asp-route-id="@Model.Id">
+                <i class='bx bx-trash'></i>
+                Xóa dịch vụ
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add CSRF token to requests
+        function getCSRFToken() {
+            return document.querySelector('input[name="__RequestVerificationToken"]')?.value ||
+                   document.querySelector('meta[name="__RequestVerificationToken"]')?.content;
+        }
+
+        function toggleServiceStatus(id, currentStatus) {
+            if (confirm(`Bạn có chắc muốn ${currentStatus ? 'tạm dừng' : 'kích hoạt'} dịch vụ này?`)) {
+                const token = getCSRFToken();
+                
+                fetch('@Url.Action("ToggleStatus", "Service")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success notification
+                        showNotification('success', data.message);
+                        
+                        // Update UI
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showNotification('error', data.message || 'Có lỗi xảy ra');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('error', 'Có lỗi xảy ra khi thực hiện thao tác');
+                });
+            }
+        }
+
+        function showNotification(type, message) {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class='bx ${type === 'success' ? 'bx-check-circle' : 'bx-error-circle'}'></i>
+                    <span>${message}</span>
+                </div>
+                <button type="button" class="notification-close" onclick="closeNotification(this)">
+                    <i class='bx bx-x'></i>
+                </button>
+            `;
+
+            // Add to page
+            let container = document.querySelector('.notification-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'notification-container';
+                document.body.appendChild(container);
+            }
+            
+            container.appendChild(notification);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function closeNotification(button) {
+            const notification = button.closest('.notification');
+            if (notification) {
+                notification.style.animation = 'slideOut 0.3s ease-in-out';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }
+        }
+    </script>
+} 

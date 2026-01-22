@@ -1,0 +1,840 @@
+@{
+    ViewData["Title"] = "Khuyến mãi";
+    var products = ViewBag.Products as List<dynamic>;
+    var brands = ViewBag.Brands as List<string>;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/promotion.css" asp-append-version="true">
+}
+
+@Html.AntiForgeryToken()
+
+<div class="product-index-container">
+    <div class="breadcrumb">
+        <a href="/Home/Index">Trang chủ</a> / 
+        <span>Khuyến mãi</span>
+    </div>
+    
+    <div class="product-index-header">
+        <h1 class="product-index-title">Khuyến mãi</h1>
+        <div class="product-index-subtitle">
+            <span>Khám phá các sản phẩm đang được giảm giá và ưu đãi đặc biệt tại GauMeo Shop.</span>
+        </div>
+    </div>
+
+    <!-- Mobile Filter Toggle -->
+    <button class="product-mobile-filter-toggle" onclick="toggleFilters()">
+        <i class="fas fa-filter"></i> Bộ lọc sản phẩm
+    </button>
+
+    <!-- Main Layout with Left Sidebar -->
+    <div class="product-main-layout">
+        <!-- Left Sidebar Filters -->
+        <div class="product-filters-sidebar" id="filtersSidebar">
+            <h3 class="product-filters-title">
+                <i class="fas fa-filter"></i> Bộ lọc sản phẩm
+            </h3>
+            
+            <button class="product-clear-filters-btn" onclick="clearAllFilters()">
+                <i class="fas fa-times"></i> Xóa tất cả bộ lọc
+            </button>
+        
+            <form id="filterForm" method="get">
+                <!-- Brand Filter -->
+                <div class="product-filter-section">
+                    <h4 class="product-filter-section-title">
+                        <i class="fas fa-tag"></i> Thương hiệu
+                    </h4>
+                    <div class="product-brand-search">
+                        <input type="text" class="product-brand-search-input" id="brandSearchInput" placeholder="Tìm thương hiệu..." autocomplete="off">
+                    </div>
+                    <div class="product-brand-options" id="brandOptions">
+                        <div class="product-filter-options">
+                            @if (brands != null)
+                            {
+                                @foreach (var brand in brands)
+                                {
+                                    <label class="product-filter-option brand-option" data-brand="@brand.ToLower()">
+                                        <input type="checkbox" name="brands" value="@brand" class="product-filter-checkbox brand-checkbox">
+                                        <span class="product-filter-label-text">@brand</span>
+                                        <span class="product-filter-count">(3)</span>
+                                    </label>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Price Range Filter -->
+                <div class="product-filter-section">
+                    <h4 class="product-filter-section-title">
+                        <i class="fas fa-dollar-sign"></i> Khoảng giá
+                    </h4>
+                    <div class="product-filter-options">
+                        <label class="product-filter-option">
+                            <input type="radio" name="priceRange" value="0-100000" class="product-filter-radio">
+                            <span class="product-filter-label-text">Dưới 100.000đ</span>
+                            <span class="product-filter-count">(8)</span>
+                        </label>
+                        <label class="product-filter-option">
+                            <input type="radio" name="priceRange" value="100000-300000" class="product-filter-radio">
+                            <span class="product-filter-label-text">100.000đ - 300.000đ</span>
+                            <span class="product-filter-count">(12)</span>
+                        </label>
+                        <label class="product-filter-option">
+                            <input type="radio" name="priceRange" value="300000-500000" class="product-filter-radio">
+                            <span class="product-filter-label-text">300.000đ - 500.000đ</span>
+                            <span class="product-filter-count">(7)</span>
+                        </label>
+                        <label class="product-filter-option">
+                            <input type="radio" name="priceRange" value="500000-1000000" class="product-filter-radio">
+                            <span class="product-filter-label-text">500.000đ - 1.000.000đ</span>
+                            <span class="product-filter-count">(5)</span>
+                        </label>
+                        <label class="product-filter-option">
+                            <input type="radio" name="priceRange" value="1000000-0" class="product-filter-radio">
+                            <span class="product-filter-label-text">Trên 1.000.000đ</span>
+                            <span class="product-filter-count">(3)</span>
+                        </label>
+                    </div>
+                    <div class="product-price-range-inputs">
+                        <input type="number" placeholder="Từ" class="product-price-input" id="priceMin">
+                        <span class="product-price-separator">-</span>
+                        <input type="number" placeholder="Đến" class="product-price-input" id="priceMax">
+                    </div>
+                </div>
+                
+                <!-- Rating Filter -->
+                <div class="product-filter-section">
+                    <h4 class="product-filter-section-title">
+                        <i class="fas fa-star"></i> Đánh giá
+                    </h4>
+                    <div class="product-filter-options">
+                        <label class="product-rating-option">
+                            <input type="radio" name="rating" value="4.5" class="product-filter-radio">
+                            <div class="product-rating-stars">
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                            </div>
+                            <span class="product-filter-label-text">4.5★ trở lên</span>
+                        </label>
+                        <label class="product-rating-option">
+                            <input type="radio" name="rating" value="4.0" class="product-filter-radio">
+                            <div class="product-rating-stars">
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star empty">★</span>
+                            </div>
+                            <span class="product-filter-label-text">4.0★ trở lên</span>
+                        </label>
+                        <label class="product-rating-option">
+                            <input type="radio" name="rating" value="3.5" class="product-filter-radio">
+                            <div class="product-rating-stars">
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star">★</span>
+                                <span class="product-rating-star empty">★</span>
+                                <span class="product-rating-star empty">★</span>
+                            </div>
+                            <span class="product-filter-label-text">3.5★ trở lên</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Active Filters -->
+                <div class="product-active-filters" id="activeFilters">
+                    <div class="product-active-filters-title">Bộ lọc đang áp dụng:</div>
+                    <div class="product-active-filter-tags" id="activeFilterTags">
+                        <!-- Active filter tags will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Products Content -->
+        <div class="product-content">
+            <div class="product-header">
+                <div class="product-info">
+                    <h2 class="products-title">Tìm thấy @(products?.Count ?? 0) sản phẩm</h2>
+                    <p class="product-description">Các sản phẩm đang được giảm giá và khuyến mãi đặc biệt</p>
+                    <div class="product-content-active-filters">
+                        <div class="product-active-filters" id="productsActiveFilters">
+                            <div class="product-active-filters-title">Đang lọc theo:</div>
+                            <div class="product-active-filter-tags" id="productsActiveFilterTags">
+                                <!-- Active filter tags will be inserted here by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-controls">
+                    <div class="product-sort-controls">
+                        <label>Sắp xếp theo:</label>
+                        <select name="sort" class="product-sort-select" onchange="applyFilters()">
+                            <option value="popular">Phổ biến nhất</option>
+                            <option value="discount-desc">Giảm giá nhiều nhất</option>
+                            <option value="price-asc">Giá tăng dần</option>
+                            <option value="price-desc">Giá giảm dần</option>
+                            <option value="name-asc">Tên A-Z</option>
+                            <option value="name-desc">Tên Z-A</option>
+                            <option value="rating">Đánh giá cao nhất</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            @if (products != null && products.Count > 0)
+            {
+                <div class="product-grid">
+                @foreach (var product in products)
+                {
+                    <div class="product-card" data-product-id="@product.Id">
+                        <div class="product-image-section">
+                            <a href="/Product/Detail/@product.Id">
+                                <img src="@product.Image" alt="@product.Name" loading="lazy">
+                            </a>
+                            @if (product.IsOnSale)
+                            {
+                                <div class="sale-badge">-@product.DiscountPercent%</div>
+                            }
+                        </div>
+                        <div class="product-info-section">
+                            <a href="/Product/Detail/@product.Id">
+                                <h3>@product.Name</h3>
+                            </a>
+                            <div class="product-rating">
+                                <div class="rating-stars">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <svg class="star-icon @(i <= product.Rating ? "" : "empty")" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                            <path d="M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z"></path>
+                                        </svg>
+                                    }
+                                </div>
+                                <span class="rating-count">(@product.Rating)</span>
+                            </div>
+                            <p class="product-price">
+                              @if (product.IsOnSale && product.DiscountPercent > 0)
+                              {
+                                <span class="sale-price">@product.CurrentPrice.ToString("N0")đ</span>
+                                <span class="original-price">@product.OriginalPrice.ToString("N0")đ</span>
+                              }
+                              else
+                              {
+                                <span>@product.CurrentPrice.ToString("N0")đ</span>
+                              }
+                            </p>
+                            <button class="add-to-cart-btn" data-product-id="@product.Id" data-has-variants="@product.HasVariants">
+                                <svg class="cart-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
+                                    <path d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"></path>
+                                </svg>
+                                Thêm vào giỏ hàng
+                            </button>
+                        </div>
+                    </div>
+                }
+                </div>
+            }
+            else
+            {
+                <div class="product-no-products">
+                    <i class="fas fa-search"></i>
+                    <h3>Không tìm thấy sản phẩm</h3>
+                    <p>Không có sản phẩm nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Filter logic with validation - Same as Category.cshtml
+        let activeFilters = {
+            brands: [],
+            priceRange: null,
+            rating: null,
+            promotions: []
+        };
+
+        // Initialize filters from current state
+        document.addEventListener('DOMContentLoaded', function() {
+            updateActiveFilters();
+            attachFilterListeners();
+            initializeBrandSearch();
+            initializeAddToCartButtons();
+            
+            // Initialize from URL parameters if any
+            const urlParams = new URLSearchParams(window.location.search);
+            const brands = urlParams.getAll('brand');
+            const priceRange = urlParams.get('priceRange');
+            const rating = urlParams.get('rating');
+            const onSale = urlParams.get('onSale');
+            const freeShipping = urlParams.get('freeShipping');
+            
+            if (brands.length > 0) {
+                activeFilters.brands = brands;
+                brands.forEach(brand => {
+                    const checkbox = document.querySelector(`input[value="${brand}"].brand-checkbox`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+            
+            if (priceRange) {
+                activeFilters.priceRange = priceRange;
+                const radio = document.querySelector(`input[value="${priceRange}"][name="priceRange"]`);
+                if (radio) radio.checked = true;
+            }
+            
+            if (rating) {
+                activeFilters.rating = rating;
+                const radio = document.querySelector(`input[value="${rating}"][name="rating"]`);
+                if (radio) radio.checked = true;
+            }
+            
+            if (onSale === 'true') {
+                activeFilters.promotions.push('onSale');
+                const checkbox = document.querySelector('input[name="onSale"]');
+                if (checkbox) checkbox.checked = true;
+            }
+            
+            if (freeShipping === 'true') {
+                activeFilters.promotions.push('freeShipping');
+                const checkbox = document.querySelector('input[name="freeShipping"]');
+                if (checkbox) checkbox.checked = true;
+            }
+            
+            updateActiveFilters();
+        });
+
+        // Brand Search Functionality
+        function initializeBrandSearch() {
+            const brandSearchInput = document.getElementById('brandSearchInput');
+            const brandOptions = document.querySelectorAll('.brand-option');
+            
+            if (brandSearchInput && brandOptions.length > 0) {
+                brandSearchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    
+                    brandOptions.forEach(option => {
+                        const brandName = option.getAttribute('data-brand');
+                        const isVisible = brandName.includes(searchTerm);
+                        option.style.display = isVisible ? 'flex' : 'none';
+                    });
+                });
+            }
+        }
+
+        function attachFilterListeners() {
+            // Brand checkboxes
+            document.querySelectorAll('.brand-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', handleBrandFilter);
+            });
+
+            // Price range radio buttons
+            document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
+                radio.addEventListener('change', handlePriceFilter);
+            });
+
+            // Rating radio buttons
+            document.querySelectorAll('input[name="rating"]').forEach(radio => {
+                radio.addEventListener('change', handleRatingFilter);
+            });
+
+            // Custom price inputs
+            const priceMinInput = document.getElementById('priceMin');
+            const priceMaxInput = document.getElementById('priceMax');
+            if (priceMinInput) priceMinInput.addEventListener('change', handleCustomPriceFilter);
+            if (priceMaxInput) priceMaxInput.addEventListener('change', handleCustomPriceFilter);
+        }
+
+        function handleBrandFilter(event) {
+            const brand = event.target.value;
+            if (event.target.checked) {
+                activeFilters.brands.push(brand);
+            } else {
+                activeFilters.brands = activeFilters.brands.filter(b => b !== brand);
+            }
+            updateActiveFilters();
+            applyFilters();
+        }
+
+        function handlePriceFilter(event) {
+            if (event.target.checked) {
+                activeFilters.priceRange = event.target.value;
+                // Clear custom price inputs
+                const priceMinInput = document.getElementById('priceMin');
+                const priceMaxInput = document.getElementById('priceMax');
+                if (priceMinInput) priceMinInput.value = '';
+                if (priceMaxInput) priceMaxInput.value = '';
+            }
+            updateActiveFilters();
+            applyFilters();
+        }
+
+        function handleRatingFilter(event) {
+            if (event.target.checked) {
+                activeFilters.rating = event.target.value;
+            }
+            updateActiveFilters();
+            applyFilters();
+        }
+
+        function handleCustomPriceFilter() {
+            const priceMinInput = document.getElementById('priceMin');
+            const priceMaxInput = document.getElementById('priceMax');
+            
+            if (!priceMinInput || !priceMaxInput) return;
+            
+            const minPrice = priceMinInput.value;
+            const maxPrice = priceMaxInput.value;
+            
+            if (minPrice || maxPrice) {
+                // Clear radio buttons
+                document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
+                    radio.checked = false;
+                });
+                activeFilters.priceRange = `${minPrice || 0}-${maxPrice || 0}`;
+            } else {
+                activeFilters.priceRange = null;
+            }
+            updateActiveFilters();
+            applyFilters();
+        }
+
+        function updateActiveFilters() {
+            const activeFiltersContainer = document.getElementById('activeFilters');
+            const activeFilterTags = document.getElementById('activeFilterTags');
+            const productsActiveFiltersContainer = document.getElementById('productsActiveFilters');
+            const productsActiveFilterTags = document.getElementById('productsActiveFilterTags');
+            
+            let tags = [];
+            
+            // Brand filters
+            if (activeFilters.brands && activeFilters.brands.length > 0) {
+                activeFilters.brands.forEach(brand => {
+                    tags.push(`<div class="product-active-filter-tag">
+                        ${brand}
+                        <span class="remove" onclick="removeBrandFilter('${brand}')">×</span>
+                    </div>`);
+                });
+            }
+            
+            // Price range filter
+            if (activeFilters.priceRange) {
+                const priceText = getPriceRangeText(activeFilters.priceRange);
+                tags.push(`<div class="product-active-filter-tag">
+                    ${priceText}
+                    <span class="remove" onclick="removePriceFilter()">×</span>
+                </div>`);
+            }
+            
+            // Rating filter
+            if (activeFilters.rating) {
+                tags.push(`<div class="product-active-filter-tag">
+                    ${activeFilters.rating}★ trở lên
+                    <span class="remove" onclick="removeRatingFilter()">×</span>
+                </div>`);
+            }
+            
+            const tagsHTML = tags.join('');
+            
+            // Update sidebar active filters
+            if (activeFiltersContainer && activeFilterTags) {
+                if (tags.length > 0) {
+                    activeFilterTags.innerHTML = tagsHTML;
+                    activeFiltersContainer.style.display = 'block';
+                } else {
+                    activeFiltersContainer.style.display = 'none';
+                }
+            }
+            
+            // Update products content active filters
+            if (productsActiveFiltersContainer && productsActiveFilterTags) {
+                if (tags.length > 0) {
+                    productsActiveFilterTags.innerHTML = tagsHTML;
+                    productsActiveFiltersContainer.style.display = 'block';
+                } else {
+                    productsActiveFiltersContainer.style.display = 'none';
+                }
+            }
+        }
+        
+        function getPriceRangeText(range) {
+            switch (range) {
+                case '0-100000': return 'Dưới 100k';
+                case '100000-300000': return '100k - 300k';
+                case '300000-500000': return '300k - 500k';
+                case '500000-1000000': return '500k - 1M';
+                case '1000000-0': return 'Trên 1M';
+                default: return range;
+            }
+        }
+        
+        function removeBrandFilter(brand) {
+            activeFilters.brands = activeFilters.brands.filter(b => b !== brand);
+            document.querySelector(`input[value="${brand}"].brand-checkbox`).checked = false;
+            updateActiveFilters();
+            applyFilters();
+        }
+        
+        function removePriceFilter() {
+            activeFilters.priceRange = null;
+            document.querySelectorAll('input[name="priceRange"]').forEach(radio => radio.checked = false);
+            updateActiveFilters();
+            applyFilters();
+        }
+        
+        function removeRatingFilter() {
+            activeFilters.rating = null;
+            document.querySelectorAll('input[name="rating"]').forEach(radio => radio.checked = false);
+            updateActiveFilters();
+            applyFilters();
+        }
+
+        function clearAllFilters() {
+            activeFilters = {
+                brands: [],
+                priceRange: null,
+                rating: null,
+                promotions: []
+            };
+            
+            // Clear all form inputs
+            document.querySelectorAll('.product-filter-checkbox, .product-filter-radio').forEach(input => {
+                input.checked = false;
+            });
+            
+            // Clear price inputs if they exist
+            const priceMinInput = document.getElementById('priceMin');
+            const priceMaxInput = document.getElementById('priceMax');
+            if (priceMinInput) priceMinInput.value = '';
+            if (priceMaxInput) priceMaxInput.value = '';
+            
+            // Reset sort to default
+            const sortSelect = document.querySelector('.product-sort-select');
+            if (sortSelect) {
+                sortSelect.value = 'popular';
+            }
+            
+            updateActiveFilters();
+            
+            // Make AJAX request to get all products without filters
+            const currentUrl = new URL(window.location);
+            const params = new URLSearchParams();
+            currentUrl.search = params.toString();
+            
+            // Show loading state
+            const productsGrid = document.querySelector('.product-grid');
+            const productsTitle = document.querySelector('.products-title');
+            if (productsGrid) {
+                productsGrid.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i><br>Đang tải sản phẩm...</div>';
+            }
+            
+            fetch(currentUrl.toString(), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Parse the response
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Update products grid
+                const newProductsGrid = doc.querySelector('.product-grid');
+                const newProductsTitle = doc.querySelector('.products-title');
+                
+                if (newProductsGrid && productsGrid) {
+                    // Remove any existing no-products message
+                    const noProductsDiv = document.querySelector('.product-no-products');
+                    if (noProductsDiv) {
+                        noProductsDiv.remove();
+                    }
+                    
+                    // Show the products grid and update its content
+                    productsGrid.style.display = 'grid';
+                    productsGrid.innerHTML = newProductsGrid.innerHTML;
+                }
+                
+                // Update products count
+                if (newProductsTitle && productsTitle) {
+                    productsTitle.textContent = newProductsTitle.textContent;
+                }
+                
+                // Update URL without page reload
+                window.history.pushState({}, '', currentUrl.toString());
+            })
+            .catch(error => {
+                console.error('Error clearing filters:', error);
+                // Fallback to page reload if AJAX fails
+                window.location.href = currentUrl.toString();
+            });
+        }
+        
+        function applyFilters() {
+            const formData = new FormData();
+            
+            // Add brands
+            activeFilters.brands.forEach(brand => {
+                formData.append('brand', brand);
+            });
+            
+            // Add price range
+            if (activeFilters.priceRange) {
+                formData.append('priceRange', activeFilters.priceRange);
+            }
+            
+            // Add rating
+            if (activeFilters.rating) {
+                formData.append('rating', activeFilters.rating);
+            }
+            
+            // Add sort
+            const sortSelect = document.querySelector('.product-sort-select');
+            if (sortSelect && sortSelect.value) {
+                formData.append('sort', sortSelect.value);
+            }
+            
+            // AJAX request instead of page reload
+            const params = new URLSearchParams();
+            for (const [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+            
+            // Show loading state
+            const productsGrid = document.querySelector('.product-grid');
+            const productsTitle = document.querySelector('.products-title');
+            if (productsGrid) {
+                productsGrid.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i><br>Đang tải sản phẩm...</div>';
+            }
+            
+            // Make AJAX request
+            const currentUrl = new URL(window.location);
+            currentUrl.search = params.toString();
+            
+            fetch(currentUrl.toString(), {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Parse the response
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Update products grid
+                const newProductsGrid = doc.querySelector('.product-grid');
+                const newProductsTitle = doc.querySelector('.products-title');
+                const newNoProducts = doc.querySelector('.product-no-products');
+                
+                if (newProductsGrid && productsGrid) {
+                    // Remove any existing no-products message
+                    const noProductsDiv = document.querySelector('.product-no-products');
+                    if (noProductsDiv) {
+                        noProductsDiv.remove();
+                    }
+                    
+                    // Show the products grid and update its content
+                    productsGrid.style.display = 'grid';
+                    productsGrid.innerHTML = newProductsGrid.innerHTML;
+                } else if (newNoProducts) {
+                    // If no products found, replace the grid with the no-products message
+                    const contentDiv = productsGrid.parentElement;
+                    productsGrid.style.display = 'none';
+                    
+                    // Check if no-products message already exists
+                    let noProductsDiv = document.querySelector('.product-no-products');
+                    if (!noProductsDiv) {
+                        noProductsDiv = document.createElement('div');
+                        noProductsDiv.className = 'product-no-products';
+                        contentDiv.appendChild(noProductsDiv);
+                    }
+                    noProductsDiv.innerHTML = newNoProducts.innerHTML;
+                }
+                
+                // Update products count
+                if (newProductsTitle && productsTitle) {
+                    productsTitle.textContent = newProductsTitle.textContent;
+                }
+                
+                // Update URL without page reload
+                window.history.pushState({}, '', currentUrl.toString());
+            })
+            .catch(error => {
+                console.error('Error applying filters:', error);
+                // Fallback to page reload if AJAX fails
+                window.location.href = currentUrl.toString();
+            });
+        }
+
+        // Initialize add to cart buttons
+        function initializeAddToCartButtons() {
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-to-cart-btn') || e.target.closest('.add-to-cart-btn')) {
+                    e.preventDefault();
+                    const button = e.target.classList.contains('add-to-cart-btn') ? e.target : e.target.closest('.add-to-cart-btn');
+                    const productId = button.getAttribute('data-product-id');
+                    const hasVariants = button.getAttribute('data-has-variants') === 'true';
+                    
+                    if (hasVariants) {
+                        // Nếu sản phẩm có biến thể, chuyển hướng đến trang chi tiết
+                        window.location.href = `/Product/Detail/${productId}`;
+                    } else {
+                        // Nếu không có biến thể, thêm trực tiếp vào giỏ hàng
+                        addToCart(productId);
+                    }
+                }
+            });
+        }
+
+        // Add to cart function
+        async function addToCart(productId) {
+            try {
+                const response = await fetch('/Cart/AddToCart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify({
+                        productId: parseInt(productId),
+                        quantity: 1
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showNotification(data.message || 'Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                    
+                    // Cập nhật số lượng giỏ hàng
+                    updateCartBadge();
+                } else {
+                    showNotification(data.message || 'Không thể thêm sản phẩm vào giỏ hàng!', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                showNotification('Có lỗi xảy ra, vui lòng thử lại!', 'error');
+            }
+        }
+
+        // Update cart badge count
+        async function updateCartBadge() {
+            try {
+                const response = await fetch('/Cart/GetCartCount');
+                const data = await response.json();
+                
+                const cartBadges = document.querySelectorAll('.header-cart-badge, .cart-count, .cart-badge');
+                cartBadges.forEach(badge => {
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'inline-block';
+                        badge.classList.add('show');
+                    } else {
+                        badge.style.display = 'none';
+                        badge.classList.remove('show');
+                    }
+                });
+            } catch (error) {
+                console.error('Error updating cart badge:', error);
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.promotion-notification');
+            existingNotifications.forEach(n => n.remove());
+
+            const notification = document.createElement('div');
+            notification.className = `promotion-notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-icon">
+                        ${type === 'success' ? 
+                            '<svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z"/></svg>' : 
+                            '<svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></svg>'
+                        }
+                    </div>
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/></svg>
+                    </button>
+                </div>
+            `;
+
+            // Add styles
+            const bgColor = type === 'success' ? '#d4edda' : '#f8d7da';
+            const textColor = type === 'success' ? '#155724' : '#721c24';
+            const borderColor = type === 'success' ? '#c3e6cb' : '#f5c6cb';
+
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10000;
+                max-width: 400px;
+                background: ${bgColor};
+                color: ${textColor};
+                border: 1px solid ${borderColor};
+                border-radius: 8px;
+                padding: 12px 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+
+            notification.querySelector('.notification-content').style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+
+            notification.querySelector('.notification-close').style.cssText = `
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 4px;
+                border-radius: 4px;
+                margin-left: auto;
+                opacity: 0.7;
+                transition: opacity 0.2s ease;
+            `;
+
+            document.body.appendChild(notification);
+
+            // Animate in
+            requestAnimationFrame(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            });
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 4000);
+        }
+        
+        function toggleFilters() {
+            const sidebar = document.getElementById('filtersSidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
+        }
+    </script>
+} 
