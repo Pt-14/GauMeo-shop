@@ -22,28 +22,6 @@
   --step-circle: #fafafa;
 }
 
-/* Dark Mode Variables */
-body.dark {
-  --service-bg: #002828;
-  --service-card-bg: #1d5715;
-  --service-text: #F0FFF0;
-  --service-text-secondary: #D6D6D6;
-  --service-border: #00871E;
-  --service-shadow: rgba(0, 0, 0, 0.3);
-  --service-primary: #00AA28;
-  --service-primary-hover: #00871E;
-  --service-secondary: #1d5715;
-  --service-accent: #00AA28;
-  --service-divider: #00871E;
-  --service-tab-hover: #1d5715;
-  --service-tab-active-bg: #00AA28;
-  --service-tab-active-text: #002828;
-  --service-success: #00AA28;
-  --service-warning: #00871E;
-  --pricing-tab-active: #00AA28;
-  --step-circle: #fafafa;
-}
-
 /* Service Container */
 .service-container {
   max-width: 1400px;

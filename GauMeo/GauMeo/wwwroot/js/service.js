@@ -6,9 +6,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize service page functionality
     initializeServicePage();
-    
-    // Listen for theme changes
-    observeThemeChanges();
 });
 
 /**
@@ -364,105 +361,6 @@ function initializeScrollAnimations() {
     // Observe sections - removed non-existent classes
     const sections = document.querySelectorAll('.service-features, .service-additional, .service-booking-steps, .service-faq');
     sections.forEach(section => observer.observe(section));
-}
-
-/**
- * Observe theme changes
- */
-function observeThemeChanges() {
-    const body = document.body;
-    
-    // Create a MutationObserver to watch for class changes
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                const isDarkMode = body.classList.contains('dark');
-                
-                if (isDarkMode) {
-                    handleDarkModeActivation();
-                } else {
-                    handleLightModeActivation();
-                }
-                
-                // Update gradient colors
-                updateGradientColors(isDarkMode);
-            }
-        });
-    });
-    
-    // Start observing
-    observer.observe(body, {
-        attributes: true,
-        attributeFilter: ['class']
-    });
-}
-
-/**
- * Handle dark mode activation
- */
-function handleDarkModeActivation() {
-    // Add dark mode specific effects
-    addDarkModeEffects();
-    
-    console.log('Dark mode activated for service page');
-}
-
-/**
- * Handle light mode activation
- */
-function handleLightModeActivation() {
-    // Remove dark mode effects
-    removeDarkModeEffects();
-    
-    console.log('Light mode activated for service page');
-}
-
-/**
- * Update gradient colors based on theme
- */
-function updateGradientColors(isDarkMode) {
-    const serviceHero = document.querySelectorAll('.service-hero');
-    const ctaSections = document.querySelectorAll('.service-cta');
-    
-    if (isDarkMode) {
-        serviceHero.forEach(hero => {
-            hero.style.background = 'linear-gradient(135deg, var(--service-primary) 0%, var(--service-accent) 100%)';
-        });
-        ctaSections.forEach(cta => {
-            cta.style.background = 'linear-gradient(135deg, var(--service-primary) 0%, var(--service-accent) 100%)';
-        });
-    } else {
-        serviceHero.forEach(hero => {
-            hero.style.background = 'var(--service-primary)';
-        });
-        ctaSections.forEach(cta => {
-            cta.style.background = 'var(--service-primary)';
-        });
-    }
-}
-
-/**
- * Add dark mode effects - Cleaned up
- */
-function addDarkModeEffects() {
-    const cards = document.querySelectorAll('.feature-card, .additional-item, .booking-step');
-    
-    cards.forEach(card => {
-        card.style.boxShadow = '0 4px 15px rgba(0, 170, 40, 0.15)';
-        card.style.borderColor = 'var(--service-border)';
-    });
-}
-
-/**
- * Remove dark mode effects - Cleaned up
- */
-function removeDarkModeEffects() {
-    const cards = document.querySelectorAll('.feature-card, .additional-item, .booking-step');
-    
-    cards.forEach(card => {
-        card.style.boxShadow = '';
-        card.style.borderColor = '';
-    });
 }
 
 /**

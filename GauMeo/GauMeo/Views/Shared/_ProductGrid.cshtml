@@ -45,7 +45,7 @@
                         <span class="current-price">@product.OriginalPrice.ToString("N0")đ</span>
                     }
                 </div>
-                <button class="add-to-cart-btn" onclick="addToCart(@product.Id)">
+                <button class="add-to-cart-btn" data-product-id="@product.Id" onclick="addToCart(@product.Id, 1, {}, this)">
                     <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
                 </button>
             </div>

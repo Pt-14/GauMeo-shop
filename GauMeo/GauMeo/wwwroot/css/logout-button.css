@@ -88,18 +88,6 @@
   z-index: 1;
 }
 
-.logoutButton--light::before {
-  background-color: #f4f7ff;
-}
-
-.logoutButton--light .button-text {
-  color: #1f2335;
-}
-
-.logoutButton--light .door, .logoutButton--light .doorway {
-  fill: #1f2335;
-}
-
 .button-text {
   color: #000000;
   font-weight: 500;

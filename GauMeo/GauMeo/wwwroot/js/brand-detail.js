@@ -366,7 +366,11 @@ function initializeProductCards() {
         if (addToCartBtn) {
             addToCartBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
-                addToCart(card);
+                const productId = card.getAttribute('data-product-id');
+                // Use global addToCart from cart-helper.js
+                if (typeof addToCart === 'function') {
+                    addToCart(productId, 1, {}, addToCartBtn);
+                }
             });
         }
         
@@ -389,35 +393,8 @@ function initializeProductCards() {
     });
 }
 
-function addToCart(productCard) {
-    const productId = productCard.getAttribute('data-product-id');
-    const productName = productCard.querySelector('.product-name').textContent;
-    
-    // Add loading state
-    const addToCartBtn = productCard.querySelector('.add-to-cart-btn');
-    const originalText = addToCartBtn.textContent;
-    addToCartBtn.textContent = 'Đang thêm...';
-    addToCartBtn.disabled = true;
-    
-    // Simulate API call
-    setTimeout(() => {
-        // Reset button
-        addToCartBtn.textContent = originalText;
-        addToCartBtn.disabled = false;
-        
-        // Show success message
-        showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
-        
-        // Update cart count
-        updateCartCount();
-        
-        // Track event
-        trackEvent('add_to_cart', {
-            product_id: productId,
-            product_name: productName
-        });
-    }, 1000);
-}
+// addToCart function is now provided by cart-helper.js (global)
+// This file uses the global addToCart(productId, quantity, selectedVariants, button) function
 
 function showQuickView(productCard) {
     const productId = productCard.getAttribute('data-product-id');
@@ -466,34 +443,9 @@ function showQuickView(productCard) {
     });
 }
 
-// Utility functions
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 100);
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 3000);
-}
-
-function updateCartCount() {
-    // This would typically update the cart count in the header
-    const cartBadge = document.querySelector('.header-cart-badge');
-    if (cartBadge) {
-        const currentCount = parseInt(cartBadge.textContent) || 0;
-        cartBadge.textContent = currentCount + 1;
-    }
-}
+// Utility functions are now provided by cart-helper.js (global)
+// - showCartNotification(message, type) for notifications
+// - updateCartBadge(count) / refreshCartBadge() for cart badge
 
 function trackEvent(eventName, parameters = {}) {
     // Analytics tracking

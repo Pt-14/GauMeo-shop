@@ -494,7 +494,7 @@ namespace GauMeo.Controllers
             ViewBag.Brands = GetBrands(products);
             ViewBag.CurrentFilters = new { Brand = brand, PriceRange = priceRange, Rating = rating, OnSale = onSale, FreeShipping = freeShipping, Sort = sort };
 
-            return View("Category");
+            return View("Index");
         }
 
         // Helper method to map ProductVariants by type

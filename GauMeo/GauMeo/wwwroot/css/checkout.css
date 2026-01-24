@@ -17,16 +17,6 @@
   --checkout-step-inactive: #cccccc;
 }
 
-/* Dark Mode Variables */
-body.dark {
-  --checkout-bg: #002828;
-  --checkout-card-bg: #1d5715;
-  --checkout-text: #ffffff;
-  --checkout-text-secondary: #cccccc;
-  --checkout-border: #3a3a3a;
-  --checkout-shadow: rgba(0, 0, 0, 0.3);
-}
-
 /* Base Styles */
 .checkout-container {
   max-width: 1200px;

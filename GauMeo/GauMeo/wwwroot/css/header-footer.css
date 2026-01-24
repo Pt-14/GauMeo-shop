@@ -11,20 +11,18 @@
 }
 
 .top-bar {
-    background: #002828;
-    font-size: 14px;
-    color: #FFFAF5;
-    padding: 6px 100px 6px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    width: 100%;
-    max-width: 1800px;
-    margin: 0 auto;
-  }
+  background: #002828;
+  font-size: 14px;
+  color: #FFFAF5;
+  padding: 6px 100px 6px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  width: 100%;
+}
   
   .top-bar-left { 
     text-align: left;
@@ -764,6 +762,10 @@
     display: flex;
     align-items: center;
   }
+  /* Đảm bảo không còn line ngăn cách giữa các tab header */
+  .header-nav ul li::after {
+    content: none !important;
+  }
   .header-nav ul li a {
     text-decoration: none;
     color: #002828;
@@ -779,43 +781,8 @@
   .header-nav ul li a:hover {
     color: #1d5715;
   }
-  .header-nav ul li:not(:last-child)::after {
-    content: '';
-    display: block;
-    width: 1.5px;
-    height: 24px;
-    font-weight: 500;
-    background: #e0e0e0;
-    position: absolute;
-    right: -16px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-  .header-nav ul li:last-child::after { display: none; }
 
-/* Arrow SVG hover effects */
-.arrow-svg {
-  display: flex;
-  align-items: center;
-  margin-left: 2px;
-  transition: transform 0.3s ease;
-}
-
-.arrow-svg svg {
-  display: block;
-  stroke: #002828;
-  width: 18px;
-  height: 18px;
-  transition: transform 0.3s ease;
-}
-
-/* Hover effect for nav items - arrow rotation and underline */
-.header-nav ul li a:hover .arrow-svg svg {
-  transform: rotate(180deg);
-}
-
-/* Underline effect for nav items */
-.header-nav ul li a::after {
+ .header-nav ul li a::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -829,19 +796,3 @@
 .header-nav ul li a:hover::after {
   width: 100%;
 }
-
-
-/* Arrow rotation when dropdown is shown */
-.nav-dropdown:hover > a .arrow-svg svg,
-.nav-dropdown:focus-within > a .arrow-svg svg {
-  transform: rotate(180deg);
-}
-
-/* Underline effect when dropdown is shown */
-.nav-dropdown:hover > a::after,
-.nav-dropdown:focus-within > a::after {
-  width: 100%;
-}
-
-
-

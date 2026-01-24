@@ -1,303 +1,16 @@
 /* Theme Variables */
 :root {
   --color-bg-light: #fff;
-  --color-bg-dark: #111827;
   --color-text-light: #6b7280;
-  --color-text-dark: #d1d5db;
   --color-primary: #111827;
-  --color-primary-dark: #e0e7ff;
   --color-accent-start: #89f7fe;
-  --color-accent-end: #66a6ff;
-  --color-accent-start-dark: #7ddcff;
-  --color-accent-end-dark: #5a96ff;
+  --color-accent-end: #00AA28;
   --color-accent-hover: #1e40af;
-  --color-accent-hover-dark: #4338ca;
   --border-radius: 0.75rem;
   --transition-speed: 0.3s;
   --shadow-light: rgba(0, 0, 0, 0.05);
-  --shadow-dark: rgba(0, 0, 0, 0.7);
   --font-headline: "Quicksand", sans-serif;
   --glass-bg-light: rgba(255, 255, 255, 0.72);
-  --glass-bg-dark: rgba(22, 28, 45, 0.6);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg-light: var(--color-bg-dark);
-    --color-text-light: var(--color-text-dark);
-    --color-primary: var(--color-primary-dark);
-    --color-accent-start: var(--color-accent-start-dark);
-    --color-accent-end: var(--color-accent-end-dark);
-    --color-accent-hover: var(--color-accent-hover-dark);
-    --shadow-light: var(--shadow-dark);
-    --glass-bg-light: var(--glass-bg-dark);
-  }
-}
-
-/* Dark mode body styles */
-body.dark {
-  background-color: var(--color-bg-dark);
-  color: var(--color-text-dark);
-}
-
-/* Dark mode header styles */
-body.dark .sticky-header {
-  background: var(--color-bg-dark);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-body.dark .top-bar {
-  background: #1e293b;
-  color: var(--color-text-dark);
-}
-
-
-
-body.dark .slider-link {
-  color: var(--color-accent-end);
-}
-
-body.dark .slider-link:hover {
-  color: var(--color-accent-start);
-}
-
-body.dark .slider-nav {
-  color: var(--color-text-dark);
-}
-
-body.dark .slider-nav:hover {
-  color: var(--color-accent-end);
-}
-
-body.dark .main-header {
-  background: var(--color-bg-dark);
-  border-color: #374151;
-  box-shadow: 0 2px 16px var(--shadow-dark);
-}
-
-body.dark .header-nav ul li a {
-  color: var(--color-text-dark);
-  transition: color 0.2s;
-}
-
-body.dark .header-nav ul li a:hover {
-  color: var(--color-accent-end);
-}
-
-/* Dark mode underline effect */
-body.dark .header-nav ul li a::after {
-  background: #d1d5db;
-  transition: width 0.3s ease;
-}
-
-/* Dark mode arrow rotation when dropdown is shown */
-body.dark .nav-dropdown:hover > a .arrow-svg svg,
-body.dark .nav-dropdown:focus-within > a .arrow-svg svg {
-  transform: rotate(180deg);
-}
-
-/* Dark mode underline effect when dropdown is shown */
-body.dark .nav-dropdown:hover > a::after,
-body.dark .nav-dropdown:focus-within > a::after {
-  width: 100%;
-}
-
-body.dark .header-nav ul li::after {
-  background: #374151;
-}
-
-body.dark .arrow-svg {
-  transition: transform 0.3s ease;
-}
-
-body.dark .arrow-svg svg {
-  stroke: var(--color-text-dark);
-  transition: transform 0.3s ease;
-}
-
-body.dark .icon-btn svg {
-  stroke: var(--color-text-dark);
-}
-
-body.dark .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-body.dark .search-input {
-  color: var(--color-text-dark);
-}
-
-body.dark .search-label {
-  color: var(--color-text-dark);
-}
-
-/* Dark mode dropdown styles */
-body.dark .dropdown-menu.multi-col {
-  background: var(--color-bg-dark);
-  border-color: #374151;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
-}
-
-body.dark .dropdown-title {
-  color: var(--color-primary-dark);
-  border-bottom-color: #374151;
-}
-
-body.dark .dropdown-sub {
-  color: var(--color-text-dark);
-}
-
-body.dark .dropdown-sub:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-accent-end);
-}
-
-body.dark .dropdown-col::after {
-  background: #374151;
-}
-
-
-
-/* Theme toggle button styles */
-.btn-theme-toggle {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: var(--color-text-light);
-  transition: color var(--transition-speed);
-  padding: 1.4rem 0 0.6rem;
-  user-select: none;
-  align-self: flex-start;
-}
-
-.btn-theme-toggle:hover,
-.btn-theme-toggle:focus-visible {
-  color: var(--color-accent-end);
-  outline: none;
-}
-
-body.dark .btn-theme-toggle {
-  color: var(--color-text-dark);
-}
-
-/* User dropdown dark mode */
-body.dark .user-dropdown-menu {
-  background: var(--color-bg-dark);
-  border-color: #374151;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
-}
-
-body.dark .user-dropdown-item {
-  color: var(--color-text-dark);
-}
-
-body.dark .user-dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-accent-end);
-}
-
-body.dark .user-dropdown-divider {
-  background: #374151;
-}
-
-/* Search form dark mode */
-
-body.dark .search-btn svg {
-  stroke: var(--color-text-dark);
-}
-
-/* Cart badge dark mode */
-body.dark .header-cart-badge {
-  background: var(--color-accent-end);
-  color: #fff;
-}
-
-/******** Footer *********/
-/* Dark mode footer styles */
-body.dark footer {
-  background: var(--color-bg-dark);
-}
-
-body.dark .footer-main {
-  background: #1e293b;;
-  border-color: #374151;
-}
-
-body.dark .footer-col {
-  background: #1e293b;;
-  color: var(--color-text-dark);
-}
-
-body.dark .footer-col::after {
-  background: #374151;
-}
-
-body.dark .footer-title {
-  color: var(--color-primary-dark);
-}
-
-body.dark .footer-col a {
-  color: var(--color-text-dark);
-}
-
-body.dark .footer-col a:hover {
-  color: var(--color-accent-end);
-}
-
-body.dark .footer-icon svg {
-  stroke: #e0e7ff;
-}
-
-body.dark .footer-social .wrapper .icon a {
-  color: #e0e7ff;
-}
-
-body.dark .footer-newsletter input[type="email"] {
-  background: var(--color-bg-dark);
-  border-color: #374151;
-  color: var(--color-text-dark);
-}
-
-body.dark .footer-newsletter input[type="email"]:hover {
-  border-color: var(--color-accent-end);
-}
-
-body.dark .footer-newsletter button {
-  background: linear-gradient(
-    90deg,
-    var(--color-accent-start),
-    var(--color-accent-end)
-  );
-  border: none;
-  border-radius: var(--border-radius);
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  padding: 0 1.25rem;
-  cursor: pointer;
-  transition: background 0.4s ease, transform var(--transition-speed);
-  box-shadow: 0 6px 20px rgba(102, 166, 255, 0.9);
-  user-select: none;
-  letter-spacing: 0.025em;
-  will-change: transform;
-}
-
-body.dark .footer-newsletter button:hover,
-body.dark .footer-newsletter button:focus-visible {
-  background: linear-gradient(
-    90deg,
-    var(--color-accent-end),
-    var(--color-accent-start)
-  );
-  transform: scale(1.1);
-  outline: none;
-  box-shadow: 0 10px 30px rgba(102, 166, 255, 1);
-}
-
-body.dark .copyright {
-  background: #111827;
-  color: var(--color-text-dark);
 }
 /* Social Media Icons - Light Mode */
 
@@ -412,73 +125,6 @@ body.dark .copyright {
   color: #ffffff;
 }
 
-/* Social Media Icons - Dark Mode */
-body.dark .footer-social .wrapper .icon {
-  background: var(--color-bg-dark);
-  border-color: #374151;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-body.dark .footer-social .wrapper .icon a {
-  color: var(--color-text-dark);
-}
-
-body.dark .footer-social .wrapper .tooltip {
-  background: #1e293b;
-  color: var(--color-text-dark);
-  border: 1px solid #374151;
-}
-
-body.dark .footer-social .wrapper .tooltip::before {
-  background: #1e293b;
-  border-right: 1px solid #374151;
-  border-bottom: 1px solid #374151;
-}
-
-body.dark .footer-social .wrapper .facebook:hover {
-  background: #1877f2;
-  border-color: #1877f2;
-}
-
-body.dark .footer-social .wrapper .facebook:hover a {
-  color: #ffffff;
-}
-
-body.dark .footer-social .wrapper .facebook:hover .tooltip,
-body.dark .footer-social .wrapper .facebook:hover .tooltip::before {
-  background: #1877f2;
-  border-color: #1877f2;
-}
-
-body.dark .footer-social .wrapper .twitter:hover {
-  background: #000000;
-  border-color: #1da1f2;
-}
-
-body.dark .footer-social .wrapper .twitter:hover a {
-  color: #ffffff;
-}
-
-body.dark .footer-social .wrapper .twitter:hover .tooltip,
-body.dark .footer-social .wrapper .twitter:hover .tooltip::before {
-  background: #000000;
-  border-color: #1da1f2;
-}
-
-body.dark .footer-social .wrapper .instagram:hover {
-    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-    border-color: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  }
-
-body.dark .footer-social .wrapper .instagram:hover a {
-  color: #ffffff;
-}
-
-body.dark .footer-social .wrapper .instagram:hover .tooltip,
-body.dark .footer-social .wrapper .instagram:hover .tooltip::before {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  border-color: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-}
 
 @keyframes blinkCaret {
   0%,
@@ -516,7 +162,7 @@ footer,
   align-items: center;
   gap: 2rem;
   padding: 4rem 1rem;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto 4rem;
   position: relative;
   user-select: none;
@@ -589,7 +235,7 @@ footer,
 }
 
 .hero-illustration {
-  max-width: 360px;
+  max-width: 700px;
   user-select: none;
   pointer-events: none;
 }
@@ -597,7 +243,6 @@ footer,
 .hero-image {
   width: 100%;
   display: block;
-  margin-left: 100px;
 }
 
 @keyframes blinkCaret {
@@ -609,32 +254,6 @@ footer,
   100% {
     border-color: var(--color-accent-end);
   }
-}
-
-/* Hero Section - Dark Mode */
-body.dark .hero-title {
-  color: var(--color-primary-dark);
-}
-
-body.dark .hero-description {
-  color: var(--color-text-dark);
-}
-
-body.dark .hero-btn {
-  box-shadow: 0 8px 30px rgba(125, 220, 255, 0.85);
-}
-
-body.dark .hero-btn:hover,
-body.dark .hero-btn:focus-visible {
-  box-shadow: 0 14px 44px rgba(93, 144, 255, 1);
-}
-
-body.dark .hero-slogan {
-  color: var(--color-primary-dark);
-  border-right-color: var(--color-accent-end);
-}
-body.dark .hero-image {
-  content: url('/images/pet1.png');
 }
 
 /* Responsive Hero */
@@ -658,19 +277,7 @@ body.dark .hero-image {
   }
 }
 
-/* Logo theme switching */
+/* Logo (always light mode) */
 .logo-light {
-  display: block;
-}
-
-.logo-dark {
-  display: none;
-}
-
-body.dark .logo-light {
-  display: none;
-}
-
-body.dark .logo-dark {
   display: block;
 }

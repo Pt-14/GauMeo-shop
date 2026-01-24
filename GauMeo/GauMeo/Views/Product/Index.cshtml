@@ -4,12 +4,14 @@
     var animalType = ViewBag.AnimalType as string;
     var brands = ViewBag.Brands as List<string>;
     var currentFilters = ViewBag.CurrentFilters;
+    var currentCategory = ViewBag.CurrentCategory as GauMeo.Models.Categories.Category;
+    var subCategories = ViewBag.SubCategories as IEnumerable<GauMeo.Models.Categories.Category>;
+    var hasSubCategories = subCategories != null && subCategories.Any();
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/product-index.css" asp-append-version="true" />
-
 }
 
 <div class="product-index-container">
@@ -45,22 +47,30 @@
     <div class="product-index-header">
         <h1 class="product-index-title">@ViewBag.Title</h1>
         <div class="product-index-subtitle">
-            @if (animalType == "dog")
+            @if (hasSubCategories)
             {
-                <span>Khám phá bộ sưu tập sản phẩm dành riêng cho chó cưng với chất lượng tuyệt vời từ các thương hiệu hàng đầu thế giới. Từ thức ăn dinh dưỡng, đồ chơi vui nhộn đến phụ kiện chăm sóc - tất cả đều được tuyển chọn kỹ lưỡng.</span>
+                @* Level 1-2: Hiển thị mô tả chung cho chó/mèo *@
+                if (animalType == "dog")
+                {
+                    <span>Khám phá bộ sưu tập sản phẩm dành riêng cho chó cưng với chất lượng tuyệt vời từ các thương hiệu hàng đầu thế giới. Từ thức ăn dinh dưỡng, đồ chơi vui nhộn đến phụ kiện chăm sóc - tất cả đều được tuyển chọn kỹ lưỡng.</span>
+                }
+                else
+                {
+                    <span>Tìm hiểu những sản phẩm tuyệt vời dành cho mèo cưng với đa dạng lựa chọn từ thức ăn cao cấp, đồ chơi thông minh đến các sản phẩm chăm sóc chuyên biệt. Mang đến cuộc sống tốt đẹp nhất cho boss nhà bạn.</span>
+                }
             }
             else
             {
-                <span>Tìm hiểu những sản phẩm tuyệt vời dành cho mèo cưng với đa dạng lựa chọn từ thức ăn cao cấp, đồ chơi thông minh đến các sản phẩm chăm sóc chuyên biệt. Mang đến cuộc sống tốt đẹp nhất cho boss nhà bạn.</span>
+                @* Level 3: Hiển thị mô tả theo category cụ thể *@
+                var categoryDisplayName = currentCategory?.Name ?? "sản phẩm";
+                var animalDisplayName = animalType == "dog" ? "chó" : "mèo";
+                <span>Khám phá bộ sưu tập @categoryDisplayName.ToLower() chất lượng cao được tuyển chọn đặc biệt cho @animalDisplayName cưng của bạn.</span>
             }
         </div>
     </div>
 
-    <!-- Category Navigation -->
-    @{
-        var subCategories = ViewBag.SubCategories as IEnumerable<GauMeo.Models.Categories.Category>;
-    }
-    @if (subCategories != null && subCategories.Any())
+    @* Category Navigation - Chỉ hiển thị cho Level 1-2 *@
+    @if (hasSubCategories)
     {
         <div class="product-category-navigation">
             <div class="product-category-nav-arrow" id="categoryScrollLeft">
@@ -111,6 +121,11 @@
             </button>
         
             <form id="filterForm" method="get">
+                @if (!hasSubCategories && currentCategory != null)
+                {
+                    <input type="hidden" name="category" value="@currentCategory.Slug" />
+                }
+                
                 <!-- Brand Filter -->
                 <div class="product-filter-section">
                     <h4 class="product-filter-section-title">
@@ -248,10 +263,52 @@
 
         <!-- Products Content -->
         <div class="product-content">
+            @* Back Navigation - Chỉ hiển thị cho Level 3 *@
+            @{
+                var breadcrumbsForBack = ViewBag.Breadcrumbs as List<object>;
+                var hasParentForBack = breadcrumbsForBack != null && breadcrumbsForBack.Count > 1;
+                var parentNameForBack = "";
+                var parentUrlForBack = "";
+                if (hasParentForBack)
+                {
+                    var parentBreadcrumb = breadcrumbsForBack[breadcrumbsForBack.Count - 2];
+                    parentNameForBack = parentBreadcrumb.GetType().GetProperty("Name")?.GetValue(parentBreadcrumb)?.ToString() ?? "";
+                    parentUrlForBack = parentBreadcrumb.GetType().GetProperty("Url")?.GetValue(parentBreadcrumb)?.ToString() ?? "";
+                }
+                var animalPageDisplayNameBack = animalType == "dog" ? "Chó" : "Mèo";
+                var animalSlugBack = animalType == "dog" ? "cho" : "meo";
+            }
+            @if (!hasSubCategories)
+            {
+                <div class="product-back-navigation">
+                    @if (hasParentForBack)
+                    {
+                        <a href="@parentUrlForBack" class="product-back-btn">
+                            <i class="fas fa-arrow-left"></i> Quay lại @parentNameForBack
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Product/Category/@animalSlugBack" class="product-back-btn">
+                            <i class="fas fa-arrow-left"></i> Quay lại @animalPageDisplayNameBack
+                        </a>
+                    }
+                </div>
+            }
+
             <div class="product-header">
                 <div class="product-info">
                     <h2 class="products-title">Tìm thấy @(products?.Count ?? 0) sản phẩm</h2>
-                    <p class="product-description">Các sản phẩm chất lượng được lựa chọn kỹ lưỡng</p>
+                    <p class="product-description">
+                        @if (!hasSubCategories && currentCategory != null)
+                        {
+                            @:Các sản phẩm @currentCategory.Name.ToLower() chất lượng được lựa chọn kỹ lưỡng
+                        }
+                        else
+                        {
+                            @:Các sản phẩm chất lượng được lựa chọn kỹ lưỡng
+                        }
+                    </p>
                     <div class="product-content-active-filters">
                         <div class="product-active-filters" id="productsActiveFilters">
                             <div class="product-active-filters-title">Đang lọc theo:</div>
@@ -318,7 +375,7 @@
                                     <span>@product.OriginalPrice.ToString("N0")đ</span>
                                   }
                                 </p>
-                                <button class="add-to-cart-btn" onclick="addToCart(@product.Id)">
+                                <button class="add-to-cart-btn" data-product-id="@product.Id" onclick="addToCart(@product.Id, 1, {}, this)">
                                     <svg class="cart-icon" width="16" height="16" viewBox="0 0 576 512" fill="currentColor">
                                         <path d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"></path>
                                     </svg>
@@ -331,13 +388,46 @@
             }
             else
             {
-                <div class="product-no-products" style="display: none;">
+                <div class="product-no-products">
                     <i class="fas fa-search"></i>
                     <h3>Không tìm thấy sản phẩm</h3>
-                    <p>Không có sản phẩm nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
-                    <button class="product-back-to-all-btn" onclick="clearAllFilters()">
-                        <i class="fas fa-arrow-left"></i> Xem tất cả sản phẩm
-                    </button>
+                    @{
+                        var breadcrumbsForNoProducts = ViewBag.Breadcrumbs as List<object>;
+                        var hasParentForNoProducts = breadcrumbsForNoProducts != null && breadcrumbsForNoProducts.Count > 1;
+                        var parentNameForNoProducts = "";
+                        var parentUrlForNoProducts = "";
+                        if (hasParentForNoProducts)
+                        {
+                            var parentBreadcrumbForNoProducts = breadcrumbsForNoProducts[breadcrumbsForNoProducts.Count - 2];
+                            parentNameForNoProducts = parentBreadcrumbForNoProducts.GetType().GetProperty("Name")?.GetValue(parentBreadcrumbForNoProducts)?.ToString() ?? "";
+                            parentUrlForNoProducts = parentBreadcrumbForNoProducts.GetType().GetProperty("Url")?.GetValue(parentBreadcrumbForNoProducts)?.ToString() ?? "";
+                        }
+                        var animalPageDisplayName2 = animalType == "dog" ? "Chó" : "Mèo";
+                        var animalSlug2 = animalType == "dog" ? "cho" : "meo";
+                    }
+                    @if (!hasSubCategories && currentCategory != null)
+                    {
+                        <p>Không có sản phẩm nào trong danh mục @currentCategory.Name.ToLower() phù hợp với tiêu chí tìm kiếm của bạn.</p>
+                        if (hasParentForNoProducts)
+                        {
+                            <a href="@parentUrlForNoProducts" class="product-back-to-all-btn">
+                                <i class="fas fa-arrow-left"></i> Quay lại @parentNameForNoProducts
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="/Product/Category/@animalSlug2" class="product-back-to-all-btn">
+                                <i class="fas fa-arrow-left"></i> Quay lại @animalPageDisplayName2
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <p>Không có sản phẩm nào phù hợp với tiêu chí tìm kiếm của bạn.</p>
+                        <button class="product-back-to-all-btn" onclick="clearAllFilters()">
+                            <i class="fas fa-arrow-left"></i> Xem tất cả sản phẩm
+                        </button>
+                    }
                 </div>
             }
         </div>
@@ -346,73 +436,70 @@
 
 @section Scripts {
     <script>
-        // Category Navigation Scroll - Show 7 items at a time with center logic
+        // Configuration from server
+        const hasSubCategories = @Json.Serialize(hasSubCategories);
+        const currentCategorySlug = '@(currentCategory?.Slug ?? "")';
+        
+        // Category Navigation Scroll - Only for Level 1-2
         document.addEventListener('DOMContentLoaded', function() {
-            const categoryGrid = document.getElementById('categoryGrid');
-            const leftArrow = document.getElementById('categoryScrollLeft');
-            const rightArrow = document.getElementById('categoryScrollRight');
-            
-            if (categoryGrid && leftArrow && rightArrow) {
-                // Calculate scroll amount for 7 items (item width + gap)
-                const itemWidth = 120; // width of each category card
-                const gap = 20; // gap between cards  
-                const scrollAmount = (itemWidth + gap) * 2; // Scroll 2 items at a time for smoother experience
+            if (hasSubCategories) {
+                const categoryGrid = document.getElementById('categoryGrid');
+                const leftArrow = document.getElementById('categoryScrollLeft');
+                const rightArrow = document.getElementById('categoryScrollRight');
                 
-                function updateArrows() {
-                    const scrollLeft = categoryGrid.scrollLeft;
-                    const maxScroll = categoryGrid.scrollWidth - categoryGrid.clientWidth;
-                    const totalItems = categoryGrid.children.length;
-                    const hasCenterClass = categoryGrid.classList.contains('center-categories');
+                if (categoryGrid && leftArrow && rightArrow) {
+                    const itemWidth = 120;
+                    const gap = 20;
+                    const scrollAmount = (itemWidth + gap) * 2;
                     
-                    // Hide arrows if 7 or fewer items (will be centered) or no overflow
-                    if (maxScroll <= 0 || hasCenterClass || totalItems <= 7) {
-                        leftArrow.style.display = 'none';
-                        rightArrow.style.display = 'none';
-                        return;
-                    } else {
-                        leftArrow.style.display = 'flex';
-                        rightArrow.style.display = 'flex';
+                    function updateArrows() {
+                        const scrollLeft = categoryGrid.scrollLeft;
+                        const maxScroll = categoryGrid.scrollWidth - categoryGrid.clientWidth;
+                        const totalItems = categoryGrid.children.length;
+                        const hasCenterClass = categoryGrid.classList.contains('center-categories');
+                        
+                        if (maxScroll <= 0 || hasCenterClass || totalItems <= 7) {
+                            leftArrow.style.display = 'none';
+                            rightArrow.style.display = 'none';
+                            return;
+                        } else {
+                            leftArrow.style.display = 'flex';
+                            rightArrow.style.display = 'flex';
+                        }
+                        
+                        leftArrow.classList.toggle('disabled', scrollLeft <= 0);
+                        rightArrow.classList.toggle('disabled', scrollLeft >= maxScroll - 1);
                     }
                     
-                    leftArrow.classList.toggle('disabled', scrollLeft <= 0);
-                    rightArrow.classList.toggle('disabled', scrollLeft >= maxScroll - 1);
-                }
-                
-                function scrollLeft() {
-                    categoryGrid.scrollBy({
-                        left: -scrollAmount,
-                        behavior: 'smooth'
+                    function scrollLeftFn() {
+                        categoryGrid.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    }
+                    
+                    function scrollRightFn() {
+                        categoryGrid.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    }
+                    
+                    leftArrow.addEventListener('click', scrollLeftFn);
+                    rightArrow.addEventListener('click', scrollRightFn);
+                    categoryGrid.addEventListener('scroll', updateArrows);
+                    
+                    updateArrows();
+                    window.addEventListener('resize', function() {
+                        setTimeout(updateArrows, 100);
                     });
                 }
-                
-                function scrollRight() {
-                    categoryGrid.scrollBy({
-                        left: scrollAmount,
-                        behavior: 'smooth'
-                    });
-                }
-                
-                leftArrow.addEventListener('click', scrollLeft);
-                rightArrow.addEventListener('click', scrollRight);
-                categoryGrid.addEventListener('scroll', updateArrows);
-                
-                // Initial arrow state
-                updateArrows();
-                
-                // Update arrows on window resize
-                window.addEventListener('resize', function() {
-                    setTimeout(updateArrows, 100);
-                });
             }
         });
 
         // Mobile filter toggle
         function toggleFilters() {
             const sidebar = document.getElementById('filtersSidebar');
-            sidebar.classList.toggle('show');
+            if (sidebar) {
+                sidebar.classList.toggle('show');
+            }
         }
 
-        // Filter logic with validation
+        // Filter logic
         let activeFilters = {
             brands: [],
             priceRange: null,
@@ -420,20 +507,22 @@
             promotions: []
         };
 
-        // Store original products for reset functionality
+        // Store original products for reset functionality (Level 1-2 only)
         let originalProducts = [];
 
         // Initialize filters from current state
         document.addEventListener('DOMContentLoaded', function() {
-            // Store original products when page loads
-            const productCards = document.querySelectorAll('.product-card');
-            originalProducts = Array.from(productCards).map(card => card.cloneNode(true));
+            // Store original products when page loads (for Level 1-2)
+            if (hasSubCategories) {
+                const productCards = document.querySelectorAll('.product-card');
+                originalProducts = Array.from(productCards).map(card => card.cloneNode(true));
+            }
             
             updateActiveFilters();
             attachFilterListeners();
             initializeBrandSearch();
             
-            // Initialize from URL parameters if any
+            // Initialize from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const brands = urlParams.getAll('brand');
             const priceRange = urlParams.get('priceRange');
@@ -474,20 +563,12 @@
                 if (checkbox) checkbox.checked = true;
             }
             
-            // Set sort value from URL
             if (sort) {
                 const sortSelect = document.querySelector('.product-sort-select');
-                if (sortSelect) {
-                    sortSelect.value = sort;
-                }
+                if (sortSelect) sortSelect.value = sort;
             }
             
             updateActiveFilters();
-            
-            // Apply initial filters if any exist
-            if (brands.length > 0 || priceRange || rating || onSale === 'true' || freeShipping === 'true' || sort) {
-                applyFilters();
-            }
         });
 
         // Brand Search Functionality
@@ -498,38 +579,28 @@
             if (brandSearchInput && brandOptions.length > 0) {
                 brandSearchInput.addEventListener('input', function() {
                     const searchTerm = this.value.toLowerCase().trim();
-                    
                     brandOptions.forEach(option => {
                         const brandName = option.getAttribute('data-brand');
-                        const isVisible = brandName.includes(searchTerm);
-                        option.style.display = isVisible ? 'flex' : 'none';
+                        option.style.display = brandName.includes(searchTerm) ? 'flex' : 'none';
                     });
                 });
             }
         }
 
         function attachFilterListeners() {
-            // Brand checkboxes
             document.querySelectorAll('.brand-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', handleBrandFilter);
             });
-
-            // Price range radio buttons
             document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
                 radio.addEventListener('change', handlePriceFilter);
             });
-
-            // Rating radio buttons
             document.querySelectorAll('input[name="rating"]').forEach(radio => {
                 radio.addEventListener('change', handleRatingFilter);
             });
-
-            // Promotion checkboxes
             document.querySelectorAll('input[name="onSale"], input[name="freeShipping"]').forEach(checkbox => {
                 checkbox.addEventListener('change', handlePromotionFilter);
             });
-
-            // Custom price inputs
+            
             const priceMinInput = document.getElementById('priceMin');
             const priceMaxInput = document.getElementById('priceMax');
             if (priceMinInput) priceMinInput.addEventListener('change', handleCustomPriceFilter);
@@ -550,7 +621,6 @@
         function handlePriceFilter(event) {
             if (event.target.checked) {
                 activeFilters.priceRange = event.target.value;
-                // Clear custom price inputs
                 const priceMinInput = document.getElementById('priceMin');
                 const priceMaxInput = document.getElementById('priceMax');
                 if (priceMinInput) priceMinInput.value = '';
@@ -582,11 +652,14 @@
         }
 
         function handleCustomPriceFilter() {
-            const minPrice = document.getElementById('priceMin').value;
-            const maxPrice = document.getElementById('priceMax').value;
+            const priceMinInput = document.getElementById('priceMin');
+            const priceMaxInput = document.getElementById('priceMax');
+            if (!priceMinInput || !priceMaxInput) return;
+            
+            const minPrice = priceMinInput.value;
+            const maxPrice = priceMaxInput.value;
             
             if (minPrice || maxPrice) {
-                // Clear radio buttons
                 document.querySelectorAll('input[name="priceRange"]').forEach(radio => {
                     radio.checked = false;
                 });
@@ -606,64 +679,38 @@
             
             let tags = [];
             
-            // Brand filters
             if (activeFilters.brands && activeFilters.brands.length > 0) {
                 activeFilters.brands.forEach(brand => {
-                    tags.push(`<div class="product-active-filter-tag">
-                        ${brand}
-                        <span class="remove" onclick="removeBrandFilter('${brand}')">×</span>
-                    </div>`);
+                    tags.push(`<div class="product-active-filter-tag">${brand}<span class="remove" onclick="removeBrandFilter('${brand}')">×</span></div>`);
                 });
             }
             
-            // Price range filter
             if (activeFilters.priceRange) {
                 const priceText = getPriceRangeText(activeFilters.priceRange);
-                tags.push(`<div class="product-active-filter-tag">
-                    ${priceText}
-                    <span class="remove" onclick="removePriceFilter()">×</span>
-                </div>`);
+                tags.push(`<div class="product-active-filter-tag">${priceText}<span class="remove" onclick="removePriceFilter()">×</span></div>`);
             }
             
-            // Rating filter
             if (activeFilters.rating) {
-                tags.push(`<div class="product-active-filter-tag">
-                    ${activeFilters.rating}★ trở lên
-                    <span class="remove" onclick="removeRatingFilter()">×</span>
-                </div>`);
+                tags.push(`<div class="product-active-filter-tag">${activeFilters.rating}★ trở lên<span class="remove" onclick="removeRatingFilter()">×</span></div>`);
             }
             
-            // Promotion filters
             if (activeFilters.promotions && activeFilters.promotions.length > 0) {
                 activeFilters.promotions.forEach(promo => {
                     const promoText = promo === 'onSale' ? 'Đang giảm giá' : 'Miễn phí vận chuyển';
-                    tags.push(`<div class="product-active-filter-tag">
-                        ${promoText}
-                        <span class="remove" onclick="removePromotionFilter('${promo}')">×</span>
-                    </div>`);
+                    tags.push(`<div class="product-active-filter-tag">${promoText}<span class="remove" onclick="removePromotionFilter('${promo}')">×</span></div>`);
                 });
             }
             
             const tagsHTML = tags.join('');
             
-            // Update sidebar active filters
             if (activeFiltersContainer && activeFilterTags) {
-                if (tags.length > 0) {
-                    activeFilterTags.innerHTML = tagsHTML;
-                    activeFiltersContainer.style.display = 'block';
-                } else {
-                    activeFiltersContainer.style.display = 'none';
-                }
+                activeFilterTags.innerHTML = tagsHTML;
+                activeFiltersContainer.style.display = tags.length > 0 ? 'block' : 'none';
             }
             
-            // Update products content active filters
             if (productsActiveFiltersContainer && productsActiveFilterTags) {
-                if (tags.length > 0) {
-                    productsActiveFilterTags.innerHTML = tagsHTML;
-                    productsActiveFiltersContainer.style.display = 'block';
-                } else {
-                    productsActiveFiltersContainer.style.display = 'none';
-                }
+                productsActiveFilterTags.innerHTML = tagsHTML;
+                productsActiveFiltersContainer.style.display = tags.length > 0 ? 'block' : 'none';
             }
         }
         
@@ -680,7 +727,8 @@
         
         function removeBrandFilter(brand) {
             activeFilters.brands = activeFilters.brands.filter(b => b !== brand);
-            document.querySelector(`input[value="${brand}"].brand-checkbox`).checked = false;
+            const checkbox = document.querySelector(`input[value="${brand}"].brand-checkbox`);
+            if (checkbox) checkbox.checked = false;
             updateActiveFilters();
             applyFilters();
         }
@@ -701,7 +749,8 @@
         
         function removePromotionFilter(promo) {
             activeFilters.promotions = activeFilters.promotions.filter(p => p !== promo);
-            document.querySelector(`input[name="${promo}"]`).checked = false;
+            const checkbox = document.querySelector(`input[name="${promo}"]`);
+            if (checkbox) checkbox.checked = false;
             updateActiveFilters();
             applyFilters();
         }
@@ -714,100 +763,95 @@
                 promotions: []
             };
             
-            // Clear all form inputs
             document.querySelectorAll('.product-filter-checkbox, .product-filter-radio').forEach(input => {
                 input.checked = false;
             });
             
-            // Clear price inputs if they exist
             const priceMinInput = document.getElementById('priceMin');
             const priceMaxInput = document.getElementById('priceMax');
             if (priceMinInput) priceMinInput.value = '';
             if (priceMaxInput) priceMaxInput.value = '';
             
-            // Reset sort to default
             const sortSelect = document.querySelector('.product-sort-select');
-            if (sortSelect) {
-                sortSelect.value = 'popular';
-            }
-            
-            // Reset to show all original products
-            resetToOriginalProducts();
+            if (sortSelect) sortSelect.value = 'popular';
             
             updateActiveFilters();
-            updateURL();
+            
+            if (hasSubCategories) {
+                // Level 1-2: Reset to original products
+                resetToOriginalProducts();
+                updateURL();
+            } else {
+                // Level 3: Use AJAX to reload
+                applyFiltersAJAX(true);
+            }
         }
         
         function resetToOriginalProducts() {
             const productGrid = document.querySelector('.product-grid');
             if (productGrid && originalProducts.length > 0) {
-                // Clear current grid
                 productGrid.innerHTML = '';
-                
-                // Add all original products back
                 originalProducts.forEach(originalProduct => {
                     const clonedProduct = originalProduct.cloneNode(true);
                     clonedProduct.style.display = 'block';
                     productGrid.appendChild(clonedProduct);
                 });
                 
-                // Update product count
                 const productsTitle = document.querySelector('.products-title');
                 if (productsTitle) {
                     productsTitle.textContent = `Tìm thấy ${originalProducts.length} sản phẩm`;
                 }
                 
-                // Hide no products message
                 hideNoProductsMessage();
             }
         }
         
         function applyFilters() {
-            // Use original products or current products if original not available
+            if (hasSubCategories) {
+                // Level 1-2: Client-side filtering
+                applyFiltersClientSide();
+            } else {
+                // Level 3: AJAX filtering
+                applyFiltersAJAX(false);
+            }
+        }
+        
+        function applyFiltersClientSide() {
             const productCards = originalProducts.length > 0 ? originalProducts.map(p => p.cloneNode(true)) : Array.from(document.querySelectorAll('.product-card'));
             const sortSelect = document.querySelector('.product-sort-select');
             const currentSort = sortSelect ? sortSelect.value : 'popular';
             
-            // Convert to Array for filtering and sorting
             let filteredProducts = Array.from(productCards);
             
-            // Check if any filters are active
             const hasActiveFilters = activeFilters.brands.length > 0 || 
                                    activeFilters.priceRange || 
                                    activeFilters.rating || 
                                    activeFilters.promotions.length > 0;
             
-            // Apply filters only if there are active filters
             if (hasActiveFilters) {
                 filteredProducts = filteredProducts.filter(card => {
                     const productData = getProductDataFromCard(card);
                     
-                    // Brand filter
-                    if (activeFilters.brands.length > 0) {
-                        if (!activeFilters.brands.includes(productData.brand)) {
-                            return false;
-                        }
+                    if (activeFilters.brands.length > 0 && !activeFilters.brands.includes(productData.brand)) {
+                        return false;
                     }
                     
-                    // Price filter
                     if (activeFilters.priceRange) {
                         const [minPrice, maxPrice] = activeFilters.priceRange.split('-').map(p => parseInt(p) || 0);
-                        if (maxPrice === 0) { // "trên X" case
+                        if (maxPrice === 0) {
                             if (productData.price < minPrice) return false;
-                        } else if (minPrice === 0) { // "dưới X" case
+                        } else if (minPrice === 0) {
                             if (productData.price > maxPrice) return false;
-                        } else { // "từ X đến Y" case
+                        } else {
                             if (productData.price < minPrice || productData.price > maxPrice) return false;
                         }
                     }
                     
-                    // Rating filter
                     if (activeFilters.rating) {
                         const minRating = parseFloat(activeFilters.rating);
                         if (productData.rating < minRating) return false;
                     }
                     
-                    // Promotion filters
                     if (activeFilters.promotions.includes('onSale') && !productData.isOnSale) {
                         return false;
                     }
@@ -816,13 +860,10 @@
                 });
             }
             
-            // Apply sorting
             filteredProducts = sortProducts(filteredProducts, currentSort);
             
-            // Show filtered and sorted products
             const productGrid = document.querySelector('.product-grid');
             if (productGrid) {
-                // Clear grid and add filtered products in order
                 productGrid.innerHTML = '';
                 filteredProducts.forEach(card => {
                     card.style.display = 'block';
@@ -830,21 +871,88 @@
                 });
             }
             
-            // Update product count
             const productsTitle = document.querySelector('.products-title');
             if (productsTitle) {
                 productsTitle.textContent = `Tìm thấy ${filteredProducts.length} sản phẩm`;
             }
             
-            // Show no products message if needed
             if (filteredProducts.length === 0) {
                 showNoProductsMessage();
             } else {
                 hideNoProductsMessage();
             }
             
-            // Update URL without page reload
             updateURL();
+        }
+        
+        function applyFiltersAJAX(isClear) {
+            const params = new URLSearchParams();
+            
+            if (currentCategorySlug) {
+                params.append('category', currentCategorySlug);
+            }
+            
+            if (!isClear) {
+                activeFilters.brands.forEach(brand => params.append('brand', brand));
+                if (activeFilters.priceRange) params.append('priceRange', activeFilters.priceRange);
+                if (activeFilters.rating) params.append('rating', activeFilters.rating);
+                activeFilters.promotions.forEach(promo => params.append(promo, 'true'));
+                
+                const sortSelect = document.querySelector('.product-sort-select');
+                if (sortSelect && sortSelect.value) params.append('sort', sortSelect.value);
+            }
+            
+            const productsGrid = document.querySelector('.product-grid');
+            if (productsGrid) {
+                productsGrid.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;"><i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i><br>Đang tải sản phẩm...</div>';
+            }
+            
+            const currentUrl = new URL(window.location);
+            currentUrl.search = params.toString();
+            
+            fetch(currentUrl.toString(), {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                const newProductsGrid = doc.querySelector('.product-grid');
+                const newProductsTitle = doc.querySelector('.products-title');
+                const newNoProducts = doc.querySelector('.product-no-products');
+                
+                if (newProductsGrid && productsGrid) {
+                    const noProductsDiv = document.querySelector('.product-no-products');
+                    if (noProductsDiv) noProductsDiv.remove();
+                    
+                    productsGrid.style.display = 'grid';
+                    productsGrid.innerHTML = newProductsGrid.innerHTML;
+                } else if (newNoProducts) {
+                    const contentDiv = productsGrid.parentElement;
+                    productsGrid.style.display = 'none';
+                    
+                    let noProductsDiv = document.querySelector('.product-no-products');
+                    if (!noProductsDiv) {
+                        noProductsDiv = document.createElement('div');
+                        noProductsDiv.className = 'product-no-products';
+                        contentDiv.appendChild(noProductsDiv);
+                    }
+                    noProductsDiv.innerHTML = newNoProducts.innerHTML;
+                }
+                
+                const productsTitle = document.querySelector('.products-title');
+                if (newProductsTitle && productsTitle) {
+                    productsTitle.textContent = newProductsTitle.textContent;
+                }
+                
+                window.history.pushState({}, '', currentUrl.toString());
+            })
+            .catch(error => {
+                console.error('Error applying filters:', error);
+                window.location.href = currentUrl.toString();
+            });
         }
         
         function getProductDataFromCard(card) {
@@ -852,7 +960,6 @@
             const ratingStars = card.querySelectorAll('.rating-stars .star-icon:not(.empty)');
             const saleBadge = card.querySelector('.sale-badge');
             
-            // Extract price (remove commas and currency)
             let price = 0;
             if (priceElement) {
                 const priceText = priceElement.textContent.replace(/[.,đ\s]/g, '');
@@ -873,10 +980,8 @@
                 const bData = getProductDataFromCard(b);
                 
                 switch (sortType) {
-                    case 'price-asc':
-                        return aData.price - bData.price;
-                    case 'price-desc':
-                        return bData.price - aData.price;
+                    case 'price-asc': return aData.price - bData.price;
+                    case 'price-desc': return bData.price - aData.price;
                     case 'name-asc':
                         const aName = a.querySelector('.product-info-section h3')?.textContent.trim() || '';
                         const bName = b.querySelector('.product-info-section h3')?.textContent.trim() || '';
@@ -885,10 +990,8 @@
                         const aNameDesc = a.querySelector('.product-info-section h3')?.textContent.trim() || '';
                         const bNameDesc = b.querySelector('.product-info-section h3')?.textContent.trim() || '';
                         return bNameDesc.localeCompare(aNameDesc);
-                    case 'rating':
-                        return bData.rating - aData.rating;
-                    default: // 'popular'
-                        return 0; // Keep original order
+                    case 'rating': return bData.rating - aData.rating;
+                    default: return 0;
                 }
             });
         }
@@ -908,65 +1011,41 @@
                         <i class="fas fa-arrow-left"></i> Xem tất cả sản phẩm
                     </button>
                 `;
-                // Insert after product-grid
                 productGrid.parentNode.insertBefore(noProductsDiv, productGrid.nextSibling);
             }
             
-            if (noProductsDiv) {
-                noProductsDiv.style.display = 'block';
-            }
+            if (noProductsDiv) noProductsDiv.style.display = 'block';
         }
         
         function hideNoProductsMessage() {
             const noProductsDiv = document.querySelector('.product-no-products');
-            if (noProductsDiv) {
-                noProductsDiv.style.display = 'none';
-            }
+            if (noProductsDiv) noProductsDiv.style.display = 'none';
         }
         
         function updateURL() {
             const params = new URLSearchParams(window.location.search);
             
-            // Clear previous filter params
             params.delete('brand');
             params.delete('priceRange');
             params.delete('rating');
             params.delete('onSale');
             params.delete('freeShipping');
+            params.delete('sort');
             
-            // Add current filters
-            activeFilters.brands.forEach(brand => {
-                params.append('brand', brand);
-            });
+            activeFilters.brands.forEach(brand => params.append('brand', brand));
+            if (activeFilters.priceRange) params.set('priceRange', activeFilters.priceRange);
+            if (activeFilters.rating) params.set('rating', activeFilters.rating);
+            activeFilters.promotions.forEach(promo => params.set(promo, 'true'));
             
-            if (activeFilters.priceRange) {
-                params.set('priceRange', activeFilters.priceRange);
-            }
-            
-            if (activeFilters.rating) {
-                params.set('rating', activeFilters.rating);
-            }
-            
-            activeFilters.promotions.forEach(promo => {
-                params.set(promo, 'true');
-            });
-            
-            // Add sort
             const sortSelect = document.querySelector('.product-sort-select');
             if (sortSelect && sortSelect.value && sortSelect.value !== 'popular') {
                 params.set('sort', sortSelect.value);
-            } else {
-                params.delete('sort');
             }
             
-            // Update URL without page reload
             const newUrl = `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`;
             window.history.pushState({}, '', newUrl);
         }
         
-        function addToCart(productId) {
-            // Add to cart logic here
-            console.log('Adding product to cart:', productId);
-        }
+        // addToCart() function is provided by cart-helper.js (global)
     </script>
-} 
+}

@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 500);
             }
             
-            // Update cart badge when switching to wishlist section
+            // Update cart badge when switching to wishlist section (from cart-helper.js)
             if (sectionKey === 'my-wishlist') {
-                updateCartBadge();
+                refreshCartBadge();
             }
         }
 
@@ -116,8 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Wishlist functionality
     initializeWishlist();
     
-    // Initialize cart badge
-    updateCartBadge();
+    // Initialize cart badge (from cart-helper.js)
+    refreshCartBadge();
 
     // Profile Edit Mode Management
     const editProfileBtn = document.getElementById('edit-profile-btn');
@@ -524,7 +524,7 @@ function initializeWishlist() {
                     if (hasVariants) {
                         hasVariantsProducts.push(productTitle);
                     } else {
-                        const success = await addToCart(productId);
+                        const success = await addToCartFromWishlist(productId);
                         if (success) {
                             addedCount++;
                         }
@@ -534,7 +534,7 @@ function initializeWishlist() {
                 // Hiển thị thông báo
                 if (addedCount > 0) {
                     showNotification(`Đã thêm ${addedCount} sản phẩm vào giỏ hàng!`, 'success');
-                    updateCartBadge();
+                    refreshCartBadge(); // from cart-helper.js
                 }
                 
                 if (hasVariantsProducts.length > 0) {
@@ -629,12 +629,12 @@ function addWishlistEventListeners() {
             }
             
             // Nếu không có biến thể, thêm trực tiếp vào giỏ hàng
-            const success = await addToCart(productId);
+            const success = await addToCartFromWishlist(productId);
             if (success) {
                 showNotification(`Đã thêm "${productTitle}" vào giỏ hàng!`, 'success');
                 
-                // Cập nhật số lượng giỏ hàng trong header
-                updateCartBadge();
+                // Cập nhật số lượng giỏ hàng trong header (from cart-helper.js)
+                refreshCartBadge();
             } else {
                 showNotification('Không thể thêm sản phẩm vào giỏ hàng!', 'error');
             }
@@ -722,26 +722,11 @@ async function removeFromWishlist(productId) {
     }
 }
 
-async function addToCart(productId) {
-    try {
-        const response = await fetch('/Cart/AddToCart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
-            },
-            body: JSON.stringify({ 
-                productId: parseInt(productId),
-                quantity: 1
-            })
-        });
-        
-        const data = await response.json();
-        return data.success;
-    } catch (error) {
-        console.error('Error adding to cart:', error);
-        return false;
-    }
+// addToCart function is now provided by cart-helper.js (global)
+// Wrapper to maintain backward compatibility with return value
+async function addToCartFromWishlist(productId) {
+    const result = await addToCart(productId, 1, {}, null);
+    return result.success;
 }
 
 async function updateHeaderWishlistCount() {
@@ -760,27 +745,7 @@ async function updateHeaderWishlistCount() {
     }
 }
 
-// Function to update cart badge count
-async function updateCartBadge() {
-    try {
-        const response = await fetch('/Cart/GetCartCount');
-        const data = await response.json();
-        
-        const cartBadges = document.querySelectorAll('.header-cart-badge, .cart-count, .cart-badge');
-        cartBadges.forEach(badge => {
-            if (data.count > 0) {
-                badge.textContent = data.count;
-                badge.style.display = 'inline-block';
-                badge.classList.add('show');
-            } else {
-                badge.style.display = 'none';
-                badge.classList.remove('show');
-            }
-        });
-    } catch (error) {
-        console.error('Error updating cart badge:', error);
-    }
-}
+// updateCartBadge and refreshCartBadge functions are now provided by cart-helper.js (global)
 
 function formatPrice(price) {
     return new Intl.NumberFormat('vi-VN', {
