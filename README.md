@@ -1,13 +1,13 @@
 # 🐾 GauMeo Shop - E-commerce Platform
 
-E-commerce platform cho shop thú cưng được xây dựng với ASP.NET Core MVC (.NET 8.0).
+E-commerce platform for pet shop built with ASP.NET Core MVC (.NET 8.0).
 
-## 📁 Cấu trúc Project
+## 📁 Project Structure
 
 ```
 GauMeo-shop/
 ├── GauMeo.sln              # Solution file
-├── README.md                # File này
+├── README.md                # This file
 ├── .gitignore              # Git ignore rules
 │
 ├── src/                    # Source code
@@ -23,17 +23,17 @@ GauMeo-shop/
 │       ├── wwwroot/       # Static files (CSS, JS, images)
 │       └── ...
 │
-└── docs/                   # Documentation (nếu có)
+└── docs/                   # Documentation (if any)
 ```
 
-## 🚀 Yêu cầu Hệ thống
+## 🚀 System Requirements
 
-- **.NET SDK 8.0** hoặc cao hơn
-- **SQL Server** (hoặc SQL Server Express/LocalDB)
-- **Visual Studio 2022** hoặc **VS Code** với C# extension
-- **Git** (để clone repository)
+- **.NET SDK 8.0** or higher
+- **SQL Server** (or SQL Server Express/LocalDB)
+- **Visual Studio 2022** or **VS Code** with C# extension
+- **Git** (to clone repository)
 
-## ⚙️ Cài đặt và Chạy
+## ⚙️ Installation and Setup
 
 ### 1. Clone Repository
 ```bash
@@ -46,9 +46,9 @@ cd GauMeo-shop
 dotnet restore
 ```
 
-### 3. Cấu hình Database
+### 3. Configure Database
 
-Tạo file `src/GauMeo/appsettings.json` từ `appsettings.Example.json`:
+Create `src/GauMeo/appsettings.json` from `appsettings.Example.json`:
 
 ```json
 {
@@ -58,29 +58,29 @@ Tạo file `src/GauMeo/appsettings.json` từ `appsettings.Example.json`:
 }
 ```
 
-### 4. Chạy Migrations
+### 4. Run Migrations
 ```bash
 cd src/GauMeo
 dotnet ef database update
 ```
 
-### 5. Chạy Application
+### 5. Run Application
 ```bash
-# Từ root folder
+# From root folder
 dotnet run --project src/GauMeo/GauMeo.csproj
 
-# Hoặc từ Visual Studio: F5
+# Or from Visual Studio: F5
 ```
 
-Application sẽ chạy tại: `https://localhost:5001` hoặc `http://localhost:5000`
+Application will run at: `https://localhost:5001` or `http://localhost:5000`
 
-## 🛠️ Công nghệ Sử dụng
+## 🛠️ Technologies Used
 
 - **Framework**: ASP.NET Core MVC 8.0
-- **Database**: SQL Server với Entity Framework Core
+- **Database**: SQL Server with Entity Framework Core
 - **Authentication**: ASP.NET Core Identity + Google OAuth
 - **Frontend**: Razor Views, CSS3, JavaScript
-- **Architecture**: MVC Pattern với Areas
+- **Architecture**: MVC Pattern with Areas
 
 ## 📦 Features
 
@@ -109,12 +109,12 @@ Application sẽ chạy tại: `https://localhost:5001` hoặc `http://localhost
 dotnet build
 ```
 
-### Run Tests (nếu có)
+### Run Tests (if any)
 ```bash
 dotnet test
 ```
 
-### Tạo Migration mới
+### Create New Migration
 ```bash
 cd src/GauMeo
 dotnet ef migrations add MigrationName
@@ -134,4 +134,4 @@ dotnet ef migrations add MigrationName
 
 ---
 
-**Note**: Đây là project đang trong quá trình phát triển. Một số tính năng có thể chưa hoàn thiện.
+**Note**: This project is currently under development. Some features may not be fully completed.
