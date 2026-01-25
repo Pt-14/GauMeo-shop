@@ -7,7 +7,6 @@ obj/
 *.dll
 *.exe
 *.pdb
-*.cache
 
 # Build results
 [Dd]ebug/
@@ -16,6 +15,7 @@ obj/
 [Rr]eleases/
 x64/
 x86/
+[Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
@@ -35,33 +35,14 @@ bld/
 *.userosscache
 *.sln.docstates
 
-# Rider
+# Rider / JetBrains
 .idea/
 *.sln.iml
 
 # User-specific files
 *.rsuser
-*.user
 *.userosscache
-*.suo
-*.user
 *.sln.docstates
-
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
-[Bb]in/
-[Oo]bj/
-[Ll]og/
-[Ll]ogs/
 
 # NuGet Packages
 *.nupkg
@@ -86,7 +67,6 @@ ScaffoldingReadMe.txt
 *.obj
 *.iobj
 *.pch
-*.pdb
 *.ipdb
 *.pgc
 *.pgd
@@ -98,7 +78,6 @@ ScaffoldingReadMe.txt
 *.tmp
 *.tmp_proj
 *_wpftmp.csproj
-*.log
 *.vspscc
 *.vssscc
 .builds
@@ -106,13 +85,12 @@ ScaffoldingReadMe.txt
 *.svclog
 *.scc
 
-
 # AppSettings with sensitive data
-appsettings.json                
+appsettings.json
 appsettings.Development.json
 appsettings.Production.json
 appsettings.*.json
-!appsettings.Example.json       
+!appsettings.Example.json
 
 # Environment variables
 .env
@@ -126,10 +104,28 @@ appsettings.*.json
 *.sqlite
 *.sqlite3
 
-# OS
+# User-uploaded content (IMPORTANT: User-generated files)
+# Avatars - ignore all user-uploaded avatar files
+**/wwwroot/images/avatars/*
+!**/wwwroot/images/avatars/.gitkeep
+
+# Reviews - ignore all review images (including subdirectories by reviewId)
+**/wwwroot/images/reviews/**
+!**/wwwroot/images/reviews/.gitkeep
+
+# Product images - ignore admin-uploaded product images (product_*.jpg pattern)
+# But keep static/default product images
+**/wwwroot/images/products/product_*.jpg
+**/wwwroot/images/products/product_*.png
+**/wwwroot/images/products/product_*.jpeg
+
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
+*.swp
+*.swo
+*~
 
 # Logs
 logs/
@@ -138,5 +134,48 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# Code coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# Azure Functions
+local.settings.json
+
+# Entity Framework Migrations (keep migrations, but ignore generated files)
+# Note: Migrations folder should be tracked, but these patterns help
+
+# Properties/launchSettings.json - may contain sensitive data
+# Uncomment if you don't want to track launch settings
+# Properties/launchSettings.json
+
+# Backup files
+*.bak
+*.backup
 *~
 
+# Secrets and keys
+secrets.json
+*.key
+*.pem
+*.pfx
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Node modules (if using npm/node)
+node_modules/
+package-lock.json
+yarn.lock
+
+# LibMan (if using)
+libman.json.lock
