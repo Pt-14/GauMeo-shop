@@ -1,4 +1,6 @@
 ## .NET Core / ASP.NET Core
+# Project structure: src/GauMeo/ (standard .NET structure)
+# All patterns below work with any folder structure using **/ wildcards
 bin/
 obj/
 *.user
