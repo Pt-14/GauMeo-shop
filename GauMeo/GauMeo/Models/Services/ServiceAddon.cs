@@ -10,13 +10,13 @@ namespace GauMeo.Models.Services
 
         [Required]
         [StringLength(200)]
-        public string Name { get; set; } // "Cắt Móng Tay", "Vệ Sinh Tai"
+        public string Name { get; set; } = string.Empty; // "Cắt Móng Tay", "Vệ Sinh Tai"
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; } // 50000
 
         [StringLength(500)]
-        public string Description { get; set; } // "Cắt và mài móng chuyên nghiệp, an toàn"
+        public string Description { get; set; } = string.Empty; // "Cắt và mài móng chuyên nghiệp, an toàn"
 
         public bool IsActive { get; set; } = true;
 
@@ -28,6 +28,6 @@ namespace GauMeo.Models.Services
         public int ServiceId { get; set; }
 
         // Navigation Property
-        public virtual Service Service { get; set; }
+        public virtual Service Service { get; set; } = null!;
     }
 } 

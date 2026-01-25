@@ -478,9 +478,9 @@
     <script src="/js/product-detail.js"></script>
     <script>
       // Pass current user info and product ID to JavaScript
-      window.currentUserEmail = '@(User.Identity.IsAuthenticated ? User.Identity.Name : "")';
-      window.currentUserName = '@(User.Identity.IsAuthenticated ? (User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "") : "")';
+      window.currentUserEmail = '@(User.Identity?.IsAuthenticated == true ? User.Identity.Name ?? "" : "")';
+      window.currentUserName = '@(User.Identity?.IsAuthenticated == true ? (User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "") : "")';
       window.productId = @Model.Id;
-      window.isUserAuthenticated = @(User.Identity.IsAuthenticated ? "true" : "false");
+      window.isUserAuthenticated = @(User.Identity?.IsAuthenticated == true ? "true" : "false");
     </script>
 }

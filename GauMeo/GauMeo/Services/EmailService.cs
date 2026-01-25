@@ -28,8 +28,9 @@ namespace GauMeo.Services
             {
                 var smtpSettings = _configuration.GetSection("SmtpSettings");
                 var smtpServer = smtpSettings["Server"];
-                var smtpPort = int.Parse(smtpSettings["Port"]);
-                var smtpUsername = smtpSettings["Username"];
+                var smtpPortStr = smtpSettings["Port"];
+                var smtpPort = int.Parse(smtpPortStr ?? "587");
+                var smtpUsername = smtpSettings["Username"] ?? string.Empty;
                 var smtpPassword = smtpSettings["Password"];
 
                 using var message = new MailMessage();
@@ -61,7 +62,7 @@ namespace GauMeo.Services
             try
             {
                 var smtpSettings = _configuration.GetSection("SmtpSettings");
-                var smtpUsername = smtpSettings["Username"];
+                var smtpUsername = smtpSettings["Username"] ?? string.Empty;
 
                 using var message = new MailMessage();
                 message.From = new MailAddress(smtpUsername, "GauMeo Shop");
@@ -84,8 +85,9 @@ namespace GauMeo.Services
         {
             var smtpSettings = _configuration.GetSection("SmtpSettings");
             var smtpServer = smtpSettings["Server"];
-            var smtpPort = int.Parse(smtpSettings["Port"]);
-            var smtpUsername = smtpSettings["Username"];
+            var smtpPortStr = smtpSettings["Port"];
+            var smtpPort = int.Parse(smtpPortStr ?? "587");
+            var smtpUsername = smtpSettings["Username"] ?? string.Empty;
             var smtpPassword = smtpSettings["Password"];
 
             using var client = new SmtpClient(smtpServer);

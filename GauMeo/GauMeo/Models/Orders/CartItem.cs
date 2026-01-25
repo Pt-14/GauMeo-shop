@@ -15,7 +15,7 @@ namespace GauMeo.Models.Orders
         public decimal UnitPrice { get; set; } // Giá tại thời điểm thêm vào giỏ
 
         [StringLength(500)]
-        public string SelectedVariants { get; set; } // JSON string lưu variants đã chọn
+        public string SelectedVariants { get; set; } = string.Empty; // JSON string lưu variants đã chọn
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -26,8 +26,8 @@ namespace GauMeo.Models.Orders
         public int ProductId { get; set; }
 
         // Navigation Properties
-        public virtual Cart Cart { get; set; }
-        public virtual Products.Product Product { get; set; }
+        public virtual Cart Cart { get; set; } = null!;
+        public virtual Products.Product Product { get; set; } = null!;
 
         // Helper methods
         public decimal GetSubTotal()

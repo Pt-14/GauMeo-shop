@@ -10,10 +10,10 @@ namespace GauMeo.Models.Promotions
 
         [Required]
         [StringLength(200)]
-        public string Name { get; set; } // Tên chương trình khuyến mãi
+        public string Name { get; set; } = string.Empty; // Tên chương trình khuyến mãi
 
         [StringLength(500)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [StringLength(50)]
         public string Type { get; set; } = "sale"; // "sale", "flash_sale", "seasonal"
@@ -33,7 +33,7 @@ namespace GauMeo.Models.Promotions
         public bool IsPublic { get; set; } = true; // Hiển thị công khai hay chỉ cho khách hàng có mã
 
         [StringLength(500)]
-        public string ImageUrl { get; set; } // Banner khuyến mãi
+        public string ImageUrl { get; set; } = string.Empty; // Banner khuyến mãi
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

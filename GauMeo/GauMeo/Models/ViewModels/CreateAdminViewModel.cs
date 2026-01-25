@@ -7,28 +7,28 @@ namespace GauMeo.Models.ViewModels
         [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
         [StringLength(50, ErrorMessage = "Tên đăng nhập không được vượt quá 50 ký tự")]
         [Display(Name = "Tên đăng nhập")]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email không được để trống")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         [Display(Name = "Email")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Họ và tên không được để trống")]
         [StringLength(100, ErrorMessage = "Họ và tên không được vượt quá 100 ký tự")]
         [Display(Name = "Họ và tên")]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự và không quá {1} ký tự", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Mật khẩu")]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
         [Display(Name = "Xác nhận mật khẩu")]
         [Compare("Password", ErrorMessage = "Mật khẩu và xác nhận mật khẩu không khớp")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; set; } = string.Empty;
 
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
         [Display(Name = "Số điện thoại")]

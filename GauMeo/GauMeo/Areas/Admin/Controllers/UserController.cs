@@ -155,9 +155,9 @@ namespace GauMeo.Areas.Admin.Controllers
             var model = new EditAdminViewModel
             {
                 Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                FullName = user.FullName,
+                UserName = user.UserName ?? string.Empty,
+                Email = user.Email ?? string.Empty,
+                FullName = user.FullName ?? string.Empty,
                 PhoneNumber = user.PhoneNumber,
                 Address = user.Address
             };
@@ -238,8 +238,10 @@ namespace GauMeo.Areas.Admin.Controllers
 
             // Không cho phép xóa chính mình
             var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser.Id == user.Id)
+            if (currentUser == null || currentUser.Id == user.Id)
             {
+                if (currentUser == null)
+                    return Json(new { success = false, message = "Không tìm thấy người dùng hiện tại!" });
                 return Json(new { success = false, message = "Không thể xóa tài khoản của chính mình!" });
             }
 
@@ -249,7 +251,7 @@ namespace GauMeo.Areas.Admin.Controllers
                 
                 if (result.Succeeded)
                 {
-                    return Json(new { success = true, message = $"Đã xóa người dùng {user.FullName ?? user.UserName} thành công!" });
+                    return Json(new { success = true, message = $"Đã xóa người dùng {user.FullName ?? user.UserName ?? "N/A"} thành công!" });
                 }
                 else
                 {
@@ -273,8 +275,10 @@ namespace GauMeo.Areas.Admin.Controllers
 
             // Không cho phép khóa chính mình
             var currentUser = await _userManager.GetUserAsync(User);
-            if (currentUser.Id == user.Id)
+            if (currentUser == null || currentUser.Id == user.Id)
             {
+                if (currentUser == null)
+                    return Json(new { success = false, message = "Không tìm thấy người dùng hiện tại!" });
                 return Json(new { success = false, message = "Không thể khóa tài khoản của chính mình!" });
             }
 
@@ -284,7 +288,7 @@ namespace GauMeo.Areas.Admin.Controllers
                 {
                     // Mở khóa
                     user.LockoutEnd = null;
-                    var message = $"Đã mở khóa tài khoản {user.FullName ?? user.UserName}";
+                    var message = $"Đã mở khóa tài khoản {user.FullName ?? user.UserName ?? "N/A"}";
                     await _userManager.UpdateAsync(user);
                     return Json(new { success = true, message = message, isLocked = false });
                 }
@@ -292,7 +296,7 @@ namespace GauMeo.Areas.Admin.Controllers
                 {
                     // Khóa
                     user.LockoutEnd = DateTimeOffset.MaxValue;
-                    var message = $"Đã khóa tài khoản {user.FullName ?? user.UserName}";
+                    var message = $"Đã khóa tài khoản {user.FullName ?? user.UserName ?? "N/A"}";
                     await _userManager.UpdateAsync(user);
                     return Json(new { success = true, message = message, isLocked = true });
                 }

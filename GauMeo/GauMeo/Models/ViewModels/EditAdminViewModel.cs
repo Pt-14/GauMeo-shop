@@ -4,22 +4,22 @@ namespace GauMeo.Models.ViewModels
 {
     public class EditAdminViewModel
     {
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
         [StringLength(50, ErrorMessage = "Tên đăng nhập không được vượt quá 50 ký tự")]
         [Display(Name = "Tên đăng nhập")]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email không được để trống")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         [Display(Name = "Email")]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Họ và tên không được để trống")]
         [StringLength(100, ErrorMessage = "Họ và tên không được vượt quá 100 ký tự")]
         [Display(Name = "Họ và tên")]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất {2} ký tự và không quá {1} ký tự", MinimumLength = 6)]
         [DataType(DataType.Password)]

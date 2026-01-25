@@ -38,16 +38,12 @@
             <div class="admin-card user-profile-card">
                 <div class="profile-header">
                     <div class="profile-avatar">
-                        @if (!string.IsNullOrEmpty(Model.Avatar))
-                        {
-                            <img src="@Model.Avatar" alt="@(Model.FullName ?? Model.UserName)" class="avatar-image">
-                        }
-                        else
-                        {
-                            <div class="no-avatar large">
-                                @((Model.FullName ?? Model.UserName).Substring(0, 1).ToUpper())
-                            </div>
-                        }
+                        @await Component.InvokeAsync("Avatar", new { 
+                            avatarUrl = Model.Avatar, 
+                            userName = Model.UserName, 
+                            fullName = Model.FullName,
+                            cssClass = "large"
+                        })
                     </div>
                     <div class="profile-info">
                         <h3 class="profile-name">@(Model.FullName ?? Model.UserName)</h3>

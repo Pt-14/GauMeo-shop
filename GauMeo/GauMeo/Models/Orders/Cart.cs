@@ -10,7 +10,7 @@ namespace GauMeo.Models
         public int Id { get; set; }
 
         [StringLength(100)]
-        public string SessionId { get; set; } // Cho khách vãng lai
+        public string? SessionId { get; set; } // Cho khách vãng lai
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -20,7 +20,7 @@ namespace GauMeo.Models
         public string? UserId { get; set; } // Nullable cho khách vãng lai
 
         // Navigation Properties
-        public virtual ApplicationUser User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
         public virtual ICollection<CartItem> CartItems { get; set; }
 
         public Cart()

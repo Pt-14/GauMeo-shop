@@ -41,8 +41,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 builder.Services.AddAuthentication()
     .AddGoogle(googleOptions =>
     {
-        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? string.Empty;
+        googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? string.Empty;
         googleOptions.CallbackPath = "/signin-google";
     });
 

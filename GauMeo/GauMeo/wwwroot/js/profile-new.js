@@ -1,5 +1,10 @@
 // Profile Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if we're on profile page
+    if (!document.querySelector('.profile-menu-item, .profile-content-section, .profile-container')) {
+        return;
+    }
+    
     // Get all menu items and content sections
     const menuItems = document.querySelectorAll('.profile-menu-item');
     const contentSections = document.querySelectorAll('.profile-content-section');

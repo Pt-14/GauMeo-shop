@@ -290,13 +290,20 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/main.js" asp-append-version="true"></script>
-    <script src="~/js/logout-button.js" asp-append-version="true"></script>
-    <script src="~/js/index.js"></script>
-    <script src="~/js/slider.js" asp-append-version="true"></script>
-    <script src="~/js/product-tracking.js" asp-append-version="true"></script>
-    <script src="~/js/newsletter.js" asp-append-version="true"></script>
+    
+    <!-- Common scripts - loaded on all pages -->
+    <script src="~/js/common.js" asp-append-version="true"></script>
     <script src="~/js/cart-helper.js" asp-append-version="true"></script>
+    
+    <!-- Account scripts - load always (contains logout button for authenticated users and forgot password for all) -->
+    <script src="~/js/account.js" asp-append-version="true"></script>
+    
+    <!-- Home page scripts - only load on home page -->
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && 
+         ViewContext.RouteData.Values["action"]?.ToString() == "Index")
+    {
+        <script src="~/js/index.js"></script>
+    }
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>

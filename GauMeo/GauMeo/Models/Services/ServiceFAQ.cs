@@ -9,11 +9,11 @@ namespace GauMeo.Models.Services
 
         [Required]
         [StringLength(500)]
-        public string Question { get; set; } // "Spa & Grooming có an toàn cho thú cưng không?"
+        public string Question { get; set; } = string.Empty; // "Spa & Grooming có an toàn cho thú cưng không?"
 
         [Required]
         [StringLength(2000)]
-        public string Answer { get; set; } // "Hoàn toàn an toàn. Chúng tôi sử dụng..."
+        public string Answer { get; set; } = string.Empty; // "Hoàn toàn an toàn. Chúng tôi sử dụng..."
 
         public bool IsActive { get; set; } = true;
 
@@ -25,6 +25,6 @@ namespace GauMeo.Models.Services
         public int ServiceId { get; set; }
 
         // Navigation Property
-        public virtual Service Service { get; set; }
+        public virtual Service Service { get; set; } = null!;
     }
 } 

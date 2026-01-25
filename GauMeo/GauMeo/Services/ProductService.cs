@@ -36,10 +36,10 @@ namespace GauMeo.Services
                         p.IsOnSale,
                         p.FreeShipping,
                         p.PopularityScore,
-                        Brand = p.Brand.Name,
-                        Category = p.Category.Slug,
+                        Brand = p.Brand != null ? p.Brand.Name : string.Empty,
+                        Category = p.Category != null ? p.Category.Slug : string.Empty,
                         Image = p.ProductImages.FirstOrDefault(img => img.IsMain) != null 
-                            ? p.ProductImages.FirstOrDefault(img => img.IsMain).ImageUrl 
+                            ? p.ProductImages.FirstOrDefault(img => img.IsMain)!.ImageUrl 
                             : "/images/products/default-product.jpg"
                     })
                     .OrderByDescending(p => p.PopularityScore)
@@ -75,10 +75,10 @@ namespace GauMeo.Services
                         p.IsOnSale,
                         p.FreeShipping,
                         p.PopularityScore,
-                        Brand = p.Brand.Name,
-                        Category = p.Category.Slug,
+                        Brand = p.Brand != null ? p.Brand.Name : string.Empty,
+                        Category = p.Category != null ? p.Category.Slug : string.Empty,
                         Image = p.ProductImages.FirstOrDefault(img => img.IsMain) != null 
-                            ? p.ProductImages.FirstOrDefault(img => img.IsMain).ImageUrl 
+                            ? p.ProductImages.FirstOrDefault(img => img.IsMain)!.ImageUrl 
                             : "/images/products/default-product.jpg"
                     })
                     .OrderByDescending(p => p.PopularityScore)
@@ -104,8 +104,9 @@ namespace GauMeo.Services
                     .Where(p => (p.AnimalType.ToLower() == animalType.ToLower() || p.AnimalType.ToLower() == "both") && p.IsActive);
 
                 // Filter by category slug or name
-                query = query.Where(p => p.Category.Slug.ToLower().Contains(categoryName.ToLower()) || 
-                                        p.Category.Name.ToLower().Contains(categoryName.ToLower()));
+                query = query.Where(p => p.Category != null && 
+                                        (p.Category.Slug.ToLower().Contains(categoryName.ToLower()) || 
+                                         p.Category.Name.ToLower().Contains(categoryName.ToLower())));
 
                 var products = await query
                     .Select(p => new
@@ -120,10 +121,10 @@ namespace GauMeo.Services
                         p.IsOnSale,
                         p.FreeShipping,
                         p.PopularityScore,
-                        Brand = p.Brand.Name,
-                        Category = p.Category.Slug,
+                        Brand = p.Brand != null ? p.Brand.Name : string.Empty,
+                        Category = p.Category != null ? p.Category.Slug : string.Empty,
                         Image = p.ProductImages.FirstOrDefault(img => img.IsMain) != null 
-                            ? p.ProductImages.FirstOrDefault(img => img.IsMain).ImageUrl 
+                            ? p.ProductImages.FirstOrDefault(img => img.IsMain)!.ImageUrl 
                             : "/images/products/default-product.jpg"
                     })
                     .OrderByDescending(p => p.PopularityScore)
@@ -182,10 +183,10 @@ namespace GauMeo.Services
                         p.IsOnSale,
                         p.FreeShipping,
                         p.PopularityScore,
-                        Brand = p.Brand.Name,
-                        Category = p.Category.Slug,
+                        Brand = p.Brand != null ? p.Brand.Name : string.Empty,
+                        Category = p.Category != null ? p.Category.Slug : string.Empty,
                         Image = p.ProductImages.FirstOrDefault(img => img.IsMain) != null 
-                            ? p.ProductImages.FirstOrDefault(img => img.IsMain).ImageUrl 
+                            ? p.ProductImages.FirstOrDefault(img => img.IsMain)!.ImageUrl 
                             : "/images/products/default-product.jpg"
                     })
                     .OrderByDescending(p => p.PopularityScore)
@@ -228,8 +229,8 @@ namespace GauMeo.Services
             {
                 var brands = await _context.Products
                     .Include(p => p.Brand)
-                    .Where(p => (p.AnimalType.ToLower() == animalType.ToLower() || p.AnimalType.ToLower() == "both") && p.IsActive)
-                    .Select(p => p.Brand.Name)
+                    .Where(p => (p.AnimalType.ToLower() == animalType.ToLower() || p.AnimalType.ToLower() == "both") && p.IsActive && p.Brand != null)
+                    .Select(p => p.Brand!.Name)
                     .Distinct()
                     .OrderBy(b => b)
                     .ToListAsync();
@@ -328,12 +329,12 @@ namespace GauMeo.Services
                         p.FreeShipping,
                         p.PopularityScore,
                         p.StockQuantity,
-                        Brand = p.Brand.Name,
-                        Category = p.Category.Name,
+                        Brand = p.Brand != null ? p.Brand.Name : string.Empty,
+                        Category = p.Category != null ? p.Category.Name : string.Empty,
                         CategoryId = p.CategoryId,
                         IsNew = p.CreatedAt >= DateTime.Now.AddDays(-30), // Products created in last 30 days are "new"
                         Image = p.ProductImages.FirstOrDefault(img => img.IsMain) != null 
-                            ? p.ProductImages.FirstOrDefault(img => img.IsMain).ImageUrl 
+                            ? p.ProductImages.FirstOrDefault(img => img.IsMain)!.ImageUrl 
                             : "/images/products/default-product.jpg"
                     })
                     .OrderByDescending(p => p.PopularityScore)
@@ -354,12 +355,12 @@ namespace GauMeo.Services
             {
                 var categories = await _context.Products
                     .Include(p => p.Category)
-                    .Where(p => p.BrandId == brandId && p.IsActive)
-                    .GroupBy(p => new { p.CategoryId, p.Category.Name })
+                    .Where(p => p.BrandId == brandId && p.IsActive && p.Category != null)
+                    .GroupBy(p => new { p.CategoryId, CategoryName = p.Category!.Name })
                     .Select(g => new
                     {
                         Id = g.Key.CategoryId,
-                        Name = g.Key.Name,
+                        Name = g.Key.CategoryName,
                         Count = g.Count()
                     })
                     .OrderBy(c => c.Name)

@@ -10,13 +10,13 @@ namespace GauMeo.Models.Orders
 
         [Required]
         [StringLength(200)]
-        public string ProductName { get; set; } // Lưu tên sản phẩm tại thời điểm mua
+        public string ProductName { get; set; } = string.Empty; // Lưu tên sản phẩm tại thời điểm mua
 
         [StringLength(200)]
-        public string ProductBrand { get; set; } // Lưu thương hiệu tại thời điểm mua
+        public string ProductBrand { get; set; } = string.Empty; // Lưu thương hiệu tại thời điểm mua
 
         [StringLength(500)]
-        public string ProductImageUrl { get; set; } // Lưu ảnh tại thời điểm mua
+        public string ProductImageUrl { get; set; } = string.Empty; // Lưu ảnh tại thời điểm mua
 
         [Range(1, int.MaxValue)]
         public int Quantity { get; set; }
@@ -31,7 +31,7 @@ namespace GauMeo.Models.Orders
         public int DiscountPercent { get; set; } = 0; // % giảm giá tại thời điểm mua
 
         [StringLength(500)]
-        public string SelectedVariants { get; set; } // JSON string variants đã chọn
+        public string SelectedVariants { get; set; } = string.Empty; // JSON string variants đã chọn
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal SubTotal { get; set; } // UnitPrice * Quantity
@@ -43,8 +43,8 @@ namespace GauMeo.Models.Orders
         public int ProductId { get; set; } // Reference đến sản phẩm gốc
 
         // Navigation Properties
-        public virtual Order Order { get; set; }
-        public virtual Products.Product Product { get; set; }
+        public virtual Order Order { get; set; } = null!;
+        public virtual Products.Product Product { get; set; } = null!;
 
         // Helper method để parse selected variants
         public Dictionary<string, string> GetSelectedVariants()

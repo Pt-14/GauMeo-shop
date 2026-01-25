@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using Microsoft.AspNetCore.Authentication;
 using GauMeo.Data;
 using Microsoft.EntityFrameworkCore;
@@ -47,73 +44,47 @@ namespace GauMeo.Controllers
             _emailService = emailService;
         }
 
-        private string GenerateAvatar(string userName)
+        /// <summary>
+        /// Tạo màu avatar deterministic từ username (cùng username sẽ có cùng màu)
+        /// </summary>
+        private string GetAvatarColor(string userName)
         {
-            // Tạo thư mục avatars nếu chưa tồn tại
-            string avatarPath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "avatars");
-            if (!Directory.Exists(avatarPath))
-            {
-                Directory.CreateDirectory(avatarPath);
-            }
+            if (string.IsNullOrEmpty(userName))
+                return "#4769ff"; // Màu mặc định
 
-            // Tạo tên file avatar với timestamp để tránh trùng lặp
-            string fileName = $"avatar_{DateTime.Now.Ticks}.png";
-            string fullPath = Path.Combine(avatarPath, fileName);
-
-            // Tạo màu nền ngẫu nhiên nhưng đẹp
-            Random random = new Random();
-            Color[] colors = new[]
+            // Danh sách màu đẹp
+            string[] colors = new[]
             {
-                Color.FromArgb(255, 71, 105, 255),   // Xanh dương
-                Color.FromArgb(255, 255, 71, 87),    // Đỏ hồng
-                Color.FromArgb(255, 71, 255, 87),    // Xanh lá
-                Color.FromArgb(255, 255, 184, 71),   // Cam
-                Color.FromArgb(255, 184, 71, 255),   // Tím
-                Color.FromArgb(255, 71, 255, 184),   // Ngọc
-                Color.FromArgb(255, 255, 71, 184),   // Hồng
-                Color.FromArgb(255, 71, 184, 255)    // Xanh biển
+                "#4769ff", // Xanh dương
+                "#ff4757", // Đỏ hồng
+                "#47ff57", // Xanh lá
+                "#ffb847", // Cam
+                "#b847ff", // Tím
+                "#47ffb8", // Ngọc
+                "#ff47b8", // Hồng
+                "#47b8ff"  // Xanh biển
             };
-            Color backgroundColor = colors[random.Next(colors.Length)];
 
-            // Tạo hình ảnh
-            using (Bitmap bitmap = new Bitmap(200, 200))
-            {
-                using (Graphics graphics = Graphics.FromImage(bitmap))
-                {
-                    // Làm mịn hình ảnh
-                    graphics.SmoothingMode = SmoothingMode.AntiAlias;
-                    graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            // Tính hash từ username để chọn màu deterministic
+            int hash = userName.GetHashCode();
+            int index = Math.Abs(hash) % colors.Length;
+            return colors[index];
+        }
 
-                    // Vẽ nền tròn
-                    using (SolidBrush brush = new SolidBrush(backgroundColor))
-                    {
-                        graphics.FillEllipse(brush, 0, 0, 200, 200);
-                    }
-
-                    // Vẽ chữ cái đầu tiên của tên người dùng
-                    using (Font font = new Font("Arial", 80, FontStyle.Bold))
-                    using (SolidBrush textBrush = new SolidBrush(Color.White))
-                    {
-                        string text = userName.Substring(0, 1).ToUpper();
-                        SizeF textSize = graphics.MeasureString(text, font);
-                        float x = (200 - textSize.Width) / 2;
-                        float y = (200 - textSize.Height) / 2;
-                        graphics.DrawString(text, font, textBrush, x, y);
-                    }
-                }
-
-                // Lưu hình ảnh
-                bitmap.Save(fullPath, ImageFormat.Png);
-            }
-
-            return $"/images/avatars/{fileName}";
+        /// <summary>
+        /// Lấy chữ cái đầu của username
+        /// </summary>
+        private string GetAvatarInitial(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return "U";
+            return userName.Substring(0, 1).ToUpper();
         }
 
         [HttpGet]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 // Kiểm tra nếu user là admin thì chuyển đến trang admin
                 if (User.IsInRole("Admin"))
@@ -140,15 +111,14 @@ namespace GauMeo.Controllers
                 }
 
                 // Đăng nhập với username và password
-                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(user.UserName ?? string.Empty, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Người dùng đã đăng nhập.");
                     
-                    // Kiểm tra nếu user đã có avatar trong database
+                    // Cập nhật Avatar claim nếu user có avatar trong database
                     if (!string.IsNullOrEmpty(user.Avatar))
                     {
-                        // Nếu có avatar trong DB thì dùng avatar đó
                         var claims = await _userManager.GetClaimsAsync(user);
                         var avatarClaim = claims.FirstOrDefault(c => c.Type == "Avatar");
                         if (avatarClaim != null)
@@ -157,18 +127,7 @@ namespace GauMeo.Controllers
                         }
                         await _userManager.AddClaimAsync(user, new Claim("Avatar", user.Avatar));
                     }
-                    else
-                    {
-                        // Nếu chưa có avatar trong DB thì tạo avatar động
-                        string avatarPath = GenerateAvatar(user.UserName);
-                        var claims = await _userManager.GetClaimsAsync(user);
-                        var avatarClaim = claims.FirstOrDefault(c => c.Type == "Avatar");
-                        if (avatarClaim != null)
-                        {
-                            await _userManager.RemoveClaimAsync(user, avatarClaim);
-                        }
-                        await _userManager.AddClaimAsync(user, new Claim("Avatar", avatarPath));
-                    }
+                    // Nếu không có avatar, Views sẽ tự động hiển thị avatar động bằng CSS
                     
                     // Kiểm tra nếu user là admin thì luôn chuyển đến trang admin
                     if (await _userManager.IsInRoleAsync(user, "Admin"))
@@ -197,7 +156,7 @@ namespace GauMeo.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -234,9 +193,7 @@ namespace GauMeo.Controllers
                 {
                     _logger.LogInformation("Người dùng đã tạo tài khoản mới.");
 
-                    // Tạo avatar động cho lần đăng nhập đầu tiên
-                    string avatarPath = GenerateAvatar(user.UserName);
-                    await _userManager.AddClaimAsync(user, new Claim("Avatar", avatarPath));
+                    // Không tạo avatar file, Views sẽ tự động hiển thị avatar động bằng CSS
 
                     // Thêm người dùng vào role User
                     await _userManager.AddToRoleAsync(user, "User");
@@ -256,7 +213,7 @@ namespace GauMeo.Controllers
         [HttpGet]
         public IActionResult ForgotPassword()
         {
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -702,7 +659,7 @@ namespace GauMeo.Controllers
                     var model = new ExternalLoginConfirmationViewModel
                     {
                         Email = email,
-                        FullName = info.Principal.FindFirstValue(ClaimTypes.Name),
+                        FullName = info.Principal.FindFirstValue(ClaimTypes.Name) ?? string.Empty,
                         LoginProvider = info.LoginProvider,
                         ProviderKey = info.ProviderKey,
                         ReturnUrl = returnUrl
@@ -845,27 +802,18 @@ namespace GauMeo.Controllers
         // Helper method để cập nhật avatar
         private async Task UpdateUserAvatar(ApplicationUser user)
         {
-            string avatarPath;
-            
+            // Cập nhật Avatar claim nếu user có avatar trong database
             if (!string.IsNullOrEmpty(user.Avatar))
             {
-                // Nếu user đã có avatar trong DB
-                avatarPath = user.Avatar;
+                var claims = await _userManager.GetClaimsAsync(user);
+                var avatarClaim = claims.FirstOrDefault(c => c.Type == "Avatar");
+                if (avatarClaim != null)
+                {
+                    await _userManager.RemoveClaimAsync(user, avatarClaim);
+                }
+                await _userManager.AddClaimAsync(user, new Claim("Avatar", user.Avatar));
             }
-            else
-            {
-                // Tạo avatar động
-                avatarPath = GenerateAvatar(user.UserName ?? user.Email);
-            }
-            
-            // Cập nhật claim
-            var claims = await _userManager.GetClaimsAsync(user);
-            var avatarClaim = claims.FirstOrDefault(c => c.Type == "Avatar");
-            if (avatarClaim != null)
-            {
-                await _userManager.RemoveClaimAsync(user, avatarClaim);
-            }
-            await _userManager.AddClaimAsync(user, new Claim("Avatar", avatarPath));
+            // Nếu không có avatar, Views sẽ tự động hiển thị avatar động bằng CSS
         }
 
         [HttpGet]

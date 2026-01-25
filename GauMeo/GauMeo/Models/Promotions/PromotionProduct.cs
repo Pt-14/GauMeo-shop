@@ -14,7 +14,7 @@ namespace GauMeo.Models.Promotions
         public int ProductId { get; set; }
 
         // Navigation Properties
-        public virtual Promotion Promotion { get; set; }
-        public virtual Products.Product Product { get; set; }
+        public virtual Promotion Promotion { get; set; } = null!;
+        public virtual Products.Product Product { get; set; } = null!;
     }
 } 

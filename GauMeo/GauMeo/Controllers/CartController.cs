@@ -121,7 +121,7 @@ namespace GauMeo.Controllers
                     return Json(new { success = false, message = "Người dùng chưa đăng nhập" });
                 }
 
-                var success = await _cartService.MergeCartAsync(request.SessionId, userId);
+                var success = await _cartService.MergeCartAsync(request.SessionId ?? string.Empty, userId);
                 if (success)
                 {
                     var cartCount = await _cartService.GetCartItemCountAsync(userId, null);
@@ -199,7 +199,7 @@ namespace GauMeo.Controllers
             };
 
             // Pre-fill customer info if user is logged in
-            if (User.Identity.IsAuthenticated && userId != null)
+            if (User.Identity?.IsAuthenticated == true && userId != null)
             {
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user != null)
@@ -238,7 +238,7 @@ namespace GauMeo.Controllers
                 {
                     CustomerName = model.CustomerName,
                     CustomerPhone = model.CustomerPhone,
-                    CustomerEmail = model.CustomerEmail,
+                    CustomerEmail = model.CustomerEmail ?? string.Empty,
                     ShippingAddress = model.ShippingAddress,
                     BillingAddress = model.BillingAddress,
                     PaymentMethod = model.PaymentMethod,
@@ -289,7 +289,7 @@ namespace GauMeo.Controllers
             string? userId = null;
             string? sessionId = null;
 
-            if (User.Identity.IsAuthenticated)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             }
@@ -328,7 +328,7 @@ namespace GauMeo.Controllers
 
     public class MergeCartRequest
     {
-        public string SessionId { get; set; }
+        public string? SessionId { get; set; }
     }
 
     public class CheckoutViewModel

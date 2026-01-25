@@ -20,7 +20,7 @@ namespace GauMeo.Middleware
             if (path != null && path.StartsWith("/admin"))
             {
                 // Kiểm tra xem user đã đăng nhập chưa
-                if (!context.User.Identity.IsAuthenticated)
+                if (context.User.Identity?.IsAuthenticated != true)
                 {
                     // Nếu chưa đăng nhập, redirect về trang login với return URL
                     var returnUrl = System.Net.WebUtility.UrlEncode(context.Request.Path + context.Request.QueryString);

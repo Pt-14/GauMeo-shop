@@ -10,10 +10,10 @@ namespace GauMeo.Models.Products
 
         [Required]
         [StringLength(200)]
-        public string Name { get; set; } // Tên biến thể (VD: "500g", "Vị gà")
+        public string Name { get; set; } = string.Empty; // Tên biến thể (VD: "500g", "Vị gà")
 
         [StringLength(100)]
-        public string Type { get; set; } // Loại biến thể: "size" hoặc "flavor"
+        public string Type { get; set; } = string.Empty; // Loại biến thể: "size" hoặc "flavor"
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal? PriceAdjustment { get; set; } // Điều chỉnh giá (+/-)
@@ -30,6 +30,6 @@ namespace GauMeo.Models.Products
         public int ProductId { get; set; }
 
         // Navigation Property
-        public virtual Product Product { get; set; }
+        public virtual Product Product { get; set; } = null!;
     }
 } 

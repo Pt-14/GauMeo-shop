@@ -7,7 +7,7 @@ namespace GauMeo.Models.ViewModels
     {
         // Service Information
         public int ServiceId { get; set; }
-        public Service Service { get; set; }
+        public Service? Service { get; set; }
         public List<ServiceVariant> ServiceVariants { get; set; } = new List<ServiceVariant>();
         public List<ServiceAddon> ServiceAddons { get; set; } = new List<ServiceAddon>();
         public List<ServiceNote> ServiceNotes { get; set; } = new List<ServiceNote>();

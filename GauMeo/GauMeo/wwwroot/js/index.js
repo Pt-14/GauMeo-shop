@@ -1,6 +1,9 @@
 // Hero slogan
 (function() {
+  // Only initialize if we're on home page
   const sloganEl = document.querySelector('.hero-slogan');
+  if (!sloganEl) return;
+  
   const slogans = [
       'GauMeo Shop – Thế giới thú cưng của bạn.',
       'Sản phẩm chất lượng cho mọi thú cưng.',
@@ -111,11 +114,17 @@ function setupProductSlider(sliderSelector) {
 
 // Call setup function when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+  // Only initialize if we're on home page
+  if (!document.querySelector('.product-slider, .hero-slogan')) return;
+  
   setupProductSlider('.product-slider');
 });
 
 // Xử lý tìm kiếm
 document.addEventListener('DOMContentLoaded', function() {
+  // Only initialize if we're on home page
+  if (!document.querySelector('.hero-slogan, .product-slider')) return;
+  
   // Xử lý nút xóa tìm kiếm
   const searchClear = document.querySelector('.search-clear');
   const searchInput = document.getElementById('search_topnav');

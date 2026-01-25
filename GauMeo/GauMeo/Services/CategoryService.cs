@@ -205,7 +205,7 @@ namespace GauMeo.Services
                 if (!string.IsNullOrEmpty(search))
                 {
                     query = query.Where(c => c.Name.Contains(search) || 
-                                           c.Description.Contains(search) ||
+                                           (c.Description != null && c.Description.Contains(search)) ||
                                            c.Slug.Contains(search));
                 }
 

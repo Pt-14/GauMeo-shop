@@ -9,11 +9,11 @@ namespace GauMeo.Models.Categories
 
         [Required]
         [StringLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [StringLength(200)]
-        public string Slug { get; set; } // URL-friendly name (VD: "thuc-an-hat")
+        public string Slug { get; set; } = string.Empty; // URL-friendly name (VD: "thuc-an-hat")
 
         [StringLength(1000)]
         public string? Description { get; set; }

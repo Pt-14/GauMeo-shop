@@ -1,5 +1,10 @@
 // Product Detail JavaScript - Clean Version (No Question functionality)
 document.addEventListener('DOMContentLoaded', function() {
+  // Only initialize if we're on product detail page
+  if (!document.querySelector('.variant-btn, .product-detail-container, .product-detail')) {
+    return;
+  }
+  
   // ===========================================
   // 1. VARIANT SELECTION & PRICE UPDATE
   // ===========================================

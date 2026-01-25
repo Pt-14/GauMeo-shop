@@ -10,8 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /**
  * Initialize service page functionality
+ * Only runs if we're on service page
  */
 function initializeServicePage() {
+    // Only initialize if we're on service page
+    if (!document.querySelector('.service-tab-btn, .service-detail, .service-container')) return;
+    
     // Initialize tab functionality
     initializeServiceTabs();
     
@@ -36,6 +40,7 @@ function initializeServicePage() {
  */
 function initializeServiceTabs() {
     const tabButtons = document.querySelectorAll('.service-tab-btn');
+    if (tabButtons.length === 0) return;
     
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -55,6 +60,7 @@ function initializeServiceTabs() {
  */
 function initializePricingTabs() {
     const pricingTabButtons = document.querySelectorAll('.pricing-tab-btn');
+    if (pricingTabButtons.length === 0) return;
     
     pricingTabButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -240,6 +246,7 @@ function initializeFromURLHash() {
 function initializeImageSlider() {
     const nextButtons = document.querySelectorAll('.slider-next');
     const prevButtons = document.querySelectorAll('.slider-prev');
+    if (nextButtons.length === 0 && prevButtons.length === 0) return;
     
     nextButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -284,6 +291,7 @@ function initializeImageSlider() {
  */
 function initializeFAQAccordion() {
     const faqQuestions = document.querySelectorAll('.faq-question');
+    if (faqQuestions.length === 0) return;
     
     faqQuestions.forEach(question => {
         question.addEventListener('click', function(e) {
@@ -337,6 +345,9 @@ function initializeFAQAccordion() {
  * Initialize scroll animations - Optimized
  */
 function initializeScrollAnimations() {
+    const sections = document.querySelectorAll('.service-features, .service-additional, .service-booking-steps, .service-faq');
+    if (sections.length === 0) return;
+    
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -359,7 +370,6 @@ function initializeScrollAnimations() {
     }, observerOptions);
     
     // Observe sections - removed non-existent classes
-    const sections = document.querySelectorAll('.service-features, .service-additional, .service-booking-steps, .service-faq');
     sections.forEach(section => observer.observe(section));
 }
 

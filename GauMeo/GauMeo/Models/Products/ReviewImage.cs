@@ -9,10 +9,10 @@ namespace GauMeo.Models.Products
 
         [Required]
         [StringLength(500)]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
         [StringLength(200)]
-        public string AltText { get; set; }
+        public string AltText { get; set; } = string.Empty;
 
         public int DisplayOrder { get; set; } = 0;
 
@@ -22,6 +22,6 @@ namespace GauMeo.Models.Products
         public int ReviewId { get; set; }
 
         // Navigation Property
-        public virtual Review Review { get; set; }
+        public virtual Review Review { get; set; } = null!;
     }
 } 

@@ -574,7 +574,7 @@ namespace GauMeo.Areas.Admin.Controllers
                 query = query.Where(b =>
                     b.CustomerName.Contains(filters.SearchTerm) ||
                     b.CustomerPhone.Contains(filters.SearchTerm) ||
-                    b.CustomerEmail.Contains(filters.SearchTerm) ||
+                    (b.CustomerEmail != null && b.CustomerEmail.Contains(filters.SearchTerm)) ||
                     b.PetName.Contains(filters.SearchTerm)
                 );
             }

@@ -130,7 +130,7 @@ namespace GauMeo.Services
                 {
                     ProductId = model.ProductId,
                     Rating = model.Rating,
-                    Comment = model.Comment,
+                    Comment = model.Comment ?? string.Empty,
                     CustomerName = model.CustomerName,
                     CustomerEmail = model.CustomerEmail,
                     UserId = userId,

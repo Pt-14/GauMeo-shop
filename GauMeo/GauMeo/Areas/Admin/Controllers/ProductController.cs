@@ -93,11 +93,11 @@ namespace GauMeo.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("ModelState is invalid for product creation. Errors: {Errors}", 
-                    string.Join(", ", ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage)));
+                    string.Join(", ", ModelState.SelectMany(x => x.Value?.Errors ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>()).Select(x => x.ErrorMessage)));
                 
                 foreach (var modelError in ModelState)
                 {
-                    if (modelError.Value.Errors.Count > 0)
+                    if (modelError.Value?.Errors.Count > 0)
                     {
                         _logger.LogWarning("Field: {Field}, Errors: {Errors}", 
                             modelError.Key, 
@@ -190,11 +190,11 @@ namespace GauMeo.Areas.Admin.Controllers
             if (!ModelState.IsValid)
             {
                 _logger.LogWarning("ModelState is invalid for product update. Errors: {Errors}", 
-                    string.Join(", ", ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage)));
+                    string.Join(", ", ModelState.SelectMany(x => x.Value?.Errors ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.ModelBinding.ModelError>()).Select(x => x.ErrorMessage)));
                 
                 foreach (var modelError in ModelState)
                 {
-                    if (modelError.Value.Errors.Count > 0)
+                    if (modelError.Value?.Errors.Count > 0)
                     {
                         _logger.LogWarning("Field: {Field}, Errors: {Errors}", 
                             modelError.Key, 

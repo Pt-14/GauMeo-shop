@@ -8,7 +8,7 @@ namespace GauMeo.Models
 
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         public DateTime SubscribedAt { get; set; } = DateTime.UtcNow;
 

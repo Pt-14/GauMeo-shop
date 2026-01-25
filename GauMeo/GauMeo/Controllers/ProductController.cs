@@ -129,7 +129,7 @@ namespace GauMeo.Controllers
                 {
                     Id = product.Id,
                     Name = product.Name,
-                    Description = product.ShortDescription,
+                    Description = product.ShortDescription ?? string.Empty,
                     // CurrentPrice: giá hiện tại (đã discount) cho sản phẩm không có variants
                     CurrentPrice = hasVariants ? minPrice : product.CurrentPrice,
                     // OriginalPrice: giá gốc cho sản phẩm không có variants  
@@ -138,7 +138,7 @@ namespace GauMeo.Controllers
                     IsOnSale = product.IsOnSale,
                     Rating = product.Rating,
                     ReviewCount = product.ReviewCount,
-                    Brand = product.Brand.Name,
+                    Brand = product.Brand?.Name ?? string.Empty,
                     Origin = "Nhập khẩu", // Default value
                     StockQuantity = product.StockQuantity,
                     HasVariants = hasVariants,
@@ -558,7 +558,7 @@ namespace GauMeo.Controllers
                 }
 
                 string? userId = null;
-                if (User.Identity.IsAuthenticated)
+                if (User.Identity?.IsAuthenticated == true)
                 {
                     userId = _userManager.GetUserId(User);
                 }

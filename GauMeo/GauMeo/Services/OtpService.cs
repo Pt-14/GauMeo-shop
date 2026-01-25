@@ -36,7 +36,7 @@ namespace GauMeo.Services
 
         public bool ValidateOtp(string email, string otp)
         {
-            if (_cache.TryGetValue($"OTP_{email}", out string storedOtp))
+            if (_cache.TryGetValue($"OTP_{email}", out string? storedOtp) && storedOtp != null)
             {
                 return storedOtp == otp;
             }

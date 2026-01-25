@@ -77,8 +77,8 @@
                 <i class="fas fa-chevron-left"></i>
             </div>
             <div class="product-category-scroll-container">
-                <div class="product-category-grid @(subCategories.Count() <= 7 ? "center-categories" : "")" id="categoryGrid">
-                    @foreach (var category in subCategories)
+                <div class="product-category-grid @((subCategories?.Count() ?? 0) <= 7 ? "center-categories" : "")" id="categoryGrid">
+                    @foreach (var category in subCategories ?? Enumerable.Empty<GauMeo.Models.Categories.Category>())
                     {
                         var categoryUrl = $"/Product/Category/{category.Slug}";
                         <a href="@categoryUrl" class="product-category-item">
@@ -269,11 +269,11 @@
                 var hasParentForBack = breadcrumbsForBack != null && breadcrumbsForBack.Count > 1;
                 var parentNameForBack = "";
                 var parentUrlForBack = "";
-                if (hasParentForBack)
+                if (hasParentForBack && breadcrumbsForBack != null && breadcrumbsForBack.Count >= 2)
                 {
                     var parentBreadcrumb = breadcrumbsForBack[breadcrumbsForBack.Count - 2];
-                    parentNameForBack = parentBreadcrumb.GetType().GetProperty("Name")?.GetValue(parentBreadcrumb)?.ToString() ?? "";
-                    parentUrlForBack = parentBreadcrumb.GetType().GetProperty("Url")?.GetValue(parentBreadcrumb)?.ToString() ?? "";
+                    parentNameForBack = parentBreadcrumb?.GetType().GetProperty("Name")?.GetValue(parentBreadcrumb)?.ToString() ?? "";
+                    parentUrlForBack = parentBreadcrumb?.GetType().GetProperty("Url")?.GetValue(parentBreadcrumb)?.ToString() ?? "";
                 }
                 var animalPageDisplayNameBack = animalType == "dog" ? "Chó" : "Mèo";
                 var animalSlugBack = animalType == "dog" ? "cho" : "meo";
@@ -396,11 +396,11 @@
                         var hasParentForNoProducts = breadcrumbsForNoProducts != null && breadcrumbsForNoProducts.Count > 1;
                         var parentNameForNoProducts = "";
                         var parentUrlForNoProducts = "";
-                        if (hasParentForNoProducts)
+                        if (hasParentForNoProducts && breadcrumbsForNoProducts != null && breadcrumbsForNoProducts.Count >= 2)
                         {
                             var parentBreadcrumbForNoProducts = breadcrumbsForNoProducts[breadcrumbsForNoProducts.Count - 2];
-                            parentNameForNoProducts = parentBreadcrumbForNoProducts.GetType().GetProperty("Name")?.GetValue(parentBreadcrumbForNoProducts)?.ToString() ?? "";
-                            parentUrlForNoProducts = parentBreadcrumbForNoProducts.GetType().GetProperty("Url")?.GetValue(parentBreadcrumbForNoProducts)?.ToString() ?? "";
+                            parentNameForNoProducts = parentBreadcrumbForNoProducts?.GetType().GetProperty("Name")?.GetValue(parentBreadcrumbForNoProducts)?.ToString() ?? "";
+                            parentUrlForNoProducts = parentBreadcrumbForNoProducts?.GetType().GetProperty("Url")?.GetValue(parentBreadcrumbForNoProducts)?.ToString() ?? "";
                         }
                         var animalPageDisplayName2 = animalType == "dog" ? "Chó" : "Mèo";
                         var animalSlug2 = animalType == "dog" ? "cho" : "meo";

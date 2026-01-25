@@ -11,13 +11,13 @@ namespace GauMeo.Models.Products
         public int Rating { get; set; }
 
         [StringLength(1000)]
-        public string Comment { get; set; } // Đánh giá bằng text
+        public string Comment { get; set; } = string.Empty; // Đánh giá bằng text
 
         [StringLength(100)]
-        public string CustomerName { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
 
         [StringLength(200)]
-        public string CustomerEmail { get; set; }
+        public string CustomerEmail { get; set; } = string.Empty;
 
         public bool IsVerifiedPurchase { get; set; } = false; // Đã mua hàng hay chưa
 
@@ -32,8 +32,8 @@ namespace GauMeo.Models.Products
         public string? UserId { get; set; } // Nullable nếu khách vãng lai
 
         // Navigation Properties
-        public virtual Product Product { get; set; }
-        public virtual ApplicationUser User { get; set; }
+        public virtual Product Product { get; set; } = null!;
+        public virtual ApplicationUser? User { get; set; }
         public virtual ICollection<ReviewImage> ReviewImages { get; set; } // Hình ảnh đánh giá
 
         public Review()

@@ -10,20 +10,20 @@ namespace GauMeo.Models.Services
 
         [Required]
         [StringLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [StringLength(50)]
-        public string ShortName { get; set; } // Tên ngắn (VD: "Spa", "Grooming")
+        public string ShortName { get; set; } = string.Empty; // Tên ngắn (VD: "Spa", "Grooming")
 
         [StringLength(500)]
-        public string Description { get; set; } // Mô tả ngắn
+        public string Description { get; set; } = string.Empty; // Mô tả ngắn
 
         [StringLength(2000)]
-        public string FullDescription { get; set; } // Mô tả đầy đủ
+        public string FullDescription { get; set; } = string.Empty; // Mô tả đầy đủ
 
         [StringLength(100)]
-        public string Price { get; set; } // Giá dạng string (VD: "150.000 - 300.000 VNĐ")
+        public string Price { get; set; } = string.Empty; // Giá dạng string (VD: "150.000 - 300.000 VNĐ")
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal? MinPrice { get; set; } // Giá tối thiểu (dạng số)
@@ -32,16 +32,16 @@ namespace GauMeo.Models.Services
         public decimal? MaxPrice { get; set; } // Giá tối đa (dạng số)
 
         [StringLength(100)]
-        public string Duration { get; set; } // Thời lượng (VD: "60 - 90 phút")
+        public string Duration { get; set; } = string.Empty; // Thời lượng (VD: "60 - 90 phút")
 
         [StringLength(500)]
-        public string Image { get; set; } // Hình ảnh dịch vụ
+        public string Image { get; set; } = string.Empty; // Hình ảnh dịch vụ
 
         [StringLength(500)]
-        public string FaqImage { get; set; } // Hình ảnh FAQ container
+        public string FaqImage { get; set; } = string.Empty; // Hình ảnh FAQ container
 
         [StringLength(3000)]
-        public string Features { get; set; } // Đặc điểm dịch vụ (JSON array)
+        public string Features { get; set; } = string.Empty; // Đặc điểm dịch vụ (JSON array)
 
         public bool IsActive { get; set; } = true;
 

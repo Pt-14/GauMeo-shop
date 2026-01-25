@@ -133,13 +133,13 @@
                     var isAdmin = userModel.Roles.Contains("Admin");
                     
                     <tr class="user-row" 
-                        data-name="@(user.FullName?.ToLower() ?? user.UserName.ToLower())" 
-                        data-email="@user.Email.ToLower()" 
+                        data-name="@((user.FullName ?? user.UserName ?? "").ToLower())" 
+                        data-email="@(user.Email?.ToLower() ?? "")" 
                         data-phone="@(user.PhoneNumber?.ToLower() ?? "")"
                         data-status="@(isLocked ? "locked" : (user.EmailConfirmed ? "confirmed" : "unconfirmed"))"
                         data-role="@(isAdmin ? "admin" : "user")"
-                        data-sort-name="@(user.FullName ?? user.UserName)"
-                        data-sort-email="@user.Email"
+                        data-sort-name="@(user.FullName ?? user.UserName ?? "")"
+                        data-sort-email="@(user.Email ?? "")"
                         data-sort-status="@(isLocked ? "2" : (user.EmailConfirmed ? "1" : "0"))"
                         data-sort-role="@(isAdmin ? "1" : "0")"
                         data-sort-date="@user.CreatedAt.Ticks">
@@ -148,16 +148,11 @@
                         </td>
                         <td>
                             <div class="user-avatar">
-                                @if (!string.IsNullOrEmpty(user.Avatar))
-                                {
-                                    <img src="@user.Avatar" alt="@(user.FullName ?? user.UserName)">
-                                }
-                                else
-                                {
-                                    <div class="no-avatar">
-                                        @((user.FullName ?? user.UserName).Substring(0, 1).ToUpper())
-                                    </div>
-                                }
+                                @await Component.InvokeAsync("Avatar", new { 
+                                    avatarUrl = user.Avatar, 
+                                    userName = user.UserName, 
+                                    fullName = user.FullName 
+                                })
                             </div>
                         </td>
                         <td>
@@ -249,22 +244,17 @@
             var isAdmin = userModel.Roles.Contains("Admin");
             
             <div class="user-card" 
-                 data-name="@(user.FullName?.ToLower() ?? user.UserName.ToLower())" 
-                 data-email="@user.Email.ToLower()" 
+                 data-name="@((user.FullName ?? user.UserName ?? "").ToLower())" 
+                 data-email="@(user.Email?.ToLower() ?? "")" 
                  data-status="@(isLocked ? "locked" : (user.EmailConfirmed ? "confirmed" : "unconfirmed"))"
                  data-role="@(isAdmin ? "admin" : "user")">
                 <div class="user-card-header">
                     <div class="user-card-avatar">
-                        @if (!string.IsNullOrEmpty(user.Avatar))
-                        {
-                            <img src="@user.Avatar" alt="@(user.FullName ?? user.UserName)">
-                        }
-                        else
-                        {
-                            <div class="no-avatar">
-                                @((user.FullName ?? user.UserName).Substring(0, 1).ToUpper())
-                            </div>
-                        }
+                        @await Component.InvokeAsync("Avatar", new { 
+                            avatarUrl = user.Avatar, 
+                            userName = user.UserName, 
+                            fullName = user.FullName 
+                        })
                     </div>
                     <div class="user-card-overlay">
                         <div class="overlay-actions">

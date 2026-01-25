@@ -1,9 +1,9 @@
 @{
-    ViewData["Title"] = $"{ViewBag.Brand.Name} - GauMeo Petshop";
+    ViewData["Title"] = $"{(ViewBag.Brand as dynamic)?.Name ?? "Thương hiệu"} - GauMeo Petshop";
     var brand = ViewBag.Brand as dynamic;
     var products = ViewBag.Products as List<dynamic>;
-    var categories = ViewBag.Categories as List<dynamic>;
-    var priceRanges = ViewBag.PriceRanges as List<dynamic>;
+    var categories = ViewBag.Categories as List<dynamic> ?? new List<dynamic>();
+    var priceRanges = ViewBag.PriceRanges as List<dynamic> ?? new List<dynamic>();
 }
 
 @section Styles {
@@ -284,5 +284,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/brand-detail.js" asp-append-version="true"></script>
+    <script src="~/js/brand.js" asp-append-version="true"></script>
 } 

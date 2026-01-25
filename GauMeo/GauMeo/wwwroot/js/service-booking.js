@@ -9,6 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeBookingForm() {
+    // Only initialize if we're on booking page
+    if (!document.getElementById('BookingDate') && !document.querySelector('.booking-form, .service-booking-container')) {
+        console.log('Booking form not found, skipping initialization');
+        return;
+    }
+    
     console.log('=== INITIALIZING BOOKING FORM ===');
     
     // Set minimum date to tomorrow
@@ -54,6 +60,8 @@ function setupPriceCalculation() {
     // Listen for variant selection changes
     const variantRadios = document.querySelectorAll('input[name="ServiceVariantId"]');
     console.log('Found variant radios:', variantRadios.length);
+    if (variantRadios.length === 0) return;
+    
     variantRadios.forEach(radio => {
         radio.addEventListener('change', updatePriceCalculation);
     });
@@ -99,6 +107,8 @@ function filterServiceVariants() {
     const petType = document.getElementById('PetType')?.value;
     const petSize = document.querySelector('select[name="PetSize"]')?.value;
     const variantCards = document.querySelectorAll('.variant-card');
+    
+    if (variantCards.length === 0) return;
     
     console.log(`Filtering variants for pet type: ${petType}, size: ${petSize}`);
     

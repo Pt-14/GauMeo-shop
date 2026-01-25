@@ -9,16 +9,16 @@ namespace GauMeo.Models.Services
 
         [Required]
         [StringLength(500)]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
         [StringLength(200)]
-        public string AltText { get; set; }
+        public string AltText { get; set; } = string.Empty;
 
         [StringLength(200)]
-        public string Title { get; set; } // slide-name: "Spa Thư Giãn", "Cắt Tỉa Lông"
+        public string Title { get; set; } = string.Empty; // slide-name: "Spa Thư Giãn", "Cắt Tỉa Lông"
 
         [StringLength(500)]
-        public string Description { get; set; } // slide-description: "Dịch vụ spa cao cấp..."
+        public string Description { get; set; } = string.Empty; // slide-description: "Dịch vụ spa cao cấp..."
 
         public bool IsMain { get; set; } = false; // Hình ảnh chính
 
@@ -30,6 +30,6 @@ namespace GauMeo.Models.Services
         public int ServiceId { get; set; }
 
         // Navigation Property
-        public virtual Service Service { get; set; }
+        public virtual Service Service { get; set; } = null!;
     }
 } 

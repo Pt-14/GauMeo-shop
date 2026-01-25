@@ -58,14 +58,14 @@
         <div class="filter-controls">
             <select id="categoryFilter" class="filter-select">
                 <option value="">Tất cả danh mục</option>
-                @foreach (var category in Model.Select(p => p.Category).Where(c => c != null).Distinct())
+                @foreach (var category in Model.Select(p => p.Category).Where(c => c != null).Distinct().Cast<GauMeo.Models.Categories.Category>())
                 {
                     <option value="@category.Name">@category.Name</option>
                 }
             </select>
             <select id="brandFilter" class="filter-select">
                 <option value="">Tất cả thương hiệu</option>
-                @foreach (var brand in Model.Select(p => p.Brand).Where(b => b != null).Distinct())
+                @foreach (var brand in Model.Select(p => p.Brand).Where(b => b != null).Distinct().Cast<GauMeo.Models.Categories.Brand>())
                 {
                     <option value="@brand.Name">@brand.Name</option>
                 }

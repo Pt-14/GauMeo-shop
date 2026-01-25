@@ -10,11 +10,11 @@ namespace GauMeo.Models.Services
 
         [Required]
         [StringLength(100)]
-        public string CustomerName { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
 
         [Required]
         [StringLength(15)]
-        public string CustomerPhone { get; set; }
+        public string CustomerPhone { get; set; } = string.Empty;
 
         [StringLength(200)]
         public string? CustomerEmail { get; set; }

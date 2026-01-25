@@ -107,7 +107,7 @@ namespace GauMeo.Controllers
         {
             try
             {
-                if (User.Identity.IsAuthenticated)
+                if (User.Identity?.IsAuthenticated == true)
                 {
                     var user = await _userManager.GetUserAsync(User);
                     if (user != null)

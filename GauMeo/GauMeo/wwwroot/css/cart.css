@@ -21,13 +21,20 @@
 
 .cart-header {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 60px;
-    gap: 20px;
+    grid-template-columns: 2fr 1fr 1fr 1fr 20px;
+    gap: 20px 8px;
     padding: 20px;
     background: #f8f9fa;
     font-weight: 600;
     color: #333;
     border-bottom: 1px solid #eee;
+}
+
+.cart-header span:nth-child(2),
+.cart-header span:nth-child(3),
+.cart-header span:nth-child(4) {
+    padding-left: 8px;
+    text-align: center;
 }
 
 .cart-items {
@@ -36,15 +43,26 @@
 
 .cart-item {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr 60px;
-    gap: 20px;
+    grid-template-columns: 2fr 1fr 1fr 1fr 20px;
+    gap: 15px 8px;
     padding: 20px;
     border-bottom: 1px solid #eee;
-    align-items: center;
+    align-items: start;
+}
+
+.cart-item:first-child {
+    border-top: none;
 }
 
 .cart-item:last-child {
     border-bottom: none;
+}
+
+/* Product Image and Info Container */
+.cart-item-product {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
 }
 
 /* Product Image - Smaller Size */
@@ -52,6 +70,7 @@
     width: 80px;
     height: 80px;
     flex-shrink: 0;
+    margin-top: 0;
 }
 
 .cart-item-image img {
@@ -68,7 +87,9 @@
     flex-direction: column;
     gap: 5px;
     min-width: 0; /* Allow text truncation */
-    max-width: 300px; /* Prevent text overflow */
+    flex: 1; /* Take remaining space */
+    margin-top: 0;
+    padding-top: 0;
 }
 
 .cart-item-name {
@@ -111,14 +132,19 @@
 .cart-item-price {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 2px;
+    align-self: start;
+    justify-content: flex-start;
+    padding-top: 0;
+    margin-top: 0;
+    padding-left: 8px;
 }
 
 .cart-item-price .price {
     font-size: 16px;
     font-weight: 600;
-    color: #e44d26;
+    color: #002828;
 }
 
 .cart-item-price .original-price {
@@ -137,6 +163,11 @@
 .cart-item-quantity {
     display: flex;
     justify-content: center;
+    align-self: start;
+    align-items: flex-start;
+    padding-top: 0;
+    margin-top: 0;
+    padding-left: 8px;
 }
 
 .quantity-selector {
@@ -152,12 +183,12 @@
     background: #f8f9fa;
     border: none;
     width: 32px;
-    height: 32px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     color: #666;
     transition: all 0.2s ease;
@@ -177,14 +208,22 @@
     border-right: 1px solid #ddd;
 }
 
-.qty-btn.plus {
-    border-left: 1px solid #ddd;
+.qty-btn:disabled {
+    background: #f0f0f0;
+    color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.qty-btn:disabled:hover {
+    background: #f0f0f0;
+    color: #ccc;
 }
 
 .qty-input {
     border: none;
     width: 50px;
-    height: 32px;
+    height: 28px;
     text-align: center;
     font-size: 14px;
     font-weight: 600;
@@ -201,39 +240,59 @@
 }
 
 /* Subtotal */
+.cart-item-total {
+    align-self: start;
+    text-align: center;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 0;
+    margin-top: 0;
+    padding-left: 8px;
+}
+
 .cart-item-total .subtotal {
     font-size: 16px;
     font-weight: 600;
     color: #333;
+    margin: 0;
 }
 
 /* Remove Button */
 .cart-item-actions {
     display: flex;
     justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+    margin: 0;
 }
 
 .cart-remove.btn-icon {
     background: none;
     border: none;
-    padding: 8px;
+    padding: 6px;
     cursor: pointer;
-    color: #dc3545;
-    border-radius: 6px;
+    color: #002828;
+    border-radius: 4px;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0.7;
 }
 
 .cart-remove.btn-icon:hover {
-    background: rgba(220, 53, 69, 0.1);
-    color: #c82333;
+    background: rgba(0, 40, 40, 0.1);
+    color: #001818;
+    opacity: 1;
 }
 
 .cart-remove.btn-icon svg {
     pointer-events: none;
+    width: 16px;
+    height: 16px;
 }
+
 
 /* Clear All Section */
 .clear-all-divider {
@@ -254,7 +313,7 @@
     gap: 8px;
     background: none;
     border: none;
-    color: #dc3545;
+    color: #002828;
     font-size: 14px;
     cursor: pointer;
     padding: 8px 12px;
@@ -263,8 +322,8 @@
 }
 
 .clear-all-btn:hover {
-    background: rgba(220, 53, 69, 0.1);
-    color: #c82333;
+    background: rgba(0, 40, 40, 0.1);
+    color: #001818;
 }
 
 .clear-all-btn svg {
@@ -304,8 +363,6 @@
     position: sticky;
     top: 20px;
 }
-
-
 
 .cart-summary-divider {
     height: 1px;
@@ -365,7 +422,6 @@
     box-sizing: border-box;
 }
 #buy-now {
-    border-radius: 50px;
     color: #fff;
     background-color: #00AA28;
     border: 1px solid #00AA28;
@@ -378,16 +434,15 @@
     align-items: center;
     border-radius: 4px;
     justify-content: center;
-  }
+}
   
-  #buy-now:hover {
+#buy-now:hover {
     background: #00871E;
     color: #fff;
     transform: scale(1.02);
-  }
+}
   
-  #continue-shopping {
-    border-radius: 50px;
+#continue-shopping {
     width: 100%;
     background-color: #fff;
     border: 1px solid #00AA28;
@@ -401,11 +456,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
+}
   
-  #continue-shopping:hover {
+#continue-shopping:hover {
     transform: scale(1.02);
-  }
+}
 
 
 .btn-outline {
@@ -509,56 +564,3 @@
         font-size: 24px;
     }
 }
-
-/* Notification Styles */
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-    min-width: 300px;
-    max-width: 400px;
-    padding: 16px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transform: translateX(100%);
-    opacity: 0;
-    transition: all 0.3s ease;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-}
-
-.notification.show {
-    transform: translateX(0);
-    opacity: 1;
-}
-
-.notification-success {
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-}
-
-.notification-error {
-    background: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-}
-
-.notification-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.notification-icon {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.notification-message {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-} 

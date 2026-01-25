@@ -9,32 +9,32 @@ namespace GauMeo.Models.Categories
 
         [Required]
         [StringLength(200)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [Required]
         [StringLength(10)]
-        public string ShortName { get; set; } // Tên viết tắt (VD: "RC", "PD")
+        public string ShortName { get; set; } = string.Empty; // Tên viết tắt (VD: "RC", "PD")
 
         [StringLength(500)]
-        public string Description { get; set; } // Mô tả ngắn
+        public string Description { get; set; } = string.Empty; // Mô tả ngắn
 
         [StringLength(2000)]
-        public string FullDescription { get; set; } // Mô tả đầy đủ cho trang detail
+        public string FullDescription { get; set; } = string.Empty; // Mô tả đầy đủ cho trang detail
 
         [StringLength(50)]
-        public string Founded { get; set; } // Năm thành lập (VD: "1968")
+        public string Founded { get; set; } = string.Empty; // Năm thành lập (VD: "1968")
 
         [StringLength(100)]
-        public string Origin { get; set; } // Xuất xứ (VD: "Pháp", "Mỹ")
+        public string Origin { get; set; } = string.Empty; // Xuất xứ (VD: "Pháp", "Mỹ")
 
         [StringLength(200)]
-        public string Website { get; set; } // Website chính thức
+        public string Website { get; set; } = string.Empty; // Website chính thức
 
         [StringLength(500)]
-        public string Image { get; set; } // Logo thương hiệu
+        public string Image { get; set; } = string.Empty; // Logo thương hiệu
 
         [StringLength(3000)]
-        public string Features { get; set; } // Đặc điểm nổi bật (JSON array hoặc string phân cách)
+        public string Features { get; set; } = string.Empty; // Đặc điểm nổi bật (JSON array hoặc string phân cách)
 
         public int DisplayOrder { get; set; } = 0; // Thứ tự hiển thị
 
