@@ -501,25 +501,7 @@
     min-height: 80px;
 }
 
-/* Breadcrumb */
-.breadcrumb {
-    padding: 60px 50px 30px;
-    font-size: 14px;
-}
-
-.breadcrumb-link {
-    color: #666;
-    text-decoration: none;
-}
-
-.breadcrumb-link:hover {
-    color: #333;
-}
-
-.breadcrumb-link.active {
-    color: #333;
-    font-weight: 600;
-}
+/* Breadcrumb styles moved to breadcrumb.css */
 
 .cart-title {
     font-size: 32px;

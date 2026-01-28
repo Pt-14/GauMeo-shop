@@ -8,12 +8,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/header-footer.css">
-    <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
+    <!-- Common CSS Files - Loaded on all pages -->
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
+    <!-- components.css: gộp từ components-common.css + components-404.css (Newsletter + Error page) -->
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/logout-button.css" asp-append-version="true" />  
-    <link rel="stylesheet" href="~/css/newsletter.css" asp-append-version="true" />
+    
+    <!-- Conditional CSS Loading -->
+    @* Auth CSS - Load when user is authenticated (for logout button) or on Account pages *@
+    @if (User.Identity?.IsAuthenticated == true || 
+         ViewContext.RouteData.Values["controller"]?.ToString() == "Account")
+    {
+        <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    }
+    
+    @* Help Pages CSS - Load only on Footer controller pages *@
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Footer")
+    {
+        <link rel="stylesheet" href="~/css/components-help.css" asp-append-version="true" />
+    }
+    
+    @* 404/Error styles đã nằm trong components.css (load global phía trên), không cần load riêng *@
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     @await RenderSectionAsync("Styles", required: false)
 </head>
@@ -40,7 +57,7 @@
                 <button class="slider-nav next" onclick="changeSlide(1)">›</button>
             </div>
             <span class="top-bar-right-info">
-                <span class="top-bar-center">Email: info.gaumeopetshop@gmail.com</span>
+                <span class="top-bar-center">Email: info.gaumeo@gmail.com</span>
                 <span class="top-bar-right">Hotline: 0901234567</span>
             </span>
         </div>
@@ -190,21 +207,6 @@
             </div>
         </section>
 
-        <!-- About Section - Separate from footer-main -->
-        <div class="footer-about-section">
-            <div class="footer-title-center">
-                Về chúng tôi
-            </div>
-            <div class="about-content-wrapper">
-                <div class="about-text">
-                    <p>GauMeo là cửa hàng trực tuyến dành cho thú cưng, cung cấp hơn 18.000 sản phẩm cho chó, mèo, bò sát, chim và các loài thú cưng nhỏ. Chúng tôi nỗ lực phục vụ khách hàng trung thành bằng cách cung cấp thức ăn thú cưng tốt nhất, sản phẩm chăm sóc chó, dịch vụ và giá cả. Nếu bạn muốn mua thức ăn cho thú cưng trực tuyến thì chúng tôi có nhiều loại dành cho tất cả các loài thú cưng, bạn thậm chí có thể thiết lập một gói đăng ký để đơn hàng của bạn sẽ được giao tự động trong khung thời gian thuận tiện cho bạn.</p>
-                    <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi và chúng tôi sẽ phản hồi bạn càng nhanh càng tốt.</p>
-                </div>
-                <div class="about-image">
-                    <img src="~/images/the-dogs.png" alt="Happy pets" class="pets-image">
-                </div>
-            </div>
-        </div>
         <!-- Footer columns -->
         <div class="footer-main">
             <div class="footer-col">

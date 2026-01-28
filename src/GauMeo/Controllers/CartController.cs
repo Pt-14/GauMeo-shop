@@ -37,7 +37,7 @@ namespace GauMeo.Controllers
             {
                 var (userId, sessionId) = GetUserAndSessionId();
                 
-                var success = await _cartService.AddToCartAsync(
+                var (success, errorMessage) = await _cartService.AddToCartAsync(
                     userId, 
                     sessionId, 
                     request.ProductId, 
@@ -51,7 +51,7 @@ namespace GauMeo.Controllers
                     return Json(new { success = true, cartCount = cartCount, message = "Đã thêm sản phẩm vào giỏ hàng!" });
                 }
 
-                return Json(new { success = false, message = "Không thể thêm sản phẩm vào giỏ hàng!" });
+                return Json(new { success = false, message = errorMessage ?? "Không thể thêm sản phẩm vào giỏ hàng!" });
             }
             catch (Exception ex)
             {
@@ -65,7 +65,7 @@ namespace GauMeo.Controllers
         {
             try
             {
-                var success = await _cartService.UpdateCartItemAsync(request.CartItemId, request.Quantity);
+                var (success, errorMessage) = await _cartService.UpdateCartItemAsync(request.CartItemId, request.Quantity);
                 
                 if (success)
                 {
@@ -76,7 +76,7 @@ namespace GauMeo.Controllers
                     return Json(new { success = true, cartTotal = cartTotal, cartCount = cartCount });
                 }
 
-                return Json(new { success = false, message = "Không thể cập nhật sản phẩm!" });
+                return Json(new { success = false, message = errorMessage ?? "Không thể cập nhật sản phẩm!" });
             }
             catch (Exception ex)
             {

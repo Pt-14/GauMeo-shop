@@ -9,11 +9,11 @@
 }
 
 <main>
-    <div class="breadcrumb">
-        <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
-        <a href="/Cart" class="breadcrumb-link">Giỏ hàng</a> /
-        <span class="breadcrumb-link active">Thanh toán</span>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Giỏ hàng", "Index", "Cart"),
+        ("Thanh toán", null, null)
+    ))
 
     @if (TempData["ErrorMessage"] != null)
     {
@@ -68,8 +68,9 @@
                                 </div>
                                 <div class="form-group">
                                     <label asp-for="CustomerPhone">Số điện thoại *</label>
-                                    <input asp-for="CustomerPhone" type="tel" required placeholder="Nhập số điện thoại">
+                                    <input asp-for="CustomerPhone" type="tel" required placeholder="0901 234 567" maxlength="13" pattern="(0[0-9]{9,10})|(\+84[0-9]{9,10})">
                                     <span asp-validation-for="CustomerPhone" class="field-validation-error"></span>
+                                    <small class="form-text text-muted">Ví dụ: 0901 234 567 (di động) hoặc 024 1234 5678 (cố định)</small>
                                 </div>
                             </div>
 

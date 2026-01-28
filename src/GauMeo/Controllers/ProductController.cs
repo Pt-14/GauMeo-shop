@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using GauMeo.Data;
+using GauMeo.Extensions;
 
 namespace GauMeo.Controllers
 {
@@ -406,6 +407,14 @@ namespace GauMeo.Controllers
             return breadcrumbs;
         }
 
+        /// <summary>
+        /// Builds BreadcrumbViewModel from dynamic breadcrumbs list for Product category pages
+        /// </summary>
+        private BreadcrumbViewModel BuildBreadcrumbViewModel(List<object> breadcrumbs, string? fallbackTitle = null)
+        {
+            return Url.ConvertToBreadcrumbViewModel(breadcrumbs, fallbackTitle);
+        }
+
         private async Task<IActionResult> HandleLevel1Category(Category category, string[]? brand, string priceRange, string rating, string onSale, string freeShipping, string sort, List<object> breadcrumbs)
         {
             // Get level 2 categories (direct subcategories) from database
@@ -427,6 +436,7 @@ namespace GauMeo.Controllers
             ViewBag.AnimalPageName = category.Name;
             ViewBag.ShowAllCategories = true;
             ViewBag.Breadcrumbs = breadcrumbs;
+            ViewBag.BreadcrumbViewModel = BuildBreadcrumbViewModel(breadcrumbs, category.Name);
             
             // Filter data for UI
             ViewBag.Brands = GetBrands(products);
@@ -458,6 +468,7 @@ namespace GauMeo.Controllers
             ViewBag.ShowAllCategories = false;
             ViewBag.CategoryGroupName = category.Name;
             ViewBag.Breadcrumbs = breadcrumbs;
+            ViewBag.BreadcrumbViewModel = BuildBreadcrumbViewModel(breadcrumbs, category.Name);
             
             // Filter data for UI
             ViewBag.Brands = GetBrands(products);
@@ -489,6 +500,7 @@ namespace GauMeo.Controllers
             ViewBag.AnimalPageUrl = breadcrumbs.Count > 0 ? $"/Product/Category/{breadcrumbs[0].GetType().GetProperty("Slug")?.GetValue(breadcrumbs[0])}" : "/";
             ViewBag.AnimalPageName = breadcrumbs.Count > 0 ? breadcrumbs[0].GetType().GetProperty("Name")?.GetValue(breadcrumbs[0]) : category.Name;
             ViewBag.Breadcrumbs = breadcrumbs;
+            ViewBag.BreadcrumbViewModel = BuildBreadcrumbViewModel(breadcrumbs, category.Name);
             
             // Filter data for UI
             ViewBag.Brands = GetBrands(products);

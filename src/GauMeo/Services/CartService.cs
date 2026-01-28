@@ -87,10 +87,16 @@ namespace GauMeo.Services
             return cart?.GetTotalAmount() ?? 0;
         }
 
-        public async Task<bool> AddToCartAsync(string? userId, string? sessionId, int productId, int quantity, Dictionary<string, string>? selectedVariants = null)
+        public async Task<(bool Success, string? ErrorMessage)> AddToCartAsync(string? userId, string? sessionId, int productId, int quantity, Dictionary<string, string>? selectedVariants = null)
         {
             try
             {
+                // Validate quantity
+                if (quantity <= 0)
+                {
+                    return (false, "Số lượng phải lớn hơn 0");
+                }
+
                 // Validate product exists
                 var product = await _context.Products
                     .Include(p => p.ProductVariants.Where(v => v.IsActive))
@@ -99,7 +105,44 @@ namespace GauMeo.Services
                 if (product == null || !product.IsActive)
                 {
                     _logger.LogWarning("Product {ProductId} not found or inactive", productId);
-                    return false;
+                    return (false, "Sản phẩm không tồn tại hoặc đã ngừng kinh doanh");
+                }
+
+                // Validate stock quantity
+                if (product.StockQuantity <= 0)
+                {
+                    return (false, "Sản phẩm đã hết hàng");
+                }
+
+                // Get or create cart
+                var cart = await GetOrCreateCartAsync(userId, sessionId);
+
+                // Check if product with same variants already exists in cart
+                var selectedVariantsJson = selectedVariants != null ? 
+                    System.Text.Json.JsonSerializer.Serialize(selectedVariants) : "";
+                
+                var existingCartItem = await _context.CartItems
+                    .Include(ci => ci.Product)
+                    .FirstOrDefaultAsync(ci => ci.CartId == cart.Id && 
+                                             ci.ProductId == productId && 
+                                             ci.SelectedVariants == selectedVariantsJson);
+
+                // Calculate total quantity after adding
+                int totalQuantity = quantity;
+                if (existingCartItem != null)
+                {
+                    totalQuantity += existingCartItem.Quantity;
+                }
+
+                // Validate total quantity against stock
+                if (totalQuantity > product.StockQuantity)
+                {
+                    int availableQuantity = product.StockQuantity - (existingCartItem?.Quantity ?? 0);
+                    if (availableQuantity <= 0)
+                    {
+                        return (false, $"Sản phẩm chỉ còn {product.StockQuantity} sản phẩm trong kho");
+                    }
+                    return (false, $"Số lượng vượt quá tồn kho. Chỉ còn {availableQuantity} sản phẩm có thể thêm vào giỏ hàng");
                 }
 
                 // Calculate unit price based on variants
@@ -129,22 +172,10 @@ namespace GauMeo.Services
                     unitPrice = unitPrice * (100 - product.DiscountPercent) / 100;
                 }
 
-                // Get or create cart
-                var cart = await GetOrCreateCartAsync(userId, sessionId);
-
-                // Check if product with same variants already exists in cart
-                var selectedVariantsJson = selectedVariants != null ? 
-                    System.Text.Json.JsonSerializer.Serialize(selectedVariants) : "";
-                
-                var existingCartItem = await _context.CartItems
-                    .FirstOrDefaultAsync(ci => ci.CartId == cart.Id && 
-                                             ci.ProductId == productId && 
-                                             ci.SelectedVariants == selectedVariantsJson);
-
                 if (existingCartItem != null)
                 {
                     // Update quantity
-                    existingCartItem.Quantity += quantity;
+                    existingCartItem.Quantity = totalQuantity;
                     existingCartItem.UpdatedAt = DateTime.Now;
                 }
                 else
@@ -168,39 +199,60 @@ namespace GauMeo.Services
                 cart.UpdatedAt = DateTime.Now;
 
                 await _context.SaveChangesAsync();
-                return true;
+                return (true, null);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error adding product {ProductId} to cart", productId);
-                return false;
+                return (false, "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng");
             }
         }
 
-        public async Task<bool> UpdateCartItemAsync(int cartItemId, int quantity)
+        public async Task<(bool Success, string? ErrorMessage)> UpdateCartItemAsync(int cartItemId, int quantity)
         {
             try
             {
-                var cartItem = await _context.CartItems.FindAsync(cartItemId);
+                var cartItem = await _context.CartItems
+                    .Include(ci => ci.Product)
+                    .FirstOrDefaultAsync(ci => ci.Id == cartItemId);
+                    
                 if (cartItem == null)
-                    return false;
+                    return (false, "Sản phẩm không tồn tại trong giỏ hàng");
 
                 if (quantity <= 0)
                 {
                     // Remove item if quantity is 0 or negative
-                    return await RemoveFromCartAsync(cartItemId);
+                    var removed = await RemoveFromCartAsync(cartItemId);
+                    return (removed, removed ? null : "Không thể xóa sản phẩm");
+                }
+
+                // Validate stock quantity
+                var product = cartItem.Product;
+                if (product == null || !product.IsActive)
+                {
+                    return (false, "Sản phẩm không tồn tại hoặc đã ngừng kinh doanh");
+                }
+
+                if (product.StockQuantity <= 0)
+                {
+                    return (false, "Sản phẩm đã hết hàng");
+                }
+
+                if (quantity > product.StockQuantity)
+                {
+                    return (false, $"Số lượng vượt quá tồn kho. Chỉ còn {product.StockQuantity} sản phẩm");
                 }
 
                 cartItem.Quantity = quantity;
                 cartItem.UpdatedAt = DateTime.Now;
 
                 await _context.SaveChangesAsync();
-                return true;
+                return (true, null);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating cart item {CartItemId}", cartItemId);
-                return false;
+                return (false, "Có lỗi xảy ra khi cập nhật giỏ hàng");
             }
         }
 
@@ -302,4 +354,4 @@ namespace GauMeo.Services
             return cart.CartItems.OrderByDescending(ci => ci.CreatedAt);
         }
     }
-} 
+}

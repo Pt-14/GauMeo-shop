@@ -7,15 +7,15 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/brand-detail.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
 }
 
 <div class="brand-detail-container">
-    <div class="breadcrumb">
-        <a href="/Home/Index">Trang chủ</a> / 
-        <a href="/Brand/Index">Thương hiệu</a> / 
-        <span>@brand.Name</span>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Thương hiệu", "Index", "Brand"),
+        (brand.Name, null, null)
+    ))
     
     <div class="brand-detail-header">
         <div class="brand-header-content">

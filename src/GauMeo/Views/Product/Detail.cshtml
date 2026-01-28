@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="/css/product-detail.css">
 }
   <main>
-    <div class="breadcrumb">
-      <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
-      <a href="/Product/@(Model.Brand?.Replace(" ", ""))" class="breadcrumb-link">@Model.Brand</a> /
-      <a href="#" class="breadcrumb-link active">@Model.Name</a>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        (Model.Brand ?? "Sản phẩm", "Index", "Brand"),
+        (Model.Name, null, null)
+    ))
     <section class="product-detail">
       <div class="product-images">
         <div class="thumb-container">

@@ -5,15 +5,15 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/brand-index.css" asp-append-version="true" />
+    @* Base CSS is already loaded in _Layout.cshtml. brand.css gộp từ brand-index + brand-detail *@
+    <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
 }
 
 <div class="brand-index-container">
-    <div class="breadcrumb">
-        <a href="/Home/Index">Trang chủ</a> / 
-        <span>Thương hiệu</span>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Thương hiệu", null, null)
+    ))
     
     <div class="brand-index-header">
         <h1 class="brand-index-title">Thương hiệu đang được phân phối bởi GauMeo</h1>

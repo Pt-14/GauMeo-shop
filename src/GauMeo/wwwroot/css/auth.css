@@ -1,9 +1,23 @@
-* {
+/* ========================================
+   Authentication Styles
+   Combined from account.css + logout-button.css
+   ======================================== */
+
+/* Reset only inside auth container to avoid affecting newsletter-section and
+   rest of layout when user is logged in (auth.css is loaded globally). */
+.auth-container,
+.auth-container * {
+  box-sizing: border-box;
+}
+.auth-container * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
   font-family: "Quicksand", sans-serif;
 }
+
+/* ========================================
+   Auth Container
+   ======================================== */
 
 .auth-container {
   width: 100%;
@@ -31,7 +45,7 @@
   align-items: center;
   flex-direction: column;
   gap: 25px;
-   /* Khoảng cách giữa các ô nhập liệu */
+  /* Khoảng cách giữa các ô nhập liệu */
 }
 
 .container .form h2 {
@@ -40,12 +54,15 @@
   letter-spacing: 0.1em;
 }
 
+/* ========================================
+   Input Box Styles
+   ======================================== */
 
 .container .form .inputBox {
   position: relative;
   width: 300px;
   margin-bottom: 30px;
-   /* Thêm khoảng cách dưới mỗi inputBox */
+  /* Thêm khoảng cách dưới mỗi inputBox */
 }
 
 .container .form .inputBox input {
@@ -61,7 +78,6 @@
   box-shadow: -5px -5px 15px rgba(255, 255, 255, 0.1), 5px 5px 15px rgba(0, 0, 0, 0.35);
   transition: 0.5s;
   outline: none;
-  
 }
 
 .container .form .inputBox span {
@@ -123,6 +139,7 @@
   font-weight: 500;
   cursor: pointer;
 }
+
 .container .form p {
   color: rgba(12, 12, 12, 0.5);
   font-size: 0.75em;
@@ -146,11 +163,14 @@
 .slide {
   display: none;
 }
+
 .slide.active {
   display: block;
 }
 
-/* Removed old profile styles - now using profile.css */
+/* ========================================
+   Modal Styles
+   ======================================== */
 
 .modal-header {
   border-bottom: 1px solid #e0e0e0;
@@ -197,7 +217,9 @@
   box-shadow: 0 0 0 0.2rem rgba(78,115,223,0.25);
 }
 
-.btn {
+/* Button styles - Scoped to auth container to avoid conflicts */
+.auth-container .btn,
+.container .btn {
   padding: 8px 16px;
   font-size: 15px;
   font-weight: 500;
@@ -205,26 +227,34 @@
   transition: all 0.2s;
 }
 
-.btn-primary {
+.auth-container .btn-primary,
+.container .btn-primary {
   background: #4e73df;
   border-color: #4e73df;
 }
 
-.btn-primary:hover {
+.auth-container .btn-primary:hover,
+.container .btn-primary:hover {
   background: #2e59d9;
   border-color: #2e59d9;
 }
 
-.btn-secondary {
+.auth-container .btn-secondary,
+.container .btn-secondary {
   background: #f1f1f1;
   border-color: #ccc;
   color: #333;
 }
 
-.btn-secondary:hover {
+.auth-container .btn-secondary:hover,
+.container .btn-secondary:hover {
   background: #e5e5e5;
   border-color: #bbb;
 }
+
+/* ========================================
+   Logout Button Styles
+   ======================================== */
 
 .logoutButton {
   --figure-duration: 100ms;
@@ -435,7 +465,10 @@
   100% { opacity: 0; }
 }
 
-/* Google Login Styles */
+/* ========================================
+   Google Login Styles
+   ======================================== */
+
 .external-login-section {
   width: 100%;
   margin-top: -20px;
@@ -515,7 +548,10 @@
   left: auto;
 }
 
-/* External Login Confirmation Styles */
+/* ========================================
+   External Login Confirmation Styles
+   ======================================== */
+
 .google-welcome {
   width: 100%;
   margin-bottom: 25px;
@@ -582,3 +618,15 @@
   color: #00dfc4;
   margin-right: 8px;
 }
+
+/* ========================================
+   Additional Logout Button Variants
+   ======================================== */
+
+/* Alternative logout button style (from logout-button.css) */
+body {
+  font-family: 'Quicksand', sans-serif;
+}
+
+/* Note: The logout button styles above are the primary styles from account.css */
+/* The logout-button.css had some duplicate styles which have been merged above */

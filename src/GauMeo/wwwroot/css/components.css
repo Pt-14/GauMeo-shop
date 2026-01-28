@@ -1,4 +1,17 @@
-/* Newsletter Section Styling - Exact Match Design */
+/* ========================================
+   COMPONENTS.CSS
+   Gộp từ: components-common.css + components-404.css
+   Dùng cho: Newsletter (layout chung), trang lỗi 404/Error
+   ======================================== */
+
+
+/* ========================================
+   PHẦN 1: NEWSLETTER COMPONENT
+   (Form đăng ký nhận tin - dùng trong footer/layout)
+   Nguồn: components-common.css
+   ======================================== */
+
+/* ---- Newsletter Section ---- */
 .newsletter-section {
     background-color: #f8f9fa;
     padding: 0;
@@ -41,9 +54,6 @@
     z-index: 2;
 }
 
-/* Dashed line effect */
-
-
 .newsletter-subtitle {
     font-size: 1.1rem;
     color: #002828;
@@ -51,6 +61,7 @@
     line-height: 1.5;
 }
 
+/* ---- Newsletter Form ---- */
 .newsletter-form-container {
     display: flex;
     -webkit-box-align: center;
@@ -79,7 +90,7 @@
     position: relative;
 }
 
-/* Placeholder animation styling */
+/* Placeholder animation (trong newsletter form) */
 .input-container {
     position: relative;
     flex: 1;
@@ -90,7 +101,7 @@
     border: none;
     background: transparent;
     outline: none;
-    z-index: 2; 
+    z-index: 2;
     padding: 0 20px;
     font-size: 14px;
     width: 100%;
@@ -135,7 +146,6 @@
     font-family: "Quicksand", sans-serif;
     z-index: 1;
 }
-/*#002828 #1d5715 #00AA28 D6D6D6 00871E F0FFF0 */
 
 .btn-subscribe:hover {
     background: #00871E;
@@ -146,7 +156,7 @@
     cursor: not-allowed;
 }
 
-/* Cat image positioned at bottom right edge */
+/* Cat image (góc phải newsletter) */
 .newsletter-container > img.cat-image {
     position: absolute;
     bottom: 0;
@@ -156,6 +166,7 @@
     z-index: 1;
 }
 
+/* ---- Newsletter Message (success/error) ---- */
 .newsletter-message {
     margin-top: 15px;
     padding: 12px 20px;
@@ -177,110 +188,21 @@
     border: 1px solid #ffcdd2;
 }
 
-/* Footer About Section Styling - Override existing styles */
-.footer-about-section {
-    padding: 40px 0;
-    margin-bottom: 0;
-    background: #002828 !important;
-    color: #ffffff !important;
-}
-
-.footer-title-center {
-    text-align: center;
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #ffffff !important;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    padding: 0 200px 0 250px;
-    gap: 10px;
-}
-
-
-
-.about-content-wrapper {
-    display: flex;
-    gap: 40px;
-    align-items: flex-start;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-.about-text {
-    flex: 1;
-    color: #ffffff !important;
-    line-height: 1.7;
-    max-width: 600px;
-    padding: 0 90px;
-}
-
-.about-text p {
-    margin-bottom: 15px;
-    font-size: 0.97rem;
-    color: #ffffff !important;
-}
-
-.about-image {
-    flex: 0 0 300px;
-}
-
-.pets-image {
-    width: 100%;
-    height: auto;
-}
-
-/* Override footer-main to remove flex layout since about section is separate */
-.footer-main {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-    gap: 0 !important;
-    font-size: 15px !important;
-    color: #FFFFFF !important;
-    margin-bottom: 0 !important;
-    flex-wrap: nowrap !important;
-    max-width: 100% !important;
-    margin: 0 auto !important;
-    background: #002828 !important;
-    border-bottom: none !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-}
-
-/* Ensure footer columns work correctly with existing styles */
-.footer-col {
-    flex: 1 !important;
-    min-width: 0 !important;
-    max-width: 300px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    padding: 28px 28px 18px 28px !important;
-    background: #002828 !important;
-    height: 100% !important;
-    position: relative !important;
-    font-size: 14px !important;
-    color: #FFFFFF !important;
-}
-
-/* Responsive Design */
+/* ---- Newsletter: Responsive ---- */
 @media (max-width: 768px) {
     .newsletter-container {
         height: auto;
         flex-direction: column;
         padding: 30px 20px;
     }
-    
+
     .newsletter-content {
         height: auto;
         padding: 0;
         text-align: center;
         max-width: 100%;
     }
-    
+
     .newsletter-form-container {
         justify-content: center;
         margin-bottom: 10px;
@@ -289,16 +211,16 @@
     .newsletter-title {
         font-size: 1.8rem;
     }
-    
+
     .newsletter-header {
         justify-content: center;
         flex-wrap: wrap;
     }
-    
+
     .newsletter-header::after {
         display: none;
     }
-    
+
     .paper-airplane {
         position: absolute;
         -webkit-transform: rotateY(180deg);
@@ -306,42 +228,17 @@
         margin-left: -80px;
         margin-top: 365px;
     }
-    
+
     .newsletter-container > img.cat-image {
         position: relative;
         width: 242px;
         margin: 40px auto -30px;
         display: block;
     }
-    
+
     .form-wrap {
         margin: 0 auto;
         justify-content: center;
-    }
-
-    /* Footer responsive */
-    .about-content-wrapper {
-        flex-direction: column;
-        gap: 20px;
-        text-align: center;
-    }
-
-    .about-image {
-        flex: none;
-        align-self: center;
-    }
-
-    .pets-image {
-        max-width: 250px;
-    }
-
-    .footer-main {
-        flex-wrap: wrap !important;
-    }
-
-    .footer-col {
-        flex: 1 1 calc(50% - 10px) !important;
-        max-width: none !important;
     }
 }
 
@@ -349,30 +246,89 @@
     .newsletter-title {
         font-size: 1.5rem;
     }
-    
+
     .newsletter-subtitle {
         font-size: 0.9rem;
     }
-    
+
     .newsletter-container > img.cat-image {
         width: 150px;
     }
-    
+
     .form-input.input-subscribe,
     .btn-subscribe {
         font-size: 13px;
     }
+}
 
-    .footer-col {
-        flex: 1 1 100% !important;
-        max-width: none !important;
-    }
 
-    .footer-title-center {
-        font-size: 1.3rem;
-    }
+/* ========================================
+   PHẦN 2: 404 / ERROR PAGE COMPONENT
+   (Trang lỗi 404 và trang lỗi chung)
+   Nguồn: components-404.css
+   Load khi: Controller = Error
+   ======================================== */
 
-    .about-text p {
-        font-size: 0.9rem;
-    }
-} 
+/* ---- Error Page Container ---- */
+.page_404,
+.page_error {
+    padding: 0;
+    background: #fff;
+    justify-content: center;
+}
+
+.page_404 img,
+.page_error img {
+    width: 100%;
+}
+
+/* ---- Error Background (animation GIF) ---- */
+.four_zero_four_bg,
+.error_bg {
+    background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+    height: 500px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.four_zero_four_bg h1,
+.error_bg h1 {
+    font-size: 80px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.four_zero_four_bg h3,
+.error_bg h3 {
+    font-size: 80px;
+    text-align: center;
+}
+
+/* ---- Error Page: Link về trang chủ ---- */
+.link_404,
+.link_error {
+    color: #fff !important;
+    padding: 10px 20px;
+    background: #39ac31;
+    margin: 20px 0;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.link_404:hover,
+.link_error:hover {
+    background: #2d8a27;
+    text-decoration: none;
+    color: #fff !important;
+}
+
+/* ---- Error Page: Content box ---- */
+.contant_box_404,
+.contant_box_error {
+    margin-top: -50px;
+    text-align: center;
+}

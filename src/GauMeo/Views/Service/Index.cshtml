@@ -9,10 +9,10 @@
 
 <div class="service-container">
     <!-- Breadcrumb -->
-    <div class="breadcrumb">
-        <a href="/Home/Index">Trang chủ</a> / 
-        <span>Dịch vụ</span>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Dịch vụ", null, null)
+    ))
     
     <!-- Page Header -->
     <div class="service-page-header">

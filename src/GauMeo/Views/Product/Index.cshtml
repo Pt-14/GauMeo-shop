@@ -10,39 +10,21 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    @* Base CSS (includes style.css content) is already loaded in _Layout.cshtml *@
     <link rel="stylesheet" href="~/css/product-index.css" asp-append-version="true" />
 }
 
 <div class="product-index-container">
-    <div class="breadcrumb">
-        <a href="/Home/Index">Trang chủ</a> / 
-        @{
-            var breadcrumbs = ViewBag.Breadcrumbs as List<object>;
-        }
-        @if (breadcrumbs != null && breadcrumbs.Any())
+    @{
+        var breadcrumbViewModel = ViewBag.BreadcrumbViewModel as BreadcrumbViewModel;
+        if (breadcrumbViewModel == null)
         {
-            @for (int i = 0; i < breadcrumbs.Count; i++)
-            {
-                var breadcrumb = breadcrumbs[i];
-                var name = breadcrumb.GetType().GetProperty("Name")?.GetValue(breadcrumb)?.ToString();
-                var url = breadcrumb.GetType().GetProperty("Url")?.GetValue(breadcrumb)?.ToString();
-                
-                if (i < breadcrumbs.Count - 1)
-                {
-                    <a href="@url">@name</a><text> / </text>
-                }
-                else
-                {
-                    <span>@name</span>
-                }
-            }
+            List<object>? breadcrumbs = ViewBag.Breadcrumbs as List<object>;
+            string? title = ViewBag.Title?.ToString();
+            breadcrumbViewModel = BreadcrumbExtensions.ConvertToBreadcrumbViewModel(Url, breadcrumbs, title);
         }
-        else
-        {
-            <span>@ViewBag.Title</span>
-        }
-    </div>
+    }
+    @await Html.PartialAsync("_Breadcrumb", breadcrumbViewModel)
     
     <div class="product-index-header">
         <h1 class="product-index-title">@ViewBag.Title</h1>

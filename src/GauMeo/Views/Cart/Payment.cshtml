@@ -4,18 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thanh toán - GauMeo Petshop</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/checkout.css">
-    <link rel="stylesheet" href="/css/payment.css">
+    @* Payment.cshtml has Layout = null, so we need to load base CSS manually *@
+    <link rel="stylesheet" href="~/css/base.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/checkout.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/payment.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
     <main>
-        <div class="breadcrumb">
-            <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
-            <a href="/Cart/Index" class="breadcrumb-link">Giỏ hàng</a> /
-            <a href="/Cart/Checkout" class="breadcrumb-link">Thanh toán</a> /
-            <span class="breadcrumb-link active">Phương thức thanh toán</span>
-        </div>
+        @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+            ("Trang chủ", "Index", "Home"),
+            ("Giỏ hàng", "Index", "Cart"),
+            ("Thanh toán", "Checkout", "Cart"),
+            ("Phương thức thanh toán", null, null)
+        ))
 
         <div class="checkout-container">
             <div class="checkout-header">

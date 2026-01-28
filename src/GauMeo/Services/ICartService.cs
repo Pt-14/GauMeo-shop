@@ -12,8 +12,8 @@ namespace GauMeo.Services
         Task<decimal> GetCartTotalAsync(string? userId, string? sessionId);
         
         // Cart items management
-        Task<bool> AddToCartAsync(string? userId, string? sessionId, int productId, int quantity, Dictionary<string, string>? selectedVariants = null);
-        Task<bool> UpdateCartItemAsync(int cartItemId, int quantity);
+        Task<(bool Success, string? ErrorMessage)> AddToCartAsync(string? userId, string? sessionId, int productId, int quantity, Dictionary<string, string>? selectedVariants = null);
+        Task<(bool Success, string? ErrorMessage)> UpdateCartItemAsync(int cartItemId, int quantity);
         Task<bool> RemoveFromCartAsync(int cartItemId);
         Task<bool> ClearCartAsync(string? userId, string? sessionId);
         

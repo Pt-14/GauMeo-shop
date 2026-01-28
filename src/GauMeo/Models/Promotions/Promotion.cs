@@ -19,7 +19,8 @@ namespace GauMeo.Models.Promotions
         public string Type { get; set; } = "sale"; // "sale", "flash_sale", "seasonal"
 
         [Range(0, 100)]
-        public decimal DiscountPercentage { get; set; } // Phần trăm giảm giá
+        [Column(TypeName = "decimal(5,2)")]
+        public decimal DiscountPercentage { get; set; } // Phần trăm giảm giá (0-100%, có thể có 2 chữ số thập phân)
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal? DiscountAmount { get; set; } // Số tiền giảm cố định

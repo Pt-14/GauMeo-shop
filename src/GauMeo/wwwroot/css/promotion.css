@@ -5,20 +5,7 @@
     padding: 60px 20px;
 }
 
-.breadcrumb {
-    margin-bottom: 30px;
-    font-size: 14px;
-    color: #666;
-}
-
-.breadcrumb a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.breadcrumb a:hover {
-    color: #0056b3;
-}
+/* Breadcrumb styles moved to breadcrumb.css */
 
 .product-index-header {
     text-align: center;

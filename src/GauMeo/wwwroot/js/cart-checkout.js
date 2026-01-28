@@ -38,8 +38,18 @@
             btn.addEventListener('click', async function() {
                 const cartItemId = parseInt(this.dataset.cartItemId);
                 const input = document.querySelector(`.qty-input[data-cart-item-id="${cartItemId}"]`);
-                const newQuantity = parseInt(input.value) + 1;
-                await updateCartItem(cartItemId, newQuantity);
+                if (input) {
+                    const currentQty = parseInt(input.value) || 1;
+                    const maxStock = parseInt(input.getAttribute('data-stock')) || 999;
+                    
+                    if (currentQty >= maxStock) {
+                        showNotification(`Chỉ còn ${maxStock} sản phẩm trong kho!`, 'warning');
+                        return;
+                    }
+                    
+                    const newQuantity = currentQty + 1;
+                    await updateCartItem(cartItemId, newQuantity);
+                }
             });
         });
         
@@ -48,27 +58,43 @@
             btn.addEventListener('click', async function() {
                 const cartItemId = parseInt(this.dataset.cartItemId);
                 const input = document.querySelector(`.qty-input[data-cart-item-id="${cartItemId}"]`);
-                const currentQuantity = parseInt(input.value);
-                
-                // Only allow decrease if quantity > 1
-                if (currentQuantity > 1) {
-                    const newQuantity = currentQuantity - 1;
-                    await updateCartItem(cartItemId, newQuantity);
+                if (input) {
+                    const currentQuantity = parseInt(input.value) || 1;
+                    
+                    // Only allow decrease if quantity > 1
+                    if (currentQuantity > 1) {
+                        const newQuantity = currentQuantity - 1;
+                        await updateCartItem(cartItemId, newQuantity);
+                    }
+                    // If quantity is 1, do nothing (button is disabled)
                 }
-                // If quantity is 1, do nothing (button is disabled)
             });
         });
         
         // Quantity input change
         document.querySelectorAll('.qty-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const maxStock = parseInt(this.getAttribute('data-stock')) || 999;
+                const value = parseInt(this.value) || 1;
+                
+                if (value > maxStock) {
+                    this.value = maxStock;
+                    showNotification(`Số lượng tối đa là ${maxStock} sản phẩm!`, 'warning');
+                }
+                if (value < 1) {
+                    this.value = 1;
+                }
+            });
+            
             input.addEventListener('change', async function() {
                 const cartItemId = parseInt(this.dataset.cartItemId);
-                const newQuantity = parseInt(this.value);
+                const newQuantity = parseInt(this.value) || 1;
                 
                 if (newQuantity >= 1) {
                     await updateCartItem(cartItemId, newQuantity);
                 } else {
                     this.value = 1;
+                    await updateCartItem(cartItemId, 1);
                 }
             });
         });
@@ -232,24 +258,27 @@
     }
 
     function updateCartItemUI(cartItemId, quantity) {
-        const cartItem = document.querySelector(`[data-cart-item-id="${cartItemId}"]`);
+        const cartItem = document.querySelector(`.cart-item[data-cart-item-id="${cartItemId}"]`);
         if (!cartItem) return;
         
         const qtyInput = cartItem.querySelector('.qty-input');
         const minusBtn = cartItem.querySelector('.qty-btn.minus');
+        const plusBtn = cartItem.querySelector('.qty-btn.plus');
         const subtotalEl = cartItem.querySelector('.subtotal');
         
         if (qtyInput) {
             qtyInput.value = quantity;
+            const maxStock = parseInt(qtyInput.getAttribute('data-stock')) || 999;
+            
+            // Update plus button based on stock
+            if (plusBtn) {
+                plusBtn.disabled = quantity >= maxStock || maxStock <= 0;
+            }
         }
         
         // Update minus button state
         if (minusBtn) {
-            if (quantity <= 1) {
-                minusBtn.disabled = true;
-            } else {
-                minusBtn.disabled = false;
-            }
+            minusBtn.disabled = quantity <= 1;
         }
         
         if (subtotalEl) {
@@ -268,7 +297,7 @@
     }
 
     function removeCartItemFromUI(cartItemId) {
-        const cartItem = document.querySelector(`[data-cart-item-id="${cartItemId}"]`);
+        const cartItem = document.querySelector(`.cart-item[data-cart-item-id="${cartItemId}"]`);
         if (cartItem) {
             cartItem.remove();
         }
@@ -517,11 +546,25 @@
 
             const phoneField = document.querySelector('input[name="CustomerPhone"]');
             if (phoneField) {
-                phoneField.addEventListener('input', () => {
+                // Auto format phone number as user types
+                phoneField.addEventListener('input', (e) => {
+                    const formatted = this.formatPhoneNumber(e.target.value);
+                    if (formatted !== e.target.value) {
+                        e.target.value = formatted;
+                    }
+                    // Validate
                     if (phoneField.value.trim() && !this.isValidPhone(phoneField.value.trim())) {
-                        this.showFieldError(phoneField, 'Số điện thoại không hợp lệ');
+                        this.showFieldError(phoneField, 'Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam (10-11 chữ số)');
                     } else {
                         this.hideFieldError(phoneField);
+                    }
+                });
+
+                // On blur: keep formatted display (backend will normalize on submit)
+                phoneField.addEventListener('blur', () => {
+                    const normalized = this.normalizePhoneNumber(phoneField.value);
+                    if (normalized) {
+                        phoneField.value = this.formatPhoneNumber(normalized);
                     }
                 });
             }
@@ -682,8 +725,113 @@
         }
 
         isValidPhone(phone) {
-            const phoneRegex = /^[0-9]{10,11}$/;
-            return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+            if (!phone || !phone.trim()) return false;
+            
+            // Remove all non-digit characters except +
+            let normalized = phone.replace(/[\s\-\(\)]/g, '');
+            
+            // Convert +84 to 0
+            if (normalized.startsWith('+84')) {
+                normalized = '0' + normalized.substring(3);
+            }
+            
+            // Vietnamese phone number: 10 digits (mobile) or 10-11 digits (landline)
+            const phoneRegex = /^(0[0-9]{9,10})$/;
+            if (!phoneRegex.test(normalized)) {
+                return false;
+            }
+            
+            // Check valid Vietnamese prefix
+            return this.isValidVietnamesePhonePrefix(normalized);
+        }
+
+        isValidVietnamesePhonePrefix(phone) {
+            if (phone.length < 10 || phone.length > 11) {
+                return false;
+            }
+
+            const prefix3 = phone.substring(0, 3);
+            const prefix2 = phone.substring(0, 2);
+
+            // Valid mobile prefixes (10 digits)
+            const validMobilePrefixes = [
+                // Viettel
+                '032', '033', '034', '035', '036', '037', '038', '039', '086', '096', '097', '098',
+                // VinaPhone
+                '081', '082', '083', '084', '085', '088', '091', '094',
+                // MobiFone
+                '070', '076', '077', '078', '079',
+                // Vietnamobile
+                '056', '058',
+                // Gmobile
+                '059'
+            ];
+
+            // Valid landline prefixes
+            const validLandlinePrefixes = [
+                '024', // Hà Nội
+                '028', // TP.HCM
+                '020', '021', '022', '023', '025', '026', '027', '029', // Các mã vùng miền Bắc
+                '236', // Đà Nẵng
+                '296'  // An Giang (ví dụ)
+            ];
+
+            // Check mobile (10 digits)
+            if (phone.length === 10) {
+                if (validMobilePrefixes.includes(prefix3)) {
+                    return true;
+                }
+                // Old landline format (02x)
+                if (prefix2 === '02') {
+                    return true;
+                }
+                return false;
+            }
+
+            // Check landline (11 digits)
+            if (phone.length === 11) {
+                return validLandlinePrefixes.includes(prefix3);
+            }
+
+            return false;
+        }
+
+        formatPhoneNumber(phone) {
+            if (!phone) return '';
+            
+            // Remove all non-digit characters except +
+            let digits = phone.replace(/[^\d+]/g, '');
+            
+            // Convert +84 to 0
+            if (digits.startsWith('+84')) {
+                digits = '0' + digits.substring(3);
+            }
+            
+            // Limit to 11 digits (max Vietnamese phone length)
+            digits = digits.substring(0, 11);
+            
+            // Format: 0123 456 789
+            if (digits.length <= 4) {
+                return digits;
+            } else if (digits.length <= 7) {
+                return digits.substring(0, 4) + ' ' + digits.substring(4);
+            } else {
+                return digits.substring(0, 4) + ' ' + digits.substring(4, 7) + ' ' + digits.substring(7);
+            }
+        }
+
+        normalizePhoneNumber(phone) {
+            if (!phone) return '';
+            
+            // Remove all non-digit characters except +
+            let normalized = phone.replace(/[\s\-\(\)]/g, '');
+            
+            // Convert +84 to 0
+            if (normalized.startsWith('+84')) {
+                normalized = '0' + normalized.substring(3);
+            }
+            
+            return normalized;
         }
 
         showFieldError(field, message) {

@@ -11,10 +11,10 @@
 @Html.AntiForgeryToken()
 
 <div class="product-index-container">
-    <div class="breadcrumb">
-        <a href="/Home/Index">Trang chủ</a> / 
-        <span>Khuyến mãi</span>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Khuyến mãi", null, null)
+    ))
     
     <div class="product-index-header">
         <h1 class="product-index-title">Khuyến mãi</h1>

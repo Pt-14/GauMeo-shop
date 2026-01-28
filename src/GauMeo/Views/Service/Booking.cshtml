@@ -53,11 +53,11 @@
 
 <div class="booking-container">
     <!-- Breadcrumb -->
-    <div class="breadcrumb">
-        <a href="/Home/Index">Trang chủ</a> / 
-        <a href="/Service/Index">Dịch vụ</a> / 
-        <span>Đặt lịch @Model.Service?.ShortName</span>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Dịch vụ", "Index", "Service"),
+        ($"Đặt lịch {Model.Service?.ShortName}", null, null)
+    ))
 
     <!-- Header Section -->
     <div class="booking-header">

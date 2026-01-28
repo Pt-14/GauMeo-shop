@@ -26,28 +26,10 @@
   min-height: 100vh;
 }
 
-/* Breadcrumb Styles */
+/* Breadcrumb styles moved to breadcrumb.css */
 .breadcrumb {
-  margin-bottom: 30px;
-  color: var(--checkout-text-secondary);
-  font-size: 14px;
   padding-top: 60px;
   padding-left: 40px;
-}
-
-.breadcrumb-link {
-  color: var(--checkout-primary);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.breadcrumb-link:hover {
-  color: var(--checkout-primary-hover);
-  text-decoration: underline;
-}
-
-.breadcrumb-link.active {
-  color: var(--checkout-text-secondary);
 }
 
 /* Header Styles */

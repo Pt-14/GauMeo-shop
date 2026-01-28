@@ -1,25 +1,9 @@
 /* Order Success Page Styles */
 
-/* Breadcrumb */
+/* Breadcrumb styles moved to breadcrumb.css */
 .breadcrumb {
     margin: 40px;
-    font-size: 14px;
-    color: #666;
     padding-top: 40px;
-}
-
-.breadcrumb a {
-    color: #666;
-    text-decoration: none;
-}
-
-.breadcrumb a:hover {
-    color: #1d5715;
-}
-
-.breadcrumb .active {
-    color: #1d5715;
-    font-weight: 600;
 }
 
 /* Alert Styles */

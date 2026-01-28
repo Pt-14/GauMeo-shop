@@ -9,12 +9,12 @@
 }
 
 <main>
-    <div class="breadcrumb">
-        <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
-        <a href="/Cart" class="breadcrumb-link">Giỏ hàng</a> /
-        <a href="/Cart/Checkout" class="breadcrumb-link">Thanh toán</a> /
-        <span class="breadcrumb-link active">Đặt hàng thành công</span>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Giỏ hàng", "Index", "Cart"),
+        ("Thanh toán", "Checkout", "Cart"),
+        ("Đặt hàng thành công", null, null)
+    ))
 
     @if (TempData["SuccessMessage"] != null)
     {

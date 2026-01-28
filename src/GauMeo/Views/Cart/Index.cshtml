@@ -9,10 +9,10 @@
 }
 
 <main>
-    <div class="breadcrumb">
-        <a href="/Home/Index" class="breadcrumb-link">Trang chủ</a> /
-        <a href="#" class="breadcrumb-link active">Giỏ hàng</a>
-    </div>
+    @await Html.PartialAsync("_Breadcrumb", Url.CreateBreadcrumb(
+        ("Trang chủ", "Index", "Home"),
+        ("Giỏ hàng", null, null)
+    ))
     <h1 class="cart-title">Giỏ hàng của bạn</h1>
     <section class="cart-section">
         <div class="cart-main-col">
@@ -92,9 +92,22 @@
                                 <div class="cart-item-quantity">
                                     <div class="quantity-selector">
                                         <button class="qty-btn minus" data-cart-item-id="@item.Id" @(item.Quantity == 1 ? "disabled" : "")>-</button>
-                                        <input type="number" value="@item.Quantity" min="1" class="qty-input" data-cart-item-id="@item.Id">
-                                        <button class="qty-btn plus" data-cart-item-id="@item.Id">+</button>
+                                        <input type="number" value="@item.Quantity" min="1" max="@item.Product.StockQuantity" data-stock="@item.Product.StockQuantity" class="qty-input" data-cart-item-id="@item.Id">
+                                        <button class="qty-btn plus" data-cart-item-id="@item.Id" @(item.Product.StockQuantity <= item.Quantity ? "disabled" : "")>+</button>
                                     </div>
+                                    @if (item.Product.StockQuantity <= 10)
+                                    {
+                                        <div class="stock-warning @(item.Product.StockQuantity == 0 ? "stock-out" : "stock-low")">
+                                            @if (item.Product.StockQuantity == 0)
+                                            {
+                                                <span>Sản phẩm đã hết hàng</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Chỉ còn @item.Product.StockQuantity sản phẩm</span>
+                                            }
+                                        </div>
+                                    }
                                 </div>
                                 <div class="cart-item-total">
                                     <span class="subtotal">@item.GetSubTotal().ToString("N0") đ</span>

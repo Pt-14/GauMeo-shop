@@ -489,22 +489,73 @@ document.addEventListener('DOMContentLoaded', function() {
     const qtyInput = document.querySelector('.qty-input');
     const minusBtn = document.querySelector('.qty-btn.minus');
     const plusBtn = document.querySelector('.qty-btn.plus');
+    const stockInfo = document.querySelector('.stock-info');
+    
+    // Get stock quantity from stock info text or data attribute
+    let stockQuantity = 999;
+    if (stockInfo) {
+      const stockText = stockInfo.textContent.trim();
+      const match = stockText.match(/(\d+)/);
+      if (match) {
+        stockQuantity = parseInt(match[1]);
+      }
+    }
+    
+    // Set max attribute based on stock
+    if (qtyInput && stockQuantity > 0) {
+      qtyInput.setAttribute('max', stockQuantity);
+      qtyInput.setAttribute('data-stock', stockQuantity);
+    }
     
     function updateQuantityButtons() {
       if (!qtyInput || !minusBtn || !plusBtn) return;
       
-      const currentQty = parseInt(qtyInput.value);
+      const currentQty = parseInt(qtyInput.value) || 1;
       const minQty = parseInt(qtyInput.min) || 1;
-      const maxQty = parseInt(qtyInput.max) || 999;
+      const maxQty = parseInt(qtyInput.getAttribute('data-stock')) || stockQuantity;
       
-      minusBtn.disabled = currentQty <= minQty;
-      plusBtn.disabled = currentQty >= maxQty;
+      // Validate against stock
+      if (currentQty > maxQty) {
+        qtyInput.value = maxQty;
+      }
+      if (currentQty < minQty) {
+        qtyInput.value = minQty;
+      }
+      
+      const finalQty = parseInt(qtyInput.value);
+      minusBtn.disabled = finalQty <= minQty;
+      plusBtn.disabled = finalQty >= maxQty || stockQuantity <= 0;
+      
+      // Update stock warning
+      updateStockWarning(finalQty, maxQty);
+    }
+    
+    function updateStockWarning(currentQty, stockQty) {
+      if (!stockInfo) return;
+      
+      // Remove existing warning classes
+      stockInfo.classList.remove('stock-low', 'stock-out', 'stock-warning');
+      
+      if (stockQty <= 0) {
+        stockInfo.textContent = 'Sản phẩm đã hết hàng';
+        stockInfo.classList.add('stock-out');
+        if (qtyInput) qtyInput.disabled = true;
+        if (plusBtn) plusBtn.disabled = true;
+      } else if (stockQty <= 10) {
+        stockInfo.textContent = `Chỉ còn ${stockQty} sản phẩm`;
+        stockInfo.classList.add('stock-low');
+      } else if (currentQty > stockQty * 0.8) {
+        stockInfo.textContent = `${stockQty} sản phẩm có sẵn`;
+        stockInfo.classList.add('stock-warning');
+      } else {
+        stockInfo.textContent = `${stockQty} sản phẩm có sẵn`;
+      }
     }
     
     if (minusBtn) {
       minusBtn.addEventListener('click', function() {
         if (qtyInput) {
-          const currentQty = parseInt(qtyInput.value);
+          const currentQty = parseInt(qtyInput.value) || 1;
           const minQty = parseInt(qtyInput.min) || 1;
           
           if (currentQty > minQty) {
@@ -518,19 +569,42 @@ document.addEventListener('DOMContentLoaded', function() {
     if (plusBtn) {
       plusBtn.addEventListener('click', function() {
         if (qtyInput) {
-          const currentQty = parseInt(qtyInput.value);
-          const maxQty = parseInt(qtyInput.max) || 999;
+          const currentQty = parseInt(qtyInput.value) || 1;
+          const maxQty = parseInt(qtyInput.getAttribute('data-stock')) || stockQuantity;
           
-          if (currentQty < maxQty) {
+          if (currentQty < maxQty && stockQuantity > 0) {
             qtyInput.value = currentQty + 1;
             updateQuantityButtons();
+          } else if (stockQuantity <= 0) {
+            showNotification('Sản phẩm đã hết hàng!', 'error');
+          } else {
+            showNotification(`Chỉ còn ${maxQty} sản phẩm trong kho!`, 'warning');
           }
         }
       });
     }
     
     if (qtyInput) {
-      qtyInput.addEventListener('input', updateQuantityButtons);
+      qtyInput.addEventListener('input', function() {
+        const value = parseInt(this.value, 10);
+        const maxQty = parseInt(this.getAttribute('data-stock'), 10) || stockQuantity;
+        
+        if (isNaN(value) || value < 1) {
+          this.value = 1;
+        } else if (value > maxQty) {
+          this.value = maxQty;
+          showNotification(`Số lượng tối đa là ${maxQty} sản phẩm!`, 'warning');
+        }
+        updateQuantityButtons();
+      });
+      
+      qtyInput.addEventListener('blur', function() {
+        if (!this.value || parseInt(this.value) < 1) {
+          this.value = 1;
+          updateQuantityButtons();
+        }
+      });
+      
       updateQuantityButtons(); // Initialize
     }
   }
@@ -828,7 +902,17 @@ document.addEventListener('DOMContentLoaded', function() {
           showNotification(data.message || 'Đã thêm sản phẩm vào giỏ hàng!', 'success');
         }
       } else {
+        // Show error message from server (includes stock validation messages)
         showNotification(data.message || 'Không thể thêm sản phẩm vào giỏ hàng!', 'error');
+        
+        // If stock issue, update UI
+        if (data.message && (data.message.includes('hết hàng') || data.message.includes('tồn kho'))) {
+          const qtyInput = document.querySelector('.qty-input');
+          const stockInfo = document.querySelector('.stock-info');
+          if (stockInfo) {
+            stockInfo.classList.add('stock-out');
+          }
+        }
       }
     } catch (error) {
       console.error('Error adding to cart:', error);
