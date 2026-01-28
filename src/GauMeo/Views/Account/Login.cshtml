@@ -4,50 +4,88 @@
     ViewData["Title"] = "Đăng nhập";
 }
 
-@* Auth CSS is already loaded in _Layout.cshtml when user is authenticated or on Account pages *@
+<div class="auth-container login-page">
+    <div class="auth-layout">
+        <div class="auth-left">
+            <h2 class="auth-left-title">Bạn là khách hàng mới?</h2>
+            <p class="auth-left-subtitle">
+                Tạo tài khoản để mua sắm nhanh hơn và tận hưởng nhiều quyền lợi.
+            </p>
 
-<div class="auth-container">
-    <div class="container">
-        <div class="form">
-            <h2>Đăng nhập</h2>
-            <form asp-action="Login" asp-controller="Account" method="post" style="height: 210px;">
-                <input type="hidden" name="returnUrl" value="@Context.Request.Query["returnUrl"]" />
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="inputBox">
-                    <input asp-for="Email" required="required">
-                    <i class="fa-regular fa-envelope"></i>
+            <ul class="auth-benefits">
+                <li>
+                    <i class="fa-solid fa-gift"></i>
+                    <span>Ưu đãi dành riêng cho hội viên</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Thanh toán nhanh chóng</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>Lưu nhiều địa chỉ giao hàng</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Theo dõi và quản lý lịch sử đơn hàng</span>
+                </li>
+                <li>
+                    <i class="fa-regular fa-heart"></i>
+                    <span>Lưu sản phẩm yêu thích</span>
+                </li>
+            </ul>
 
-                    <span asp-validation-for="Email" class="text-danger">Email</span>
-                </div>
-                <div class="inputBox">
-                    <input asp-for="Password" required="required">
-                    <i class="fa-solid fa-lock"></i>
+            <a asp-action="Register" asp-controller="Account" class="auth-left-cta">
+                Tạo tài khoản ngay
+            </a>
+        </div>
 
-                    <span asp-validation-for="Password" class="text-danger">Mật khẩu</span>
-                </div>
-                <div class="inputBox">
-                    <input type="submit" value="Đăng nhập">
-                </div>
-                <p class="forgot-password"><a asp-action="ForgotPassword" asp-controller="Account">Quên mật khẩu?</a></p>
-            </form>
-            
-            <!-- Phần đăng nhập bằng Google -->
-            <div class="external-login-section">
-                <div class="divider">
-                    <span>Hoặc</span>
-                </div>
-                <form asp-action="ExternalLogin" asp-controller="Account" method="post">
-                    <input type="hidden" name="provider" value="Google" />
+        <div class="auth-right">
+            <div class="auth-card form">
+                <h2>Đăng nhập</h2>
+                <form asp-action="Login" asp-controller="Account" method="post">
                     <input type="hidden" name="returnUrl" value="@Context.Request.Query["returnUrl"]" />
-                    <div class="inputBox google-login">
-                        <button type="submit" class="google-btn">
-                            <i class="fab fa-google"></i>
-                            Đăng nhập với Google
-                        </button>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="inputBox">
+                        <input asp-for="Email" required="required">
+                        <i class="fa-regular fa-envelope"></i>
+                        <span asp-validation-for="Email" class="text-danger">Email</span>
+                    </div>
+
+                    <div class="inputBox">
+                        <input asp-for="Password" required="required">
+                        <i class="fa-solid fa-lock"></i>
+                        <span asp-validation-for="Password" class="text-danger">Mật khẩu</span>
+                    </div>
+
+                    <div class="auth-right-actions">
+                        <a class="auth-link-small" asp-action="ForgotPassword" asp-controller="Account">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+
+                    <div class="inputBox">
+                        <input type="submit" value="Đăng nhập">
                     </div>
                 </form>
+
+                <div class="external-login-section">
+                    <div class="divider">
+                        <span>Hoặc</span>
+                    </div>
+                    <form asp-action="ExternalLogin" asp-controller="Account" method="post">
+                        <input type="hidden" name="provider" value="Google" />
+                        <input type="hidden" name="returnUrl" value="@Context.Request.Query["returnUrl"]" />
+                        <div class="inputBox google-login">
+                            <button type="submit" class="google-btn">
+                                <i class="fab fa-google"></i>
+                                Đăng nhập với Google
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <p>Chưa có tài khoản? <a asp-action="Register" asp-controller="Account">Đăng ký</a></p>
         </div>
     </div>
 </div>
