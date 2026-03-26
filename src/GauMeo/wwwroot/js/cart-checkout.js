@@ -315,14 +315,9 @@
             totalEl.textContent = formatCurrency(total);
         }
         
-        // Update cart badge (use global function from cart-helper.js if available)
+        // Update cart badge (global from cart-helper.js)
         if (typeof updateCartBadge === 'function') {
             updateCartBadge(count);
-        } else {
-            const cartBadges = document.querySelectorAll('.header-cart-badge, .cart-count, .cart-badge');
-            cartBadges.forEach(badge => {
-                badge.textContent = count || 0;
-            });
         }
         
         // Update product count text

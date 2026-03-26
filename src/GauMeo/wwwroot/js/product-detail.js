@@ -971,20 +971,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
   }
 
-  function updateCartBadge(count) {
-    // Update all cart badges
-    const cartBadges = document.querySelectorAll('.header-cart-badge, .cart-count, .cart-badge');
-    cartBadges.forEach(badge => {
-      badge.textContent = count || 0;
-      if (count && count > 0) {
-        badge.classList.add('show');
-        badge.style.display = 'flex';
-      } else {
-        badge.classList.remove('show');
-        badge.style.display = 'none';
-      }
-    });
-  }
+  // updateCartBadge: use global from cart-helper.js (loaded in _Layout)
 
   // ===========================================
   // 12. REVIEW SYSTEM

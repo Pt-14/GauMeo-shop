@@ -577,7 +577,8 @@ nav ul li a:hover {
 
 .user-dropdown-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 }
 
 .user-dropdown-wrapper::after {
@@ -601,7 +602,7 @@ nav ul li a:hover {
   box-shadow: 0 4px 24px #0002;
   border: 1.5px solid #222;
   padding: 10px 10px 10px 10px;
-  top: 150%;
+  top: calc(100% + 8px);
   right: -60px;
   margin-top: 0px;
   z-index: 100;
@@ -617,6 +618,10 @@ nav ul li a:hover {
   color: #333;
   text-decoration: none;
   transition: background-color 0.2s;
+  font: inherit;
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.3;
 }
 
 .user-dropdown-item:hover {
@@ -887,11 +892,6 @@ footer {
   color: #1d5715; /* Màu xanh đậm cho trang hiện tại */
   font-weight: 500;
   pointer-events: none; /* Không cho click vào trang hiện tại */
-}
-
-/* Admin Bootstrap override - giữ nguyên Bootstrap styles */
-.breadcrumb.admin {
-  /* Bootstrap sẽ override styles này */
 }
 
 /* ========================================
