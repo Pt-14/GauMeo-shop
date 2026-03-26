@@ -6,41 +6,75 @@
 
 @* Auth CSS is already loaded in _Layout.cshtml when user is authenticated or on Account pages *@
 
-<div class="auth-container">
-    <div class="container">
-        <div class="form">
-            <h2>Đăng ký</h2>
-            <form asp-action="Register" asp-controller="Account" method="post" style="height: 335px;">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="inputBox">
-                    <input asp-for="UserName" required="required">
-                    <i class="fa-regular fa-user"></i>
+<div class="auth-container register-page">
+    <div class="auth-layout">
+        <div class="auth-left">
+            <div class="auth-card form">
+                <h2>Đăng ký</h2>
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="message auth-alert auth-alert-success">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+                <form asp-action="Register" asp-controller="Account" method="post">
+                    <div asp-validation-summary="All" class="message auth-alert auth-alert-error"></div>
+                    <div class="inputBox">
+                        <input asp-for="UserName" required="required">
+                        <i class="fa-regular fa-user"></i>
+                        <span asp-validation-for="UserName" class="text-danger">Tên tài khoản</span>
+                    </div>
+                    <div class="inputBox">
+                        <input asp-for="Email" required="required">
+                        <i class="fa-regular fa-envelope"></i>
+                        <span asp-validation-for="Email" class="text-danger">Email</span>
+                    </div>
+                    <div class="inputBox">
+                        <input asp-for="Password" required="required">
+                        <i class="fa-solid fa-lock"></i>
+                        <span asp-validation-for="Password" class="text-danger">Mật khẩu</span>
+                    </div>
+                    <div class="inputBox">
+                        <input asp-for="ConfirmPassword" required="required">
+                        <i class="fa-solid fa-lock"></i>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger">Xác thực mật khẩu</span>
+                    </div>
+                    <div class="inputBox">
+                        <input type="submit" value="Đăng ký">
+                    </div>
+                </form>
+                <p>Đã có tài khoản? <a asp-action="Login" asp-controller="Account">Đăng nhập</a></p>
+            </div>
+        </div>
 
-                    <span asp-validation-for="UserName" class="text-danger">Tên tài khoản</span>
-                </div>
-                <div class="inputBox">
-                    <input asp-for="Email" required="required">
-                    <i class="fa-regular fa-envelope"></i>
+        <div class="auth-right">
+            <h2 class="auth-left-title">Đã có tài khoản GauMeo?</h2>
+            <p class="auth-left-subtitle">
+                Đăng nhập để tiếp tục mua sắm, theo dõi đơn hàng và nhận ưu đãi dành riêng cho thành viên.
+            </p>
 
-                    <span asp-validation-for="Email" class="text-danger">Email</span>
-                </div>
-                <div class="inputBox">
-                    <input asp-for="Password" required="required">
-                    <i class="fa-solid fa-lock"></i>
+            <ul class="auth-benefits">
+                <li>
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>Xem lại đơn hàng và trạng thái giao hàng</span>
+                </li>
+                <li>
+                    <i class="fa-regular fa-heart"></i>
+                    <span>Truy cập nhanh danh sách sản phẩm yêu thích</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>Nhận thông báo ưu đãi và mã giảm giá mới</span>
+                </li>
+                <li>
+                    <i class="fa-solid fa-shield-heart"></i>
+                    <span>Bảo mật tài khoản với hệ thống đăng nhập an toàn</span>
+                </li>
+            </ul>
 
-                    <span asp-validation-for="Password" class="text-danger">Mật khẩu</span>
-                </div>
-                <div class="inputBox">
-                    <input asp-for="ConfirmPassword" required="required">
-                    <i class="fa-solid fa-lock"></i>
-
-                    <span asp-validation-for="ConfirmPassword" class="text-danger">Xác thực mật khẩu</span>
-                </div>
-                <div class="inputBox">
-                    <input type="submit" value="Đăng ký">
-                </div>
-            </form>
-            <p>Đã có tài khoản ? <a asp-action="Login" asp-controller="Account">Đăng nhập</a></p>
+            <a asp-action="Login" asp-controller="Account" class="auth-left-cta">
+                Đi tới đăng nhập
+            </a>
         </div>
     </div>
 </div>

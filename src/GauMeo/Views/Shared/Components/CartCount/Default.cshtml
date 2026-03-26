@@ -1,0 +1,2 @@
+@model GauMeo.ViewComponents.CartCountViewModel
+<span class="header-cart-badge @(Model.Count > 0 ? "show" : "")" data-count="@Model.Count" aria-label="Số sản phẩm trong giỏ: @Model.DisplayText">@Model.DisplayText</span>

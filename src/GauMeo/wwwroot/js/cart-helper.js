@@ -112,15 +112,23 @@ async function addToCart(productId, quantity = 1, selectedVariants = {}, button 
 }
 
 // ============================================
-// UPDATE CART BADGE
+// UPDATE CART BADGE (display: count or "99+" when > 99)
 // ============================================
+function formatCartBadgeText(count) {
+    var n = parseInt(count, 10) || 0;
+    return n > 99 ? '99+' : String(n);
+}
+
 function updateCartBadge(count) {
-    const cartBadges = document.querySelectorAll('.header-cart-badge, .cart-count, .cart-badge');
-    
-    cartBadges.forEach(badge => {
-        badge.textContent = count || 0;
-        
-        if (count && count > 0) {
+    var displayText = formatCartBadgeText(count);
+    var num = parseInt(count, 10) || 0;
+    var cartBadges = document.querySelectorAll('.header-cart-badge, .cart-count, .cart-badge');
+
+    cartBadges.forEach(function (badge) {
+        badge.textContent = displayText;
+        if (badge.dataset !== undefined) badge.dataset.count = num;
+
+        if (num > 0) {
             badge.classList.add('show');
             badge.style.display = 'flex';
         } else {
@@ -128,26 +136,22 @@ function updateCartBadge(count) {
             badge.style.display = 'none';
         }
     });
-    
-    // Add bounce animation
-    const headerBadge = document.querySelector('.header-cart-badge');
-    if (headerBadge && count > 0) {
+
+    var headerBadge = document.querySelector('.header-cart-badge');
+    if (headerBadge && num > 0) {
         headerBadge.style.transform = 'scale(1.3)';
-        setTimeout(() => {
+        setTimeout(function () {
             headerBadge.style.transform = 'scale(1)';
         }, 200);
     }
 }
 
-// Fetch and update cart count from server
-async function refreshCartBadge() {
-    try {
-        const response = await fetch('/Cart/GetCartCount');
-        const data = await response.json();
-        updateCartBadge(data.count);
-    } catch (error) {
-        console.error('Error fetching cart count:', error);
-    }
+// Fetch and update cart count from server (keeps badge in sync after nav)
+function refreshCartBadge() {
+    fetch('/Cart/GetCartCount')
+        .then(function (r) { return r.json(); })
+        .then(function (data) { updateCartBadge(data.count); })
+        .catch(function (err) { console.error('Error fetching cart count:', err); });
 }
 
 // ============================================
@@ -305,5 +309,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Export for modules (optional)
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { addToCart, updateCartBadge, refreshCartBadge, showCartNotification };
+    module.exports = { addToCart, updateCartBadge, formatCartBadgeText, refreshCartBadge, showCartNotification };
 }
